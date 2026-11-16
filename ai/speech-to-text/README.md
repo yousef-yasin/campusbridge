@@ -40,7 +40,7 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-The model is downloaded from Hugging Face on first use (~480 MB for `small`) and cached.
+Models are downloaded from Hugging Face on first use and cached (`medium` ~1.5 GB, `small` ~480 MB).
 `faster-whisper` decodes audio via PyAV, so ffmpeg is not required.
 
 ## Configuration
@@ -49,15 +49,34 @@ Environment variables (CLI `--model` / `--device` override them):
 
 | Variable | Default | Notes |
 |---|---|---|
-| `STT_MODEL` | `small` | `tiny`, `base`, `small`, `medium`, `large-v3`, or a local model path |
+| `STT_MODEL` | `medium` | Saved/uploaded audio (`stt file`, `Transcriber`). `tiny`, `base`, `small`, `medium`, `large-v3`, or a local model path |
+| `STT_LIVE_MODEL` | `small` | Live microphone sessions (`stt mic`, `config.for_live()`). Independent of `STT_MODEL` |
 | `STT_DEVICE` | `auto` | `cuda` if a CUDA GPU is detected, otherwise `cpu` |
 | `STT_COMPUTE_TYPE` | `auto` | `int8` on CPU, `float16` on CUDA |
 | `STT_LANGUAGE` | `ar` | |
 | `STT_BEAM_SIZE` | `5` | |
 | `STT_VAD_FILTER` | `1` | Skip silence (Silero VAD built into faster-whisper) |
 
-Default `small` was chosen because the development machine has no NVIDIA GPU (CPU, 16 threads).
-For better Arabic quality use `medium` or `large-v3`, preferably on a GPU.
+### Model selection
+
+- Saved/uploaded audio uses `medium`. On a single 105 s synthetic Arabic/English TTS clip
+  (`samples/bilingual_test.mp3`, CPU int8) it scored 6.8% WER vs 14.6% for `small`, and
+  recognised all English technical terms that `small` dropped. It ran at ~0.96× real time
+  and ~1.7 GB peak RAM on the development CPU (no NVIDIA GPU).
+- Live sessions use `small` (~0.31× real time, ~0.65 GB) so captions keep up on CPU.
+- These figures come from one synthetic clip only; real-lecture accuracy has not been measured.
+- `--model` on the CLI applies to whichever command is run (file or mic).
+- Only one model is kept loaded at a time: Transcribers with the same model share an instance,
+  and loading a different model releases the previous one. Alternating between file and live
+  transcription in one process therefore reloads the model (a few seconds each switch).
+
+```bash
+STT_MODEL=large-v3 python -m stt file lecture.mp3      # override file model
+STT_LIVE_MODEL=base python -m stt mic --seconds 60     # override live model
+python -m stt --model small file lecture.mp3           # one-off override
+```
+
+PowerShell: `$env:STT_MODEL="large-v3"; python -m stt file lecture.mp3`
 
 ## Usage
 
@@ -79,12 +98,13 @@ Python API (for future backend/API integration):
 ```python
 from stt import Transcriber, LiveSession, STTConfig
 
-tr = Transcriber(STTConfig(model="small"))
-transcript = tr.transcribe_file("lecture.wav")
+cfg = STTConfig.from_env()                 # model=medium, live_model=small unless overridden
+transcript = Transcriber(cfg).transcribe_file("lecture.wav")
 transcript.save("lecture.txt")
 transcript.search("مقدمة")
 
-session = LiveSession(tr, "live.txt", on_caption=lambda seg: print(seg.text))
+live = Transcriber(cfg.for_live())         # uses live_model
+session = LiveSession(live, "live.txt", on_caption=lambda seg: print(seg.text))
 session.start()
 session.set_slide(1)
 session.feed(pcm_float32_16khz_mono)   # call per audio chunk
@@ -108,7 +128,10 @@ timestamps is produced; it does not measure accuracy.
   has **not** been measured. Add samples with reference transcripts and evaluate before relying on it.
 - Live mode transcribes fixed-length chunks independently; words cut at chunk boundaries may be
   lost or split, and captions lag by roughly the chunk length plus processing time.
-- On CPU, `medium`/`large-v3` may be too slow for live captions.
+- On CPU, `medium`/`large-v3` are too slow for live captions; keep `STT_LIVE_MODEL` at `small`
+  unless a GPU is available (GPU speed not measured).
+- `Transcriber()` with no arguments now defaults to `medium` (previously `small`); pass
+  `STTConfig(model="small")` or set `STT_MODEL=small` for the old behaviour.
 - Keyword search normalizes diacritics and alef forms only; it is substring-based, not semantic.
 - No HTTP API, authentication, or database persistence (left to backend integration).
 - Transcript retention/deletion policy is handled outside this module.

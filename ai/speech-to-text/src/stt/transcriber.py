@@ -1,4 +1,5 @@
 import logging
+import threading
 from pathlib import Path
 from typing import List, Optional
 
@@ -10,26 +11,38 @@ from .transcript import Segment, Transcript
 
 log = logging.getLogger(__name__)
 
+# Single shared slot: Transcribers using the same model share one instance, and loading a
+# different model releases the previous one first, so two models are not held at once.
+_shared = {"key": None, "model": None}
+_lock = threading.Lock()
+
 
 class Transcriber:
     """Wraps faster-whisper. The model loads lazily on first use."""
 
     def __init__(self, config: Optional[STTConfig] = None, model=None):
         self.config = config or STTConfig.from_env()
-        self._model = model
+        self._model = model  # injected model (tests); bypasses the shared slot
 
     @property
     def model(self):
-        if self._model is None:
-            device, compute = self.config.resolved()
-            try:
-                from faster_whisper import WhisperModel
-                log.info("Loading model %s on %s (%s)", self.config.model, device, compute)
-                self._model = WhisperModel(self.config.model, device=device, compute_type=compute)
-            except Exception as exc:
-                raise ModelUnavailableError(
-                    f"Cannot load STT model '{self.config.model}': {exc}") from exc
-        return self._model
+        if self._model is not None:
+            return self._model
+        device, compute = self.config.resolved()
+        key = (self.config.model, device, compute)
+        with _lock:
+            if _shared["key"] != key:
+                _shared["key"] = _shared["model"] = None
+                try:
+                    from faster_whisper import WhisperModel
+                    log.info("Loading model %s on %s (%s)", self.config.model, device, compute)
+                    _shared["model"] = WhisperModel(self.config.model, device=device,
+                                                    compute_type=compute)
+                except Exception as exc:
+                    raise ModelUnavailableError(
+                        f"Cannot load STT model '{self.config.model}': {exc}") from exc
+                _shared["key"] = key
+            return _shared["model"]
 
     def _run(self, audio, offset: float = 0.0) -> List[Segment]:
         model = self.model

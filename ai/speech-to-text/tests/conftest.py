@@ -22,6 +22,16 @@ class FakeModel:
         return iter(SimpleNamespace(start=s, end=e, text=t) for s, e, t in self.segments), None
 
 
+@pytest.fixture(autouse=True)
+def clean_stt_state(monkeypatch):
+    """Isolate tests from the caller's STT_* variables and the shared model slot."""
+    import os
+    from stt import transcriber
+    for k in [k for k in os.environ if k.startswith("STT_")]:
+        monkeypatch.delenv(k)
+    monkeypatch.setattr(transcriber, "_shared", {"key": None, "model": None})
+
+
 @pytest.fixture
 def fake_model():
     return FakeModel()

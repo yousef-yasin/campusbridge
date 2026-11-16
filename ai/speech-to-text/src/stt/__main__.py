@@ -11,7 +11,7 @@ from .transcriber import Transcriber
 
 def main(argv=None) -> int:
     p = argparse.ArgumentParser(prog="stt", description="CampusBridge Arabic speech-to-text")
-    p.add_argument("--model", help="model size or local path (env STT_MODEL)")
+    p.add_argument("--model", help="model for this command, overrides STT_MODEL / STT_LIVE_MODEL")
     p.add_argument("--device", help="auto/cpu/cuda (env STT_DEVICE)")
     sub = p.add_subparsers(dest="cmd", required=True)
     f = sub.add_parser("file", help="transcribe an audio file")
@@ -33,7 +33,7 @@ def main(argv=None) -> int:
         pass
     cfg = STTConfig.from_env()
     if args.model:
-        cfg.model = args.model
+        cfg.model = cfg.live_model = args.model
     if args.device:
         cfg.device = args.device
     try:
@@ -42,7 +42,7 @@ def main(argv=None) -> int:
             hits = Transcript.load(args.transcript).search(args.keyword)
             print(Transcript(hits).to_text() if hits else "No matches.", end="")
             return 0
-        tr = Transcriber(cfg)
+        tr = Transcriber(cfg if args.cmd == "file" else cfg.for_live())
         if args.cmd == "file":
             t = tr.transcribe_file(args.audio)
             out = t.save(args.out or Path(args.audio).with_suffix(".txt"))

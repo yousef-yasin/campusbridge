@@ -1,5 +1,5 @@
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 
 
 def _detect_device() -> str:
@@ -13,7 +13,8 @@ def _detect_device() -> str:
 @dataclass
 class STTConfig:
     """Settings, overridable through STT_* environment variables."""
-    model: str = "small"            # tiny/base/small/medium/large-v3 or a local path
+    model: str = "medium"           # saved/uploaded audio: tiny/base/small/medium/large-v3 or a path
+    live_model: str = "small"       # live microphone sessions
     device: str = "auto"            # auto/cpu/cuda
     compute_type: str = "auto"      # auto -> int8 on CPU, float16 on CUDA
     language: str = "ar"
@@ -26,12 +27,17 @@ class STTConfig:
         e = os.environ.get
         return cls(
             model=e("STT_MODEL", cls.model),
+            live_model=e("STT_LIVE_MODEL", cls.live_model),
             device=e("STT_DEVICE", cls.device),
             compute_type=e("STT_COMPUTE_TYPE", cls.compute_type),
             language=e("STT_LANGUAGE", cls.language),
             beam_size=int(e("STT_BEAM_SIZE", cls.beam_size)),
             vad_filter=e("STT_VAD_FILTER", "1").lower() not in ("0", "false", "no"),
         )
+
+    def for_live(self) -> "STTConfig":
+        """Copy of this config that uses live_model, for live microphone sessions."""
+        return replace(self, model=self.live_model)
 
     def resolved(self) -> tuple:
         """Return (device, compute_type) with 'auto' values resolved."""
