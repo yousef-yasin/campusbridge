@@ -12,3 +12,7 @@ class ModelUnavailableError(STTError):
 
 class TranscriptionError(STTError):
     """Transcription failed for the given audio."""
+
+
+class GlossaryError(STTError):
+    """Glossary file is missing, malformed, or fails its integrity check."""
