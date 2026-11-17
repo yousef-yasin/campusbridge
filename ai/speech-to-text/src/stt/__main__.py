@@ -13,6 +13,7 @@ def main(argv=None) -> int:
     p = argparse.ArgumentParser(prog="stt", description="CampusBridge Arabic speech-to-text")
     p.add_argument("--model", help="model for this command, overrides STT_MODEL / STT_LIVE_MODEL")
     p.add_argument("--device", help="auto/cpu/cuda (env STT_DEVICE)")
+    p.add_argument("--glossary", help="approved course glossary JSON (env STT_GLOSSARY)")
     sub = p.add_subparsers(dest="cmd", required=True)
     f = sub.add_parser("file", help="transcribe an audio file")
     f.add_argument("audio")
@@ -36,6 +37,8 @@ def main(argv=None) -> int:
         cfg.model = cfg.live_model = args.model
     if args.device:
         cfg.device = args.device
+    if args.glossary:
+        cfg.glossary_path = args.glossary
     try:
         if args.cmd == "search":
             from .transcript import Transcript

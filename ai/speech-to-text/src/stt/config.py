@@ -1,5 +1,6 @@
 import os
 from dataclasses import dataclass, replace
+from typing import Optional
 
 
 def _detect_device() -> str:
@@ -20,6 +21,7 @@ class STTConfig:
     language: str = "ar"
     beam_size: int = 5
     vad_filter: bool = True
+    glossary_path: Optional[str] = None  # approved course glossary; None disables term correction
     sample_rate: int = 16000
 
     @classmethod
@@ -33,6 +35,7 @@ class STTConfig:
             language=e("STT_LANGUAGE", cls.language),
             beam_size=int(e("STT_BEAM_SIZE", cls.beam_size)),
             vad_filter=e("STT_VAD_FILTER", "1").lower() not in ("0", "false", "no"),
+            glossary_path=e("STT_GLOSSARY") or None,
         )
 
     def for_live(self) -> "STTConfig":

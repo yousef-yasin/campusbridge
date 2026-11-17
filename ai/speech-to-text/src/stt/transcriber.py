@@ -1,7 +1,7 @@
 import logging
 import threading
 from pathlib import Path
-from typing import List, Optional
+from typing import Dict, Iterable, List, Optional
 
 import numpy as np
 
@@ -23,6 +23,23 @@ class Transcriber:
     def __init__(self, config: Optional[STTConfig] = None, model=None):
         self.config = config or STTConfig.from_env()
         self._model = model  # injected model (tests); bypasses the shared slot
+        self._glossary = None
+
+    @property
+    def glossary(self):
+        """Approved glossary from config.glossary_path (loaded once), or None when disabled."""
+        if self.config.glossary_path and self._glossary is None:
+            from .glossary import load_glossary
+            self._glossary = load_glossary(self.config.glossary_path)
+        return self._glossary
+
+    def correct(self, segments: List[Segment],
+                slide_terms: Optional[Dict[int, Iterable[str]]] = None) -> List[Segment]:
+        """Apply glossary term correction; returns segments unchanged when disabled."""
+        if self.glossary is None:
+            return segments
+        from .termfix import correct_segments
+        return correct_segments(segments, self.glossary, slide_terms)
 
     @property
     def model(self):
@@ -64,7 +81,12 @@ class Transcriber:
             raise AudioNotFoundError(f"Audio file not found: {path}")
         if path.stat().st_size == 0:
             raise AudioNotFoundError(f"Audio file is empty: {path}")
-        return Transcript(self._run(str(path)), self.config.language)
+        glossary = self.glossary  # load (and validate) before transcribing
+        transcript = Transcript(self._run(str(path)), self.config.language)
+        if glossary is not None:
+            transcript.segments = self.correct(transcript.segments)
+            transcript.glossary = glossary.info
+        return transcript
 
     def transcribe_chunk(self, audio, offset: float = 0.0) -> List[Segment]:
         """Transcribe mono float32 PCM at config.sample_rate; timestamps shifted by offset."""
