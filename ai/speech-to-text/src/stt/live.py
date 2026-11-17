@@ -1,6 +1,7 @@
 import logging
+from dataclasses import replace
 from pathlib import Path
-from typing import Callable, List, Optional
+from typing import Callable, Dict, Iterable, List, Optional
 
 import numpy as np
 
@@ -19,11 +20,16 @@ class LiveSession:
     """
 
     def __init__(self, transcriber: Transcriber, output_path=None,
-                 on_caption: Optional[Callable[[Segment], None]] = None):
+                 on_caption: Optional[Callable[[Segment], None]] = None,
+                 slide_terms: Optional[Dict[int, Iterable[str]]] = None):
         self.transcriber = transcriber
         self.output_path = Path(output_path) if output_path else None
         self.on_caption = on_caption
+        self.slide_terms = slide_terms  # slide number -> English terms on that slide
         self.transcript = Transcript(language=transcriber.config.language)
+        glossary = transcriber.glossary  # load and validate before the session starts
+        if glossary is not None:
+            self.transcript.glossary = glossary.info
         self.status = "created"
         self.slide: Optional[int] = None
         self.elapsed = 0.0
@@ -50,6 +56,14 @@ class LiveSession:
             return []
         for seg in segments:
             seg.slide = self.slide
+        if self.transcript.glossary is not None:
+            try:
+                segments = self.transcriber.correct(segments, self.slide_terms)
+            except Exception as exc:  # never drop captions because of the correction layer
+                self.last_error = f"Term correction failed: {exc}"
+                log.warning("%s; captions kept uncorrected", self.last_error)
+                segments = [replace(s, raw_text=s.text, corrections=[]) for s in segments]
+        for seg in segments:
             self.transcript.segments.append(seg)
             if self.on_caption:
                 self.on_caption(seg)
