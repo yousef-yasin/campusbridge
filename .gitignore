@@ -21,3 +21,20 @@ obj/
 # OS
 .DS_Store
 Thumbs.db
+
+# Tests
+.pytest_cache/
+
+# Text-to-speech: voice models, audio cache, generated audio, local custom phrases
+*.onnx
+*.onnx.json
+ai/text-to-speech/voices/
+ai/text-to-speech/.tts-cache/
+ai/text-to-speech/data/
+ai/text-to-speech/**/*.wav
+ai/text-to-speech/**/*.mp3
+ai/text-to-speech/samples-out/
+
+# Document reader: input documents and extracted images
+ai/samples-in/
+ai/document-reader/extracted-images/
