@@ -238,12 +238,18 @@ def test_pdf_bookmarks_are_the_outline(pdf_file, cfg, tmp_path):
             ("Part one", 1, 1), ("Details", 3, 2), ("Scans", 4, 1)]
 
 
-def test_pdf_direct_page_access_loads_one_page(pdf_file, cfg):
+def test_pdf_direct_page_access_processes_one_page(pdf_file, cfg):
     with open_document(pdf_file, cfg) as doc:
-        loaded, original = [], doc._doc.load_page
-        doc._doc.load_page = lambda i: loaded.append(i) or original(i)
+        processed, read_page = [], doc._read_page
+        doc._read_page = lambda n: processed.append(n) or read_page(n)
         doc.page(3)
-        assert loaded == [2]
+        assert processed == [3]           # tables, images, blocks: only page 3
+        # The document's body font size is sampled once from the text of a few pages (cached);
+        # after that, reading a page loads that page only.
+        loaded, load_page = [], doc._doc.load_page
+        doc._doc.load_page = lambda i: loaded.append(i) or load_page(i)
+        doc.page(2)
+        assert loaded == [1]
 
 
 # --- speech text -------------------------------------------------------------------------

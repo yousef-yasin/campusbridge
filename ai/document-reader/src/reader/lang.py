@@ -9,6 +9,10 @@ _PRESENTATION = re.compile("[ﬀ-ﬆﭐ-﷿ﹰ-ﻼ]")
 # controls (except tab/newline), soft hyphen, bidi marks and isolates, BOM, private use (bullet glyphs)
 _DROP = re.compile("[\x00-\x08\x0B-\x1F\x7F­​-‏‪-‮⁦-⁩﻿-]")
 _SPACES = re.compile(r"[^\S\n]+")
+# PDFs often put a space before a shadda/tanween drawn as a separate glyph: "ومهي ّأة"
+_SPACE_BEFORE_MARK = re.compile(r"[^\S\n]+(?=[ً-ْٰ])")
+_MARKS = re.compile("[ً-ْٰ]")
+_AR_PLAIN = re.compile("[ء-ي]+")
 _MIRROR = str.maketrans("()[]{}<>", ")(][}{><")
 _LTR_RUN = re.compile(r"[A-Za-z0-9À-ɏ][A-Za-z0-9À-ɏ.,:/%+\-_' ]*[A-Za-z0-9À-ɏ%]|[A-Za-z0-9]")
 
@@ -55,7 +59,35 @@ def clean_text(text: str) -> str:
     text = _PRESENTATION.sub(lambda m: unicodedata.normalize("NFKC", m.group(0)), text)
     text = _DROP.sub("", text).replace("ـ", "")          # tatweel is decoration
     text = _SPACES.sub(" ", text)
+    text = _SPACE_BEFORE_MARK.sub("", text)                    # a word never starts with a mark
     return "\n".join(line.strip() for line in text.split("\n")).strip()
+
+
+_LEADING_MARKS = re.compile("^([ً-ْٰ]+)")
+
+
+def fix_leading_marks(text: str) -> str:
+    """A diacritic at the start of a paragraph belongs to its last word.
+
+    Some PDFs store the tanween of the last word of a right-to-left line as a separate glyph,
+    and text extraction puts it first: 'ًيحوّل ... يوميا' -> 'يحوّل ... يومياً'.
+    """
+    match = _LEADING_MARKS.match(text or "")
+    if not match or not has_arabic(text):
+        return text
+    return text[match.end():].rstrip() + match.group(1)
+
+
+def looks_reversed(text: str) -> bool:
+    """Arabic stored letter by letter in reverse, without presentation forms to repair it.
+
+    Reversed words start with ة or ى (impossible in Arabic) or end with 'لا' (a reversed 'ال');
+    normal text has many words starting with 'ال' or ending with ة/ى.
+    """
+    words = [w for w in _AR_PLAIN.findall(_MARKS.sub("", text or "")) if len(w) >= 3]
+    reversed_words = sum(w[0] in "ةى" or (len(w) >= 4 and w.endswith("لا")) for w in words)
+    logical_words = sum(w.startswith("ال") or w[-1] in "ةى" for w in words)
+    return reversed_words >= 3 and reversed_words > logical_words
 
 
 def word_counts(text: str):

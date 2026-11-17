@@ -41,6 +41,8 @@ def block_speech(block: Block, include_notes: bool = True) -> str:
     if block.kind == "table" and block.table:
         rows = len(block.table["rows"])
         total = block.table.get("total_rows", rows)
+        if not total:                                   # header only: no "table with 0 rows"
+            return "\n".join(_sentence(l) for l in block.text.split("\n") if l.strip())
         if _arabic(block):
             intro = f"جدول، عدد صفوفه {total}." if total == rows else \
                 f"جدول، عدد صفوفه {total}، وهذه أول {rows} منها:"

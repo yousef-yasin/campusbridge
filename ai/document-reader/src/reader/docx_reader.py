@@ -7,7 +7,7 @@ from .errors import CorruptFileError
 from .images import image_size, is_decoration
 from .lang import clean_text, detect_language
 from .model import Block, OutlineEntry, Page
-from .tables import make_table, table_text
+from .tables import table_blocks
 
 W = "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
 R_EMBED = "{http://schemas.openxmlformats.org/officeDocument/2006/relationships}embed"
@@ -171,9 +171,7 @@ class DocxDocument(Document):
                 continue
             if element.tag == f"{W}tbl":
                 flush()
-                block = self._table(element, n)
-                if block:
-                    page.blocks.append(block)
+                page.blocks.extend(self._table(element, n))
                 if element.findall(f".//{A_BLIP}"):
                     page.warnings.append("images inside tables are not read")
                 continue
@@ -199,7 +197,7 @@ class DocxDocument(Document):
         flush()
         return page
 
-    def _table(self, element, unit) -> Optional[Block]:
+    def _table(self, element, unit) -> List[Block]:
         from docx.table import Table
         try:
             rows = []
@@ -212,12 +210,8 @@ class DocxDocument(Document):
                     cells.append(cell.text)
                 rows.append(cells)
         except Exception:
-            return None
-        table = make_table(rows)
-        if not table:
-            return None
-        text = table_text(table)
-        return Block("table", text, detect_language(text), unit, table=table)
+            return []
+        return table_blocks(rows, unit)
 
     def _title(self, pages) -> str:
         title = clean_text(self._doc.core_properties.title or "")

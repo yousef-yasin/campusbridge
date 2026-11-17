@@ -80,6 +80,8 @@ class SheetInfo:
     header_row: int             # 1-based row number of the header
     rtl: bool = False
     hidden: bool = False
+    title: Optional[str] = None        # text above the header (a title row), if any
+    approximate: bool = False          # row_count estimated from the sheet size (very large sheet)
 
 
 @dataclass

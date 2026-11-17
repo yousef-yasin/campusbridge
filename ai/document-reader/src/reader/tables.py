@@ -2,6 +2,7 @@
 from typing import Any, Dict, List, Optional, Sequence
 
 from .lang import clean_text, detect_language
+from .model import Block
 
 
 def cell_text(value: Any) -> str:
@@ -20,7 +21,9 @@ def normalize_rows(rows: Sequence[Sequence[Any]]) -> List[List[str]]:
     rows = [[cell_text(c) for c in row] for row in rows]
     rows = [row for row in rows if any(row)]
     width = max((len(r) for r in rows), default=0)
-    return [row + [""] * (width - len(row)) for row in rows]
+    rows = [row + [""] * (width - len(row)) for row in rows]
+    keep = [c for c in range(width) if any(row[c] for row in rows)]    # drop empty columns
+    return [[row[c] for c in keep] for row in rows]
 
 
 def make_table(rows: Sequence[Sequence[Any]], total_rows: Optional[int] = None) -> Optional[Dict]:
@@ -47,3 +50,20 @@ def table_text(table: Dict) -> str:
         if parts:
             lines.append(sep.join(parts))
     return "\n".join(lines)
+
+
+def table_blocks(rows: Sequence[Sequence[Any]], unit: int, unit_type: str = "page") -> List[Block]:
+    """A table block; or paragraphs when the 'table' is one box with one filled cell.
+
+    Word and PowerPoint authors often use a one-cell table as a framed call-out; reading it as a
+    table would announce 'a table' with no rows. Its lines become paragraphs instead.
+    """
+    filled = [c for row in rows for c in row if c is not None and str(c).strip()]
+    if len(filled) == 1:
+        lines = [clean_text(line) for line in str(filled[0]).split("\n")]
+        return [Block("paragraph", line, detect_language(line), unit, unit_type) for line in lines if line]
+    table = make_table(rows)
+    if not table:
+        return []
+    text = table_text(table)
+    return [Block("table", text, detect_language(text), unit, unit_type, table=table)]

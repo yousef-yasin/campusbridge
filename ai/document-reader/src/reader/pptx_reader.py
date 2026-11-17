@@ -1,4 +1,5 @@
 """PowerPoint (.pptx): one unit per slide; speaker notes become a 'notes' block."""
+import re
 from collections import Counter
 from typing import List, Optional, Set
 
@@ -8,9 +9,12 @@ from .images import digest, image_size, is_decoration
 from .lang import clean_text, detect_language, is_rtl
 from .layout import order_boxes
 from .model import Block, OutlineEntry, Page
-from .tables import make_table, table_text
+from .tables import table_blocks
 
 A = "{http://schemas.openxmlformats.org/drawingml/2006/main}"
+_LETTER = re.compile(r"[^\W\d_]")
+_TITLE_RATIO = 1.2     # a text box this much larger than every other text = the slide title
+_TITLE_MIN_PT = 28     # ... or a large font when all the other text is short (cover slides)
 
 
 class PptxDocument(Document):
@@ -114,14 +118,8 @@ class PptxDocument(Document):
             children = [(self._box(s), self._shape_blocks(s, n, rtl)) for s in shape.shapes]
             return [b for blocks in self._order(children, rtl) for b in blocks]
         if getattr(shape, "has_table", False) and shape.has_table:
-            rows = []
-            for row in shape.table.rows:
-                rows.append([c.text for c in row.cells if not c.is_spanned])
-            table = make_table(rows)
-            if not table:
-                return []
-            text = table_text(table)
-            return [Block("table", text, detect_language(text), n, "slide", table=table)]
+            rows = [[c.text for c in row.cells if not c.is_spanned] for row in shape.table.rows]
+            return table_blocks(rows, n, "slide")
         pic = self._picture_blob(shape)
         if pic:
             blob, ext = pic
@@ -149,6 +147,35 @@ class PptxDocument(Document):
         unplaced = [blocks for box, blocks in items if box is None and blocks]
         return order_boxes(placed, rtl, gap=91440 * 0.1) + unplaced   # 0.1 inch in EMU
 
+    @staticmethod
+    def _font_size(shape) -> Optional[float]:
+        sizes = [r.font.size.pt for p in shape.text_frame.paragraphs for r in p.runs
+                 if r.font.size is not None and r.text.strip()]
+        return max(sizes) if sizes else None
+
+    def _fallback_title(self, shapes):
+        """The text box that acts as the title on a slide without a title placeholder."""
+        texts = []
+        for shape in shapes:
+            if not shape.has_text_frame or self._placeholder_type(shape) in ("FOOTER", "SLIDE_NUMBER", "DATE"):
+                continue
+            text = clean_text(shape.text_frame.text)
+            if text:
+                texts.append((shape, text, self._font_size(shape)))
+        sized = [t for t in texts if t[2] is not None]
+        if not sized:
+            return None
+        top = lambda t: t[0].top if t[0].top is not None else 0
+        best = max(sized, key=lambda t: (t[2], -top(t)))
+        shape, text, size = best
+        if len(text) > 100 or text.count("\n") > 1:
+            return None
+        others = [t for t in texts if t is not best]
+        other_sizes = [t[2] for t in others if t[2] is not None]
+        bigger = not other_sizes or size >= _TITLE_RATIO * max(other_sizes)
+        cover = size >= _TITLE_MIN_PT and all(len(t[1]) <= 100 for t in others)
+        return shape if (bigger or cover) else None
+
     def _read_page(self, n: int) -> Page:
         slide = self._slides[n - 1]
         page = Page(n, "slide")
@@ -161,19 +188,32 @@ class PptxDocument(Document):
         for shape in shapes:
             if self._placeholder_type(shape) in ("TITLE", "CENTER_TITLE", "VERTICAL_TITLE"):
                 titles.extend(self._shape_blocks(shape, n, rtl))
-            else:
-                others.append((self._box(shape), self._shape_blocks(shape, n, rtl)))
+        title_shape = None if titles else self._fallback_title(shapes)
+        if title_shape is not None:
+            text = clean_text(title_shape.text_frame.text).replace("\n", " ")
+            titles.append(Block("heading", text, detect_language(text), n, "slide", level=1))
+        for shape in shapes:
+            if shape is title_shape or self._placeholder_type(shape) in ("TITLE", "CENTER_TITLE", "VERTICAL_TITLE"):
+                continue
+            others.append((self._box(shape), self._shape_blocks(shape, n, rtl)))
         page.blocks = titles + [b for blocks in self._order(others, rtl) for b in blocks]
         if slide.has_notes_slide:
             frame = slide.notes_slide.notes_text_frame
             notes = clean_text(frame.text) if frame is not None else ""
-            if notes:
+            if _LETTER.search(notes):              # notes holding only a slide number are skipped
                 page.blocks.append(Block("notes", notes, detect_language(notes), n, "slide"))
         return page
 
     def _title(self, pages) -> str:
         title = clean_text(self._prs.core_properties.title or "")
         return title or super()._title(pages)
+
+    def _extend_info(self, info, pages) -> None:
+        from .document import _ranges
+        untitled = [p.unit for p in pages if not any(b.kind == "heading" and b.level == 1 for b in p.blocks)]
+        if untitled:
+            label = "slide" if len(untitled) == 1 else "slides"
+            info.warnings.append(f"no title on {label} {_ranges(untitled)} (not in the outline)")
 
     def _outline(self, pages) -> List[OutlineEntry]:
         """Slide titles; consecutive slides with the same title are one topic."""

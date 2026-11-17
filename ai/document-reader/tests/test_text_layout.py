@@ -48,7 +48,7 @@ def test_order_boxes_columns_and_rtl():
 
 def test_tables_to_readable_rows():
     table = make_table([["الاسم", "الدرجة", ""], ["أحمد", 90.0, None], [None, None, None], ["سارة", "", ""]])
-    assert table["columns"] == ["الاسم", "الدرجة", "3"]
+    assert table["columns"] == ["الاسم", "الدرجة"]               # the empty third column is dropped
     assert table_text(table) == "الاسم: أحمد، الدرجة: 90\nالاسم: سارة"
     english = make_table([["Model", "Accuracy"], ["CNN", "92"]])
     assert table_text(english) == "Model: CNN; Accuracy: 92"
