@@ -1,0 +1,10 @@
+# Default engine: Gemini TTS (online, needs GEMINI_API_KEY). Gemini 3.8 TTS needs >= 2.25.
+google-genai>=2.25,<4
+# First fallback: Microsoft Edge neural voices (online, unofficial client)
+edge-tts>=7,<8
+# Offline fallback: Piper (local voices)
+piper-tts>=1.3,<2
+num2words>=0.5.13
+numpy>=1.26
+# Tests
+pytest>=7
