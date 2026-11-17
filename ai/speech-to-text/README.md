@@ -61,7 +61,7 @@ Environment variables (CLI `--model` / `--device` override them):
 ### Model selection
 
 - Saved/uploaded audio uses `medium`. On a single 105 s synthetic Arabic/English TTS clip
-  (`samples/bilingual_test.mp3`, CPU int8) it scored 6.8% WER vs 14.6% for `small`, and
+  (not included in the repository; CPU int8) it scored 6.8% WER vs 14.6% for `small`, and
   recognised all English technical terms that `small` dropped. It ran at ~0.96× real time
   and ~1.7 GB peak RAM on the development CPU (no NVIDIA GPU).
 - Live sessions use `small` (~0.31× real time, ~0.65 GB) so captions keep up on CPU.

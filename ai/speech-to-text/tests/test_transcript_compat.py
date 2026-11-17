@@ -1,4 +1,4 @@
-"""Stage 1: transcript format stays byte-identical when glossary correction is disabled."""
+"""Transcript format stays byte-identical when glossary correction is disabled."""
 from pathlib import Path
 
 from stt import STTConfig
