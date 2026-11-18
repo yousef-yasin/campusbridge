@@ -186,6 +186,24 @@ def test_only_requested_units_have_their_images_described(three_slides_with_imag
     assert images == ["صورة بدون وصف.", "صورة، وصف تلقائي: مخطط.", "صورة بدون وصف."]
 
 
+def test_intro_counts_useful_images_and_listening_time_is_stable(lecture, monkeypatch):
+    long_photo = {"category": "photo", "informative": True, "text_in_image": "", "detailed_description": "",
+                  "short_description": " ".join(["كلمة"] * 400)}        # a very long description
+    plain = FileNarrator(config("ar")).narrate(lecture, {}, now=NOW).intro.text
+    described = FileNarrator(config("ar")).narrate(lecture, {}, now=NOW, describer=fake_describer(long_photo)).intro.text
+    assert described == plain                       # same listening time, described or not
+    assert "ويحتوي على صورة واحدة وجدول واحد. مدة الاستماع التقديرية حوالي دقيقة." in plain
+
+    decorative = dict(long_photo, informative=False)
+    intro = FileNarrator(config("ar")).narrate(                 # "ar": its own cache entry
+        lecture, {}, now=NOW, describer=fake_describer(decorative, language="ar")).intro.text
+    assert "ويحتوي على جدول واحد." in intro and "صورة" not in intro
+    # the description is now in the cache: a later run without describing reads it, offline
+    monkeypatch.setenv("READER_VISION_MODEL", "fake-vision")       # same cache key as the fake engine
+    again = FileNarrator(config("ar")).narrate(lecture, {}, now=NOW)
+    assert again.intro.text == intro and all(s.kind != "image" for s in again.segments)
+
+
 def test_many_topics_name_the_first_five(tmp_path):
     from pptx import Presentation
     prs = Presentation()

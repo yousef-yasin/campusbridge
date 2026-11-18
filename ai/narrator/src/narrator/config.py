@@ -20,6 +20,7 @@ class NarratorConfig:
     max_table_rows: int = 10               # rows read per table; a sentence tells how many remain
     number_rows_from: int = 4              # tables with at least this many rows say "row 2 of 8"
     words_per_minute: int = 130            # for the listening-time estimate
+    words_per_image: int = 25              # each useful image counts as this many words in it
     quiz_warnings: tuple = (5, 1)          # minutes left at which a quiz warns
     reader_path: str = str(_ROOT.parent / "document-reader" / "src")
 
@@ -33,6 +34,7 @@ class NarratorConfig:
                    max_table_rows=int(e("NARRATOR_MAX_TABLE_ROWS", cls.max_table_rows)),
                    number_rows_from=int(e("NARRATOR_NUMBER_ROWS_FROM", cls.number_rows_from)),
                    words_per_minute=int(e("NARRATOR_WORDS_PER_MINUTE", cls.words_per_minute)),
+                   words_per_image=int(e("NARRATOR_WORDS_PER_IMAGE", cls.words_per_image)),
                    quiz_warnings=tuple(int(x) for x in warnings.split(",")) if warnings else cls.quiz_warnings,
                    reader_path=e("NARRATOR_READER_PATH", cls.reader_path)).validate()
 

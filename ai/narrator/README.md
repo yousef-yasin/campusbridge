@@ -125,8 +125,14 @@ For a quiz it is `question` and `questions`.
 - title;
 - type, with the number of pages, slides or sheets;
 - number of topics, naming the first 5 (`NARRATOR_MAX_TOPICS`) and then «و X مواضيع أخرى»;
-- number of images, tables and charts;
-- estimated listening time (`NARRATOR_WORDS_PER_MINUTE`, default 130).
+- number of useful images (decorative ones are not counted), tables and charts;
+- estimated listening time (`NARRATOR_WORDS_PER_MINUTE`, default 130). It does not depend on which
+  images were described in this run: image text is left out, and each useful image counts as
+  `NARRATOR_WORDS_PER_IMAGE` (25) words.
+
+Descriptions already in the document-reader cache are used for every page, without any network
+call, so an image found decorative once is skipped and not counted afterwards. An image that was
+never described counts as useful.
 
 **Topics** come from the document-reader outline (level-1 headings, or slide titles), with
 repeated titles merged. A **title slide** is not a topic: the first page or slide counts as one
@@ -227,6 +233,7 @@ Every type also takes `sent_at`. **Emergencies are always read first**, as segme
 | `NARRATOR_MAX_TABLE_ROWS` | 10 | rows read per table |
 | `NARRATOR_NUMBER_ROWS_FROM` | 4 | tables with this many rows say «الصف 2 من 8» |
 | `NARRATOR_WORDS_PER_MINUTE` | 130 | listening-time estimate |
+| `NARRATOR_WORDS_PER_IMAGE` | 25 | words counted per useful image in that estimate |
 | `NARRATOR_QUIZ_WARNINGS` | `5,1` | quiz warnings, minutes left |
 | `NARRATOR_READER_PATH` | `../document-reader/src` | where the document-reader is |
 

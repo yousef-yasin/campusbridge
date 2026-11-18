@@ -80,18 +80,26 @@ class FileNarrator:
             info = doc.info
             pages = list(doc.pages())
         warnings += info.warnings
-        if describe or describer is not None:
-            describer = describer or self.reader.ImageDescriber(language=self.config.language)
+        describing = describe or describer is not None
+        describer = describer or self.reader.ImageDescriber(language=self.config.language)
+        if describing:
             wanted = set(units) if units is not None else None
             warnings += describer.describe_pages([p for p in pages if wanted is None or p.unit in wanted])
+        describer.apply_cached(pages)           # earlier descriptions of the other pages: no network
+        useful = sum(1 for p in pages for b in p.blocks
+                     if b.kind == "image" and (b.image or {}).get("status") != "decorative")
         topics = self._topics(info, pages[0] if pages else None)
         starts = {t["unit"]: t for t in topics}
         units, current = [], None
         for page in pages:
             current = starts.get(page.unit, current)
             units.append(self._page(page, info.unit_count, current, len(topics), starts.get(page.unit)))
-        words = sum(len(s.text.split()) for unit in units for s in unit)
-        intro = self._intro(info, meta, now, topics, words)
+        # Listening time does not depend on which images happen to be described: image text is
+        # left out and every useful image counts as words_per_image words.
+        words = sum(len(s.text.split()) for unit in units for s in unit
+                    if s.kind != "image" and s.position.get("source") != "image")
+        words += useful * self.config.words_per_image
+        intro = self._intro(info, meta, now, topics, words, useful)
         return FileNarration(intro=intro, units=units, outro=self._outro(info.unit_type, bool(topics)),
                              unit_type=info.unit_type, unit_numbers=[p.unit for p in pages], topics=topics,
                              lang=self.lang, sheets=[p.sheet for p in pages], warnings=warnings)
@@ -129,7 +137,7 @@ class FileNarrator:
     def _unit_word(self, unit_type: str) -> str:
         return UNIT_EN[unit_type] if self.lang == "en" else UNIT_AR[unit_type][0]
 
-    def _intro(self, info, meta, now, topics, words) -> Segment:
+    def _intro(self, info, meta, now, topics, words, images) -> Segment:
         en, tz = self.lang == "en", self.config.tz()
         course, instructor = meta.get("course"), meta.get("instructor")
         title = meta.get("title") or info.title
@@ -160,7 +168,7 @@ class FileNarrator:
             parts.append(f"It covers {count(len(topics), 'topic', 'en')}: {listed}" if en else
                          f"يتناول {count(len(topics), 'topic', 'ar')}: {listed}")
         items = [count(n, noun, self.lang) for n, noun in
-                 ((info.image_count, "image"), (info.table_count, "table"), (info.chart_count, "chart")) if n]
+                 ((images, "image"), (info.table_count, "table"), (info.chart_count, "chart")) if n]
         if en:
             parts.append(f"It has {' and '.join(items)}" if items else "It has no images or tables")
         else:

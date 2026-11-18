@@ -223,6 +223,21 @@ class ImageDescriber:
         image.update({"status": "undescribed", "reason": reason})
 
     # --- main --------------------------------------------------------------------------
+    def apply_cached(self, pages: Iterable[Page]) -> int:
+        """Fill image blocks from the cache only: no network call, nothing is sent.
+
+        Returns how many images were found in the cache. Others are left untouched.
+        """
+        found = 0
+        for page in pages:
+            for index, block in enumerate(page.blocks):
+                image = block.image if block.kind == "image" else None
+                record = self._load(image["sha256"]) if image and image.get("sha256") else None
+                if record:
+                    self._apply(image, record, self._context(page, index))
+                    found += 1
+        return found
+
     def describe_pages(self, pages: Iterable[Page]) -> List[str]:
         """Describe every image block in the pages (in place). Returns the warnings."""
         for page in pages:
