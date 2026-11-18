@@ -19,21 +19,22 @@ Wednesday 18 November 2026, 12:00 (Amman), and the explanation language was `mix
 
 | File | Length | Size | What it contains |
 |---|---|---|---|
-| `01-file-intro-clt-slide1.mp3` | 55 s | 428 KB | The intro of the CLT lecture file, then slide 1 |
+| `01-file-intro-clt-slide1.mp3` | 42 s | 326 KB | The intro of the CLT lecture file, then slide 1 |
 | `02-quiz-question1.mp3` | 30 s | 232 KB | Question 1 of a fake 3-question quiz, with its options |
 | `03-assignment.mp3` | 31 s | 244 KB | A fake assignment |
 | `04-emergency-notification.mp3` | 21 s | 168 KB | A fake emergency notification |
 
-**`01-file-intro-clt-slide1.mp3`.** The intro gives the course (الإحصاء), the instructor
-(د. ليال الزبن), the upload date with how long ago, the title, the type and the 21 slides. It
-also names the topics and gives the number of images and the estimated listening time. Then it
-reads slide 1: «الموضوع الأول من 15: Chapter 2. سلايد 1 من 21.», an automatic description of the
-slide picture, and the subtitle "Central Limit Theorem".
+**`01-file-intro-clt-slide1.mp3`.** The intro gives:
+- the course (الإحصاء) and the instructor (د. ليال الزبن);
+- the upload date with how long ago;
+- the title, the type and the 21 slides;
+- the 14 topics, the first five by name;
+- the 17 useful images;
+- the estimated listening time (about 22 minutes).
 
-This recording was made **before** three later fixes, so it differs from the current output:
-- the title slide is no longer a topic, so there are 14 topics instead of 15;
-- the slide 1 picture (a person in front of screens) is now treated as decorative and skipped;
-- the intro now counts only useful images, and gives a stable listening-time estimate.
+Then it reads slide 1, the title slide, which is not counted as a topic:
+«سلايد 1 من 21: Chapter 2.» and the subtitle "Central Limit Theorem". The slide's picture (a
+person in front of screens) is decorative, so it is skipped.
 
 **`02-quiz-question1.mp3`.** «سؤال 1 من 3.», the type and mark («اختيار من متعدد، العلامة: 2.»),
 the question text in English, then «الخيار أ: …» to «الخيار د: …». The correct answer is never read.
