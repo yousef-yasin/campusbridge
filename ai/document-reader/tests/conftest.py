@@ -18,15 +18,23 @@ def png(width, height, color=(30, 120, 200)) -> bytes:
 @pytest.fixture(autouse=True)
 def clean_env(monkeypatch, tmp_path):
     import os
-    for k in [k for k in os.environ if k.startswith("READER_")]:
+    for k in [k for k in os.environ if k.startswith("READER_") or k in ("GEMINI_API_KEY", "CB_EXPLAIN_LANGUAGE")]:
         monkeypatch.delenv(k)
     monkeypatch.setenv("READER_IMAGES_DIR", str(tmp_path / "images"))
+    monkeypatch.setenv("READER_DESCRIPTIONS_DIR", str(tmp_path / "descriptions"))
+    monkeypatch.setenv("READER_ENV_FILE", str(tmp_path / "no.env"))     # never the real key
+
+    def no_network(*args, **kwargs):
+        raise AssertionError("test tried to reach Gemini; inject a fake vision engine")
+    from google import genai
+    monkeypatch.setattr(genai, "Client", no_network)
 
 
 @pytest.fixture
 def cfg(tmp_path):
     from reader import ReaderConfig
-    return ReaderConfig(images_dir=str(tmp_path / "images"))
+    return ReaderConfig(images_dir=str(tmp_path / "images"), descriptions_dir=str(tmp_path / "descriptions"),
+                        env_file=str(tmp_path / "test.env"))
 
 
 @pytest.fixture

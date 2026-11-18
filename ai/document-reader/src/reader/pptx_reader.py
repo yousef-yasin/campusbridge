@@ -129,8 +129,12 @@ class PptxDocument(Document):
                 return []
             return [Block("image", "", None, n, "slide", image=self.save_image(blob, ext, width, height, sha))]
         if getattr(shape, "has_chart", False) and shape.has_chart:
-            self._page_warnings.append("charts are not read")
-            return []
+            from .charts import chart_block, pptx_chart
+            chart = pptx_chart(shape)
+            if chart is None:
+                self._page_warnings.append("a chart could not be read")
+                return []
+            return [chart_block(chart, n, "slide")]
         if shape.has_text_frame:
             return self._text_blocks(shape, n)
         return []

@@ -148,6 +148,7 @@ class Document:
                 unit_count=self.unit_count,
                 image_count=sum(b.kind == "image" for b in blocks),
                 table_count=sum(b.kind == "table" for b in blocks),
+                chart_count=sum(b.kind == "chart" for b in blocks),
                 language=detect_language(" ".join(b.text for b in blocks if b.kind != "image")),
                 outline=self._outline(pages), needs_ocr=bool(ocr), ocr_pages=ocr,
                 warnings=list(dict.fromkeys(warnings)))

@@ -90,9 +90,13 @@ def test_2_xlsx_header_below_a_title_row(xlsx_titled, cfg):
 
 
 def test_10_xlsx_charts_and_formulas_without_values_are_reported(xlsx_titled, cfg):
+    # phase 2: the chart is no longer only reported, its data is read (see test_vision.py)
     with open_document(xlsx_titled, cfg) as doc:
-        warnings = " | ".join(doc.info.warnings)
-    assert "1 chart" in warnings and "not read" in warnings
+        charts = [b for b in doc.page(1).blocks if b.kind == "chart"]
+        info = doc.info
+    warnings = " | ".join(info.warnings)
+    assert len(charts) == 1 and info.chart_count == 1 and "not read" not in warnings
+    assert charts[0].chart["series"][0] == {"name": "الرياضيات", "values": ["80", "95", "60", "88", "70"]}
     assert "المعدل" in warnings and "formulas" in warnings and "saved" in warnings
 
 

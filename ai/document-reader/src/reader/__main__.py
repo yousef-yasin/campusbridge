@@ -45,6 +45,17 @@ def _print_page(page):
         if b.kind == "image":
             img = b.image or {}
             print(f"[image] {img.get('width')}x{img.get('height')} {img.get('path', img.get('sha256', '')[:16])}")
+            if img.get("status"):
+                status = img["status"] + (f" ({img['category']})" if img.get("category") else "")
+                print(f"    status: {status}")
+                if img.get("description"):
+                    print(f"    short: {img['description']}")
+                if img.get("text"):
+                    print(f"    text in image: {img['text']}")
+                if img.get("unverified_numbers"):
+                    print(f"    numbers not in the image: {', '.join(img['unverified_numbers'])}")
+                if img.get("reason"):
+                    print(f"    reason: {img['reason']}")
         else:
             print(f"[{tag}] [{b.lang or '-'}] {b.text}")
 
@@ -61,6 +72,12 @@ def main(argv=None) -> int:
     e.add_argument("--rows", help="xlsx: data rows START:COUNT of the --page sheet (e.g. 1:50)")
     e.add_argument("--images-dir", help="where extracted images are saved (env READER_IMAGES_DIR)")
     e.add_argument("--no-images", action="store_true", help="list images without saving them")
+    e.add_argument("--describe", action="store_true",
+                   help="describe images with the vision model (sends images to Google)")
+    e.add_argument("--explain-lang", choices=("ar", "en", "mixed"),
+                   help="language of descriptions (env CB_EXPLAIN_LANGUAGE, default mixed)")
+    e.add_argument("--max-images", type=int, help="vision API calls per run (env READER_VISION_MAX_IMAGES)")
+    e.add_argument("--detailed", action="store_true", help="--speech: read detailed image descriptions")
     args = p.parse_args(argv)
 
     logging.basicConfig(level=logging.WARNING, format="%(levelname)s %(message)s")
@@ -74,6 +91,10 @@ def main(argv=None) -> int:
             cfg.images_dir = args.images_dir
         if args.no_images:
             cfg.extract_images = False
+        if args.max_images is not None:
+            cfg.vision_max_images = args.max_images
+        if args.describe and args.no_images:
+            raise ValueError("--describe needs the image files: do not combine it with --no-images")
         with open_document(args.file, cfg) as doc:
             ref = None
             if args.page is not None:
@@ -96,8 +117,12 @@ def main(argv=None) -> int:
                     _print_info(info)
                 return 0
             pages = [doc.page(ref)] if ref is not None else list(doc.pages())
+            if args.describe:
+                from .describe import ImageDescriber
+                for w in ImageDescriber(cfg, language=args.explain_lang).describe_pages(pages):
+                    print(f"Warning: {w}", file=sys.stderr)
             if args.speech:
-                units = to_speech_text(pages)
+                units = to_speech_text(pages, detailed_images=args.detailed)
                 if args.json:
                     print(json.dumps([u.__dict__ for u in units], ensure_ascii=False, indent=2))
                 else:

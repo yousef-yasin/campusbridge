@@ -24,3 +24,23 @@ class PageNotFoundError(ReaderError):
 
 class ConfigError(ReaderError):
     """A setting is invalid."""
+
+
+class VisionError(ReaderError):
+    """The vision model could not describe an image."""
+
+
+class VisionUnavailableError(VisionError):
+    """No API key, key rejected, no internet, or the service is down."""
+
+
+class VisionBusyError(VisionUnavailableError):
+    """The service is temporarily overloaded (HTTP 500/503), even after retries."""
+
+
+class VisionQuotaError(VisionUnavailableError):
+    """Rate limit or quota exceeded (HTTP 429)."""
+
+    def __init__(self, message: str, retry_after: float = 0.0):
+        super().__init__(message)
+        self.retry_after = retry_after

@@ -19,6 +19,14 @@ class ReaderConfig:
     heading_ratio: float = 1.25       # PDF: font this much larger than body text = heading
     ocr_min_chars: int = 10           # PDF page with fewer text characters has no text layer
     xlsx_preview_rows: int = 20       # rows shown per sheet; the rest are read on request
+    # --- phase 2: image descriptions (Gemini vision; images are sent to Google) ---
+    vision_model: str = "gemini-3.5-flash-lite"   # free tier; gemini-4-hydrogen is stronger but was overloaded (503)
+    vision_max_images: int = 20       # API calls per run (cached descriptions do not count)
+    vision_timeout: int = 120         # seconds per request
+    vision_retry_wait: int = 30       # on 429, wait up to this long once, then stop
+    vision_thinking: str = "low"      # Gemini thinking level ("" = model default)
+    descriptions_dir: str = str(_ROOT / "image-descriptions")   # reviewable JSON cache
+    env_file: str = str(_ROOT / ".env")                          # holds GEMINI_API_KEY
 
     @classmethod
     def from_env(cls) -> "ReaderConfig":
@@ -35,6 +43,13 @@ class ReaderConfig:
                 heading_ratio=float(e("READER_HEADING_RATIO", cls.heading_ratio)),
                 ocr_min_chars=int(e("READER_OCR_MIN_CHARS", cls.ocr_min_chars)),
                 xlsx_preview_rows=int(e("READER_XLSX_PREVIEW_ROWS", cls.xlsx_preview_rows)),
+                vision_model=e("READER_VISION_MODEL", cls.vision_model),
+                vision_max_images=int(e("READER_VISION_MAX_IMAGES", cls.vision_max_images)),
+                vision_timeout=int(e("READER_VISION_TIMEOUT", cls.vision_timeout)),
+                vision_retry_wait=int(e("READER_VISION_RETRY_WAIT", cls.vision_retry_wait)),
+                vision_thinking=e("READER_VISION_THINKING", cls.vision_thinking),
+                descriptions_dir=e("READER_DESCRIPTIONS_DIR", cls.descriptions_dir),
+                env_file=e("READER_ENV_FILE", cls.env_file),
             ).validate()
         except ValueError as exc:
             raise ConfigError(f"Invalid READER_* setting: {exc}") from exc
@@ -44,4 +59,6 @@ class ReaderConfig:
             raise ConfigError("min_image_px >= 0, max_image_aspect >= 1, xlsx_preview_rows >= 0")
         if not 0 < self.repeated_image_ratio <= 1:
             raise ConfigError("repeated_image_ratio must be in (0, 1]")
+        if self.vision_max_images < 0 or not self.vision_model.strip():
+            raise ConfigError("vision_max_images >= 0 and vision_model must not be empty")
         return self

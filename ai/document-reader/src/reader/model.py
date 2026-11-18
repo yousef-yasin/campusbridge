@@ -2,7 +2,7 @@
 from dataclasses import asdict, dataclass, field
 from typing import Any, Dict, List, Optional
 
-KINDS = ("heading", "paragraph", "list", "table", "image", "notes")
+KINDS = ("heading", "paragraph", "list", "table", "image", "chart", "notes")
 
 
 @dataclass
@@ -22,7 +22,8 @@ class Block:
     level: Optional[int] = None             # heading level (1 = top)
     items: Optional[List[str]] = None       # list items
     table: Optional[Dict[str, Any]] = None  # {"columns": [...], "rows": [[...]], "total_rows": n}
-    image: Optional[Dict[str, Any]] = None  # {"path", "sha256", "ext", "width", "height", "description"}
+    image: Optional[Dict[str, Any]] = None  # {"path", "sha256", "ext", "width", "height", "description", ...}
+    chart: Optional[Dict[str, Any]] = None  # native chart: {"type", "title", "categories", "series", ...}
 
     @property
     def location(self) -> Dict[str, Any]:
@@ -98,6 +99,7 @@ class DocumentInfo:
     ocr_pages: List[int] = field(default_factory=list)
     sheets: List[SheetInfo] = field(default_factory=list)
     warnings: List[str] = field(default_factory=list)
+    chart_count: int = 0        # native charts read from the file (not pictures of charts)
 
     def to_dict(self) -> Dict[str, Any]:
         data = asdict(self)

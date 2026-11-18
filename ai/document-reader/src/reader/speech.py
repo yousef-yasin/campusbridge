@@ -2,10 +2,16 @@
 from dataclasses import dataclass
 from typing import Iterable, List, Optional, Union
 
+import re
+
+from .explain import AUTO_LABEL, MANUAL_LABEL, NO_DESCRIPTION, REVIEW_NO_TEXT, REVIEW_NUMBERS
 from .lang import detect_language
 from .model import Block, Page
+from .numbers import has_number
+from .tables import table_text
 
 _END = tuple(".!?؟…:؛")
+_SENTENCES = re.compile(r"(?:[^.!?؟؛\n]|(?<=\d)\.(?=\d))+(?:[.!?؟؛]+|$)")   # 95.4 is not a sentence end
 
 
 @dataclass
@@ -25,14 +31,43 @@ def _arabic(block: Block) -> bool:
     return block.lang in ("ar", "mixed")
 
 
-def block_speech(block: Block, include_notes: bool = True) -> str:
+def _image_speech(image: dict, detailed: bool) -> str:
+    status = image.get("status")
+    mode = image.get("language") or "mixed"
+    if status == "decorative":
+        return ""
+    if status == "undescribed":
+        return NO_DESCRIPTION.get(mode, NO_DESCRIPTION["mixed"])
+    desc = ((image.get("details") if detailed else None) or image.get("description") or "").strip()
+    if not desc:
+        return ""                                       # not processed by the describer
+    unverified = (image.get("unverified_numbers") or []) if status == "needs_review" else []
+    if unverified:                                      # drop the sentences with unconfirmed numbers
+        desc = " ".join(s for s in _SENTENCES.findall(desc) if s.strip() and not has_number(s, unverified))
+    if status == "manual":
+        label = MANUAL_LABEL.get(mode, MANUAL_LABEL["mixed"])
+    elif status in ("described", "needs_review"):
+        label = AUTO_LABEL.get(mode, AUTO_LABEL["mixed"])
+    else:                                               # description set by other code
+        label = "صورة:" if detect_language(desc) in ("ar", "mixed") else "Image:"
+    parts = [_sentence(f"{label} {desc}")] if desc else []
+    text = (image.get("text") or "").strip()
+    if image.get("category") == "table" and image.get("table"):
+        parts += [_sentence(l) for l in table_text(image["table"]).split("\n") if l.strip()]
+    elif image.get("category") in ("text", "screenshot") and text and status != "manual":
+        parts.append(text)
+    elif unverified:                                    # numbers from the image, not the model
+        parts.append(f"{REVIEW_NUMBERS.get(mode, REVIEW_NUMBERS['mixed'])} {text}" if text
+                     else REVIEW_NO_TEXT.get(mode, REVIEW_NO_TEXT["mixed"]))
+    return "\n".join(parts)
+
+
+def block_speech(block: Block, include_notes: bool = True, detailed_images: bool = False) -> str:
     """How one block is read aloud ('' when it is skipped)."""
     if block.kind == "image":
-        desc = (block.image or {}).get("description", "").strip()
-        if not desc:
-            return ""                                   # filled in by phase 2
-        prefix = "صورة: " if detect_language(desc) in ("ar", "mixed") else "Image: "
-        return _sentence(prefix + desc)
+        return _image_speech(block.image or {}, detailed_images)
+    if block.kind == "chart":
+        return "\n".join(_sentence(l) for l in block.text.split("\n") if l.strip())
     if block.kind == "notes":
         if not include_notes:
             return ""
@@ -58,12 +93,18 @@ def block_speech(block: Block, include_notes: bool = True) -> str:
 
 
 def to_speech_text(source: Union[Page, Iterable[Page], Iterable[Block]],
-                   include_notes: bool = True) -> List[SpeechUnit]:
+                   include_notes: bool = True, detailed_images: bool = False) -> List[SpeechUnit]:
     """Text ready for text-to-speech, page by page.
 
     source: a Page, pages (document.pages()) or blocks. Blocks are separated by blank lines,
     so the TTS module splits long pages at block boundaries. Images without a description
     are skipped; headings and list items get a final period so the voice pauses.
+    Described images are read as «وصف تلقائي: <short description>» (detailed_images=True reads
+    the detailed description); a manual description is read as «صورة: ...»; decorative images
+    are skipped; images the describer could not handle are announced as «صورة بدون وصف».
+    When a description has numbers that are not in the image (status needs_review), its
+    sentences with those numbers are dropped and the text read from the image follows
+    «الأرقام كما وردت في الصورة:».
     """
     if isinstance(source, Page):
         source = [source]
@@ -73,7 +114,7 @@ def to_speech_text(source: Union[Page, Iterable[Page], Iterable[Block]],
         for block in blocks:
             key = (block.unit, block.unit_type, block.sheet)
             groups.setdefault(key, [])
-            text = block_speech(block, include_notes)
+            text = block_speech(block, include_notes, detailed_images)
             if text:
                 groups[key].append(text)
         if isinstance(item, Page):

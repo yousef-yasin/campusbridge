@@ -32,6 +32,7 @@ class XlsxDocument(Document):
         self._xml = self._sheet_xml_flags()
         self._infos: Dict[int, SheetInfo] = {}
         self._formulas_wb = None     # second read-only view with formulas, opened only if needed
+        self._charts_by_sheet = None
         if len(self._wb.sheetnames) > len(self._sheets):
             self.warnings.append("chart sheets are not read")
 
@@ -60,7 +61,8 @@ class XlsxDocument(Document):
                         with z.open(target) as f:
                             head = f.read(4096).decode("utf-8", "ignore")
                     flags[s.get("name")] = {"rtl": bool(re.search(r'rightToLeft="(1|true)"', head)),
-                                            "hidden": s.get("state") in ("hidden", "veryHidden")}
+                                            "hidden": s.get("state") in ("hidden", "veryHidden"),
+                                            "part": target}
                 self._media = sum(1 for n in z.namelist() if n.startswith("xl/media/"))
                 self._charts = sum(1 for n in z.namelist() if re.match(r"xl/charts/chart\d+\.xml$", n))
         except Exception:
@@ -112,6 +114,30 @@ class XlsxDocument(Document):
                                            flags.get("rtl", False), flags.get("hidden", False),
                                            title, approximate)
         return self._infos[index]
+
+    def _resolve(self, formula: str) -> List[str]:
+        """Values of a range such as 'Sheet'!$B$4:$B$23 (empty strings for missing values)."""
+        from openpyxl.utils import range_boundaries
+        from .charts import parse_ref
+        try:
+            sheet, cells = parse_ref(formula)
+            ws = self._wb[sheet] if sheet else self._sheets[0]
+            min_col, min_row, max_col, max_row = range_boundaries(cells)
+            return [cell_text(v) for row in ws.iter_rows(min_row=min_row, max_row=max_row, min_col=min_col,
+                                                         max_col=max_col, values_only=True) for v in row]
+        except Exception:
+            return []
+
+    def _sheet_charts(self) -> Dict[str, list]:
+        if self._charts_by_sheet is None:
+            from .charts import xlsx_charts
+            parts = {name: f["part"] for name, f in self._xml.items() if f.get("part")}
+            try:
+                self._charts_by_sheet = xlsx_charts(self.path, parts, self._resolve)
+            except Exception as exc:
+                self.warnings.append(f"charts could not be read: {exc}")
+                self._charts_by_sheet = {}
+        return self._charts_by_sheet
 
     def _formula_columns(self, info: SheetInfo, preview: int) -> List[str]:
         """Columns whose formulas have no saved result in the preview rows (they read as empty)."""
@@ -185,6 +211,12 @@ class XlsxDocument(Document):
                                  f"use rows() / --rows for more")
         if info.approximate:
             page.warnings.append(f"row count {info.row_count} is estimated from the sheet size")
+        from .charts import chart_block
+        for chart in self._sheet_charts().get(info.name, []):
+            page.blocks.append(chart_block(chart, n, "sheet", info.name))
+            if chart.get("missing_values"):
+                page.warnings.append(f"chart '{chart.get('title') or chart['type']}': some values "
+                                     f"have no saved result (formulas not calculated by Excel)")
         empty = self._formula_columns(info, self.config.xlsx_preview_rows)
         if empty:
             page.warnings.append(
@@ -205,7 +237,8 @@ class XlsxDocument(Document):
         info.warnings = [w for w in info.warnings if "showing" not in w]
         if self._media:
             info.warnings.append(f"{self._media} images in the workbook are counted but not extracted")
-        if self._charts:
-            many = self._charts != 1
-            info.warnings.append(f"{self._charts} chart{'s' if many else ''} in the workbook "
+        unread = self._charts - info.chart_count
+        if unread > 0:
+            many = unread != 1
+            info.warnings.append(f"{unread} chart{'s' if many else ''} in the workbook "
                                  f"{'are' if many else 'is'} not read")

@@ -38,3 +38,4 @@ ai/text-to-speech/samples-out/
 # Document reader: input documents and extracted images
 ai/samples-in/
 ai/document-reader/extracted-images/
+ai/document-reader/image-descriptions/
