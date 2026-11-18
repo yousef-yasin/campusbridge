@@ -267,6 +267,12 @@ with open_document("lecture.pptx") as doc:
 | `photo` | `photo` (role in the lesson) | description |
 | `decorative` | (none) | skipped |
 
+  The model also answers `informative` (true/false): does the image show information the
+  student needs, or does it only set a mood (a person in front of screens, stock photos, title
+  slide pictures)? A `photo` with `informative: false` is treated as `decorative`. This was
+  added because the same model classified CLT slide 1 as decorative once and as a photo the
+  next time: a borderline image, decided by one explicit question instead.
+
   Every image also gets `description` (one or two sentences), `details` (full explanation),
   `text` (text written inside the image, exactly as written, in its own language), `status`
   (`described`, `needs_review`, `manual`, `decorative`, `undescribed`), `language` and `model`.

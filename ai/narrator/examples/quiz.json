@@ -1,0 +1,37 @@
+{
+  "title": "Quiz 2: Central Limit Theorem",
+  "course": "الإحصاء",
+  "duration_minutes": 15,
+  "attempts_allowed": 1,
+  "attempts_used": 0,
+  "opens_at": "2026-11-18T08:00:00+03:00",
+  "closes_at": "2026-11-19T23:59:00+03:00",
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "points": 2,
+      "text": "According to the Central Limit Theorem, the sampling distribution of the mean becomes approximately normal when:",
+      "options": [
+        {"text": "The sample size is large (n ≥ 30)", "correct": true},
+        {"text": "The population is always normal"},
+        {"text": "The sample size is 5"},
+        {"text": "The standard deviation is zero"}
+      ],
+      "correct_answer": "A",
+      "explanation": "With n of at least 30 the sample means are close to normal."
+    },
+    {
+      "type": "true_false",
+      "points": 1,
+      "text": "حسب القاعدة التجريبية، يقع حوالي 95% من البيانات ضمن انحرافين معياريين من المتوسط.",
+      "correct_answer": true
+    },
+    {
+      "type": "short_answer",
+      "points": 3,
+      "text": "If μ = 72, σ = 3 and n = 36, what is the standard error of the mean?",
+      "answer_key": "0.5",
+      "feedback": "σ/√n = 3/6 = 0.5"
+    }
+  ]
+}
