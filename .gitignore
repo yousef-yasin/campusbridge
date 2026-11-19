@@ -34,3 +34,8 @@ ai/text-to-speech/data/
 ai/text-to-speech/**/*.wav
 ai/text-to-speech/**/*.mp3
 ai/text-to-speech/samples-out/
+
+# Document reader: input documents and extracted images
+ai/samples-in/
+ai/document-reader/extracted-images/
+ai/document-reader/image-descriptions/

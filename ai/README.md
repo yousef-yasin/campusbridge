@@ -4,6 +4,7 @@
 
 - speech-to-text/: Live lecture transcription.
 - text-to-speech/: Reading content and responses aloud.
+- document-reader/: Content extraction from Word, PDF, PowerPoint and Excel files.
 - lecture-summarization/: Lecture summaries and key points.
 - lecture-assistant/: RAG-based academic assistant.
 - question-generation/: AI practice questions.

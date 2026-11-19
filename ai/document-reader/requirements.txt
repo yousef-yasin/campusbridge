@@ -1,0 +1,10 @@
+python-docx>=1.1,<2
+python-pptx>=1.0,<2
+openpyxl>=3.1,<4
+# PDF. License: AGPL-3.0 (or a paid Artifex license); see README "PDF library license".
+pymupdf>=1.24
+Pillow>=10
+# Phase 2: image descriptions with Gemini (online; images are sent to Google)
+google-genai>=2.25,<4
+# Tests
+pytest>=7
