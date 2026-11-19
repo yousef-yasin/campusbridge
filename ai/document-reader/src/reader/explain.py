@@ -47,6 +47,10 @@ OCR_INTRO = {"ar": "نص مستخرج تلقائياً من صورة الصفح�
 OCR_INTRO_LOCAL = {"ar": "نص مستخرج تلقائياً من صورة الصفحة بقارئ محلي، وقد تكون فيه أخطاء.",
                    "mixed": "نص مستخرج تلقائياً من صورة الصفحة بقارئ محلي، وقد تكون فيه أخطاء.",
                    "en": "Text extracted automatically from the page image with a local reader; it may contain mistakes."}
+# References and footnotes (not read by default)
+REFERENCES_NOTE = {"ar": "في مراجع بآخر الصفحة.", "mixed": "في مراجع بآخر الصفحة.",
+                   "en": "There are references at the end of the page."}
+REFERENCES_LABEL = {"ar": "المراجع:", "mixed": "المراجع:", "en": "References:"}
 HANDWRITTEN_LABEL = {"ar": "ملاحظة بخط اليد:", "mixed": "ملاحظة بخط اليد:", "en": "Handwritten note:"}
 UNCLEAR_WORD = {"ar": "كلمة غير واضحة", "mixed": "كلمة غير واضحة", "en": "unclear word"}
 NEEDS_OCR = {"ar": "صفحة ممسوحة لم يُستخرج نصها بعد، وتحتاج OCR.",

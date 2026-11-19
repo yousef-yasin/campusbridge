@@ -5,7 +5,8 @@ from typing import Iterable, List, Optional, Union
 import re
 
 from .explain import (AUTO_LABEL, HANDWRITTEN_LABEL, MANUAL_LABEL, NEEDS_OCR, NO_DESCRIPTION, OCR_INTRO,
-                      OCR_INTRO_LOCAL, REVIEW_NO_TEXT, REVIEW_NUMBERS, UNCLEAR_WORD, explain_language)
+                      OCR_INTRO_LOCAL, REFERENCES_LABEL, REFERENCES_NOTE, REVIEW_NO_TEXT, REVIEW_NUMBERS,
+                      UNCLEAR_WORD, explain_language)
 from .lang import detect_language
 from .model import Block, Page
 from .numbers import has_number
@@ -66,13 +67,20 @@ def _image_speech(image: dict, detailed: bool) -> str:
 
 
 def block_speech(block: Block, include_notes: bool = True, detailed_images: bool = False,
-                 mode: Optional[str] = None) -> str:
+                 mode: Optional[str] = None, include_references: bool = False) -> str:
     """How one block is read aloud ('' when it is skipped).
 
     Text read by OCR has its unreadable words marked [unclear]: they are said «كلمة غير واضحة»
     ("unclear word" in en mode). A handwritten block is said «ملاحظة بخط اليد: ...».
+    References are announced «في مراجع بآخر الصفحة.», or read with include_references=True.
     """
-    if block.kind == "handwritten":
+    if block.kind == "references":
+        mode = mode or explain_language()
+        if not include_references:
+            return REFERENCES_NOTE[mode]
+        entries = block.items or [l for l in block.text.split("\n") if l.strip()]
+        text = "\n".join([REFERENCES_LABEL[mode]] + [_sentence(e) for e in entries])
+    elif block.kind == "handwritten":
         label = HANDWRITTEN_LABEL[mode or explain_language()]
         text = _sentence(f"{label} {' '.join(block.text.split())}")
     else:
@@ -124,7 +132,8 @@ def _block_speech(block: Block, include_notes: bool, detailed_images: bool) -> s
 
 
 def to_speech_text(source: Union[Page, Iterable[Page], Iterable[Block]],
-                   include_notes: bool = True, detailed_images: bool = False) -> List[SpeechUnit]:
+                   include_notes: bool = True, detailed_images: bool = False,
+                   include_references: bool = False) -> List[SpeechUnit]:
     """Text ready for text-to-speech, page by page.
 
     source: a Page, pages (document.pages()) or blocks. Blocks are separated by blank lines,
@@ -138,6 +147,7 @@ def to_speech_text(source: Union[Page, Iterable[Page], Iterable[Block]],
     «الأرقام كما وردت في الصورة:».
     A page whose text was read by OCR starts with «نص مستخرج تلقائياً من صورة الصفحة.»; a scanned
     page whose text was not read yet says «صفحة ممسوحة لم يُستخرج نصها بعد، وتحتاج OCR.».
+    References and footnotes are not read: «في مراجع بآخر الصفحة.» (include_references=True reads them).
     """
     if isinstance(source, Page):
         source = [source]
@@ -153,7 +163,7 @@ def to_speech_text(source: Union[Page, Iterable[Page], Iterable[Block]],
         for block in blocks:
             key = (block.unit, block.unit_type, block.sheet)
             groups.setdefault(key, [])
-            text = block_speech(block, include_notes, detailed_images, mode)
+            text = block_speech(block, include_notes, detailed_images, mode, include_references)
             if text:
                 groups[key].append(text)
         if isinstance(item, Page):

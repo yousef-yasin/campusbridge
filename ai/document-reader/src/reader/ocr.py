@@ -325,6 +325,8 @@ class PageOCR:
             return page
         # The page image itself is replaced by its text; other pictures are kept.
         page.blocks = blocks + [b for b in page.blocks if b.kind == "image" and not _page_scan(b)]
+        from .references import mark_references
+        mark_references(page)                    # footnotes at the bottom of the scanned page
         if unclear:
             page.warnings.append(f"OCR: {unclear} unclear word(s) marked {UNCLEAR}")
         return page

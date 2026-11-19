@@ -84,6 +84,7 @@ def main(argv=None) -> int:
                    help="language of descriptions (env CB_EXPLAIN_LANGUAGE, default mixed)")
     e.add_argument("--max-images", type=int, help="vision API calls per run (env READER_VISION_MAX_IMAGES)")
     e.add_argument("--detailed", action="store_true", help="--speech: read detailed image descriptions")
+    e.add_argument("--references", action="store_true", help="--speech: read references and footnotes too")
     e.add_argument("--ocr", action="store_true",
                    help="read the text of scanned pages and photos (sends page images to Google; "
                         "Tesseract is the local fallback)")
@@ -138,7 +139,7 @@ def main(argv=None) -> int:
                 for w in ImageDescriber(cfg, language=args.explain_lang).describe_pages(pages):
                     print(f"Warning: {w}", file=sys.stderr)
             if args.speech:
-                units = to_speech_text(pages, detailed_images=args.detailed)
+                units = to_speech_text(pages, detailed_images=args.detailed, include_references=args.references)
                 if args.json:
                     print(json.dumps([u.__dict__ for u in units], ensure_ascii=False, indent=2))
                 else:

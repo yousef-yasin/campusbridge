@@ -2,7 +2,7 @@
 from dataclasses import asdict, dataclass, field
 from typing import Any, Dict, List, Optional
 
-KINDS = ("heading", "paragraph", "list", "table", "image", "chart", "notes", "handwritten")
+KINDS = ("heading", "paragraph", "list", "table", "image", "chart", "notes", "handwritten", "references")
 
 
 @dataclass

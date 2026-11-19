@@ -125,7 +125,8 @@ class Document:
         if not isinstance(n, int) or not 1 <= n <= self.unit_count:
             raise PageNotFoundError(
                 f"{self.unit_type} {n} does not exist ({self.path.name} has {self.unit_count})")
-        return self._read_page(n)
+        from .references import mark_references
+        return mark_references(self._read_page(n))
 
     def pages(self) -> Iterator[Page]:
         for n in range(1, self.unit_count + 1):

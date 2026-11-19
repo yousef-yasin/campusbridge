@@ -392,6 +392,26 @@ After a quota or connection error, Gemini is not called again in that run.
 - The model can still misread a word without marking it, so check important pages.
 - Tesseract is much weaker on Arabic and does not detect headings, lists or tables (paragraphs only).
 
+## References and footnotes
+
+Each page (every format, and pages read by OCR) is checked for references (`references.py`).
+What is found becomes one block of kind `references`, whose `items` are the entries.
+
+- **A titled section**, such as «المراجع», «المصادر», «قائمة المراجع», «الهوامش», "References",
+  "Bibliography" or "Works Cited". It runs from the title to the next heading of the same or a
+  higher level, and the title is not listed in the outline.
+- **Footnotes at the bottom of the page**: the last blocks, each starting with `(1)`, `[1]` or
+  `¹`. They count only when the text above refers to that number («الأدوية(1)», "result [1]",
+  "word¹", "word1"). Several footnotes in one block are split into entries. A numbered list at
+  the end of a page with no such reference stays a list.
+
+Speech does not read them. It says «في مراجع بآخر الصفحة.» ("There are references at the end of
+the page." in `en` mode) where they are. `to_speech_text(..., include_references=True)` (CLI
+`--speech --references`) reads them as «المراجع:» followed by each entry.
+
+A references section that continues on the next page without a title is not recognised on that
+page.
+
 ## Images
 
 - Saved as `extracted-images/<first 16 hex of sha256>.<ext>`: the same image is stored once,

@@ -255,7 +255,7 @@ class FileNarrator:
             else:
                 text = self.reader.speech.block_speech(block, mode=self.config.language)
                 kind = {"heading": "heading", "list": "list", "notes": "notes", "chart": "chart",
-                        "handwritten": "handwritten"}.get(block.kind, "content")
+                        "handwritten": "handwritten", "references": "references"}.get(block.kind, "content")
                 if text.strip():
                     out.append(Segment(text, kind, dict(pos, block=index)))
         return out
