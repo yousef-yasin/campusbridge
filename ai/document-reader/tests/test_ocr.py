@@ -100,7 +100,7 @@ def test_scanned_pdf_page_becomes_unified_blocks(tmp_path, cfg):
         ("table", "الموسم: 2023/24، الإنتاج: 2.589\nالموسم: 2024/25، الإنتاج: 3.572", "ocr")]
     assert page.blocks[3].table["columns"] == ["الموسم", "الإنتاج"]           # the scan image is gone
     assert page.ocr == {"status": "done", "engine": "gemini", "model": "fake-vision", "language": "mixed",
-                        "cached": False, "blocks": 4, "unclear_words": 1}
+                        "cached": False, "blocks": 4, "unclear_words": 1, "handwritten": False}
     assert page.warnings == [f"OCR: 1 unclear word(s) marked {UNCLEAR}"]
     speech = to_speech_text(page)[0].text.split("\n\n")
     assert speech == [INTRO, "شجرة الزيتون.",
@@ -313,3 +313,48 @@ def test_handwriting_is_its_own_block_and_is_announced(tmp_path, cfg):
         assert to_speech_text(page)[0].text.split("\n\n")[2:] == expected
     assert "handwritten" in SCHEMA["properties"]["blocks"]["items"]["properties"]["kind"]["enum"]
     assert "Never mix handwriting into" in PROMPT
+
+
+def test_a_handwritten_page_is_announced_once_and_read_as_normal_text(tmp_path, cfg):
+    # Real case: a sheet written by hand in Arabic with a few English words.
+    answer = {"handwritten_page": True, "blocks": [
+        {"kind": "heading", "text": "Slide 4 - project idea."},
+        {"kind": "handwritten", "text": "وهنا هون اجت فكرتنا"},
+        {"kind": "paragraph", "text": "منصة تفاعلية تحول بيانات ناسا من 2000 الى 2026"}]}
+    for mode, lead in (("mixed", "نص مستخرج تلقائياً من صورة الصفحة. الورقة مكتوبة بخط اليد."),
+                       ("en", "Text extracted automatically from the page image. The page is handwritten.")):
+        with open_document(scanned_pdf(tmp_path / f"hand-{mode}.pdf"), cfg) as doc:
+            page = doc.page(1)
+            PageOCR(cfg, engine=FakeOCR(answer), tesseract=None, language=mode).read_pages(doc, [page])
+        assert [b.kind for b in page.blocks] == ["heading", "paragraph", "paragraph"] and page.ocr["handwritten"]
+        speech = to_speech_text(page)[0].text.split("\n\n")
+        assert speech[0] == lead and speech[2] == "وهنا هون اجت فكرتنا"     # no «ملاحظة بخط اليد» per line
+        assert sum("خط اليد" in part or "handwritten" in part.lower() for part in speech) == 1
+    assert "handwritten_page: true when all or most of the page is written by hand" in PROMPT
+    # Without the flag: mostly handwritten blocks also make a handwritten page
+    from reader.ocr import is_handwritten_page
+    assert is_handwritten_page({"blocks": [{"kind": "handwritten", "text": "نص طويل مكتوب باليد هنا"},
+                                           {"kind": "heading", "text": "Title"}]})
+    assert not is_handwritten_page({"blocks": [{"kind": "paragraph", "text": "نص مطبوع طويل جداً في الصفحة"},
+                                               {"kind": "handwritten", "text": "تحليل"}]})
+
+
+def test_handwritten_page_without_internet_is_not_read_by_tesseract(tmp_path, cfg):
+    class HandTesseract(FakeTesseract):
+        def read(self, image):                     # Tesseract on a handwritten sheet: low confidence
+            self.calls += 1
+            return {"blocks": [{"kind": "paragraph", "text": "وهنا هرن احت فكرتلا"}],
+                    "confidence": {"words": 105, "median": 52.0, "low_share": 0.25}}
+    engine = FakeOCR(error=VisionUnavailableError("Gemini unreachable (internet required)"))
+    with open_document(scanned_pdf(tmp_path / "hand.pdf"), cfg) as doc:
+        page = doc.page(1)
+        warnings = PageOCR(cfg, engine=engine, tesseract=HandTesseract()).read_pages(doc, [page])
+    assert page.ocr["status"] == "handwritten_offline" and "cannot read handwriting" in warnings[0]
+    assert all(b.source != "ocr" for b in page.blocks)                    # the wrong text is not used
+    assert to_speech_text(page)[0].text == (
+        "الورقة مكتوبة بخط اليد على الأغلب، ولا يمكن قراءتها بدون إنترنت. جرّب مرة أخرى عند توفر الاتصال.")
+    from reader.ocr import confidence_stats, looks_handwritten
+    head = "level\tpage_num\tblock_num\tpar_num\tline_num\tword_num\tleft\ttop\twidth\theight\tconf\ttext\n"
+    printed = head + "".join(f"5\t1\t1\t1\t1\t{i}\t0\t0\t1\t1\t{c}\tw{i}\n" for i, c in enumerate([96, 91, 88, 20, 95]))
+    assert confidence_stats(printed) == {"words": 5, "median": 91.0, "low_share": 0.2}
+    assert not looks_handwritten({"median": 88, "low_share": 0.12}) and looks_handwritten({"median": 52, "low_share": 0.25})

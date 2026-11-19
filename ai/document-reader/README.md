@@ -364,6 +364,19 @@ printed text. Each note becomes its own block of kind `handwritten`, placed afte
 block it belongs to and copied exactly as written. Speech reads it as «ملاحظة بخط اليد: ...»
 ("Handwritten note: ..." in `en` mode).
 
+**A handwritten page** (all or most of it written by hand) is different. The model answers
+`handwritten_page: true`, or most of the text comes back in handwritten blocks. The text then
+becomes normal blocks, and `page.ocr.handwritten` is true. Speech says once at the start
+«نص مستخرج تلقائياً من صورة الصفحة. الورقة مكتوبة بخط اليد.», then reads the text without
+«ملاحظة بخط اليد» before each line. Prompt version 4.
+
+**Tesseract cannot read handwriting.** When it is the fallback, its word confidence is checked.
+On our pages the median was 52 for a handwritten sheet and 88 to 96 for printed ones, with 25%
+against 5 to 12% of words below 30. So a median under 70, or 20% or more of words under 30,
+counts as handwritten (or unreadable). Its text is then not used: `page.ocr.status` is
+`handwritten_offline`, and speech says «الورقة مكتوبة بخط اليد على الأغلب، ولا يمكن قراءتها
+بدون إنترنت. جرّب مرة أخرى عند توفر الاتصال.».
+
 **Speech** starts such a page with «نص مستخرج تلقائياً من صورة الصفحة.». A scanned page whose
 text was not read says «صفحة ممسوحة لم يُستخرج نصها بعد، وتحتاج OCR.».
 
