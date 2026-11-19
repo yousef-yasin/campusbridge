@@ -161,6 +161,18 @@ first: «الموضوع الثاني من 15: ...». The title is then not repea
   document-reader's cache. Only the images of the requested pages are described (`--units`,
   or `units=` in Python). The other pages are still narrated, so navigation works. **Images are then sent to Google**; see the document-reader README.
 
+**Scanned pages and photos (OCR).** With `--ocr` (or `ocr=True`), the requested pages that need
+OCR are read with the document-reader's phase 4. **Page images are sent to Google**, with
+Tesseract as the local fallback.
+- Right after «صفحة 2 من 9» comes a segment of kind `ocr_notice`:
+  - «نص مستخرج تلقائياً من صورة الصفحة.» for text read by Gemini;
+  - «نص مستخرج تلقائياً من صورة الصفحة بقارئ محلي، وقد تكون فيه أخطاء.» for text read by Tesseract;
+  - «صفحة ممسوحة لم يُستخرج نصها بعد، وتحتاج OCR.» for a page that was not read.
+- Handwritten notes are segments of kind `handwritten`: «ملاحظة بخط اليد: ...».
+- The scan image itself is not announced, and it is not counted among the images in the intro.
+- Topics in the intro come from the file outline, so headings found by OCR are read on their
+  page but are not listed as topics.
+
 **Outro:** «انتهى الملف. الخيارات المتاحة: الاستماع من البداية، الرجوع إلى السلايد السابق،
 الذهاب إلى سلايد معيّن، أو الذهاب إلى موضوع معيّن».
 

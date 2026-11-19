@@ -39,6 +39,7 @@ ai/text-to-speech/samples-out/
 ai/samples-in/
 ai/document-reader/extracted-images/
 ai/document-reader/image-descriptions/
+ai/document-reader/ocr-cache/
 
 # Audio: ignored everywhere in the project, except the demo MP3 files in docs/demo-audio
 *.wav

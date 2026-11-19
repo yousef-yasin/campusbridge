@@ -36,8 +36,13 @@ def _print_info(info):
 
 def _print_page(page):
     print(f"--- {page.label} ---")
-    if page.needs_ocr:
-        print("[needs OCR: no text layer]")
+    ocr = page.ocr or {}
+    if ocr.get("status") in ("done", "no_text"):
+        engine = ocr.get("model") or ocr.get("engine")
+        print(f"[OCR: {ocr['status']} by {engine}{', cached' if ocr.get('cached') else ''}, "
+              f"{ocr.get('unclear_words', 0)} unclear word(s)]")
+    elif page.needs_ocr:
+        print("[needs OCR: no text layer]" + (f" ({ocr['reason']})" if ocr.get("reason") else ""))
     for w in page.warnings:
         print(f"[warning] {w}")
     for b in page.blocks:
@@ -57,13 +62,14 @@ def _print_page(page):
                 if img.get("reason"):
                     print(f"    reason: {img['reason']}")
         else:
-            print(f"[{tag}] [{b.lang or '-'}] {b.text}")
+            source = " [ocr]" if b.source == "ocr" else ""
+            print(f"[{tag}]{source} [{b.lang or '-'}] {b.text}")
 
 
 def main(argv=None) -> int:
     p = argparse.ArgumentParser(prog="reader", description="CampusBridge document reader (phase 1)")
     sub = p.add_subparsers(dest="cmd", required=True)
-    e = sub.add_parser("extract", help="extract content from a .docx, .pdf, .pptx or .xlsx file")
+    e = sub.add_parser("extract", help="extract content from a .docx, .pdf, .pptx, .xlsx or image file")
     e.add_argument("file")
     e.add_argument("--page", help="one page / slide / sheet (number, or sheet name for .xlsx)")
     e.add_argument("--outline", action="store_true", help="only general info and the outline")
@@ -78,6 +84,10 @@ def main(argv=None) -> int:
                    help="language of descriptions (env CB_EXPLAIN_LANGUAGE, default mixed)")
     e.add_argument("--max-images", type=int, help="vision API calls per run (env READER_VISION_MAX_IMAGES)")
     e.add_argument("--detailed", action="store_true", help="--speech: read detailed image descriptions")
+    e.add_argument("--ocr", action="store_true",
+                   help="read the text of scanned pages and photos (sends page images to Google; "
+                        "Tesseract is the local fallback)")
+    e.add_argument("--max-ocr-pages", type=int, help="Gemini OCR calls per run (env READER_OCR_MAX_PAGES)")
     args = p.parse_args(argv)
 
     logging.basicConfig(level=logging.WARNING, format="%(levelname)s %(message)s")
@@ -93,6 +103,8 @@ def main(argv=None) -> int:
             cfg.extract_images = False
         if args.max_images is not None:
             cfg.vision_max_images = args.max_images
+        if args.max_ocr_pages is not None:
+            cfg.ocr_max_pages = args.max_ocr_pages
         if args.describe and args.no_images:
             raise ValueError("--describe needs the image files: do not combine it with --no-images")
         with open_document(args.file, cfg) as doc:
@@ -117,6 +129,10 @@ def main(argv=None) -> int:
                     _print_info(info)
                 return 0
             pages = [doc.page(ref)] if ref is not None else list(doc.pages())
+            if args.ocr:
+                from .ocr import PageOCR
+                for w in PageOCR(cfg, language=args.explain_lang).read_pages(doc, pages):
+                    print(f"Warning: {w}", file=sys.stderr)
             if args.describe:
                 from .describe import ImageDescriber
                 for w in ImageDescriber(cfg, language=args.explain_lang).describe_pages(pages):

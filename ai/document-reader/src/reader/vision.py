@@ -61,6 +61,10 @@ class GeminiVision:
             data = json.loads(text)
         except ValueError:
             raise VisionError(f"vision model returned no valid JSON: {text[:120]!r}") from None
+        if isinstance(data, list):              # a bare array answers the schema's first array field
+            field = next((k for k in schema.get("required", [])
+                          if (schema.get("properties", {}).get(k) or {}).get("type") == "array"), None)
+            data = {field: data} if field else data
         if not isinstance(data, dict):
             raise VisionError("vision model returned JSON that is not an object")
         missing = [f for f in schema.get("required", []) if f not in data]

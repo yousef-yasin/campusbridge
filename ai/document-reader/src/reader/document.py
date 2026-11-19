@@ -28,12 +28,14 @@ def legacy_error(kind: str) -> UnsupportedFormatError:
 
 
 def detect_type(path: Path) -> str:
-    """'docx', 'pdf', 'pptx' or 'xlsx' from the file content (the extension is only a hint)."""
+    """'docx', 'pdf', 'pptx', 'xlsx' or 'image' from the file content (the extension is only a hint)."""
     ext = path.suffix.lower().lstrip(".")
     with open(path, "rb") as f:
-        head = f.read(8)
+        head = f.read(12)
     if head.startswith(b"%PDF"):
         return "pdf"
+    if head.startswith((b"\xff\xd8\xff", b"\x89PNG\r\n\x1a\n")) or (head[:4] == b"RIFF" and head[8:12] == b"WEBP"):
+        return "image"
     if head.startswith(_OLE):
         data = path.read_bytes()
         if "EncryptedPackage".encode("utf-16-le") in data:
@@ -58,7 +60,8 @@ def detect_type(path: Path) -> str:
     if ext in _LEGACY:
         raise legacy_error(ext)
     raise UnsupportedFormatError(
-        f"{path.name}: unsupported file type (supported: .docx, .pdf, .pptx, .xlsx)")
+        f"{path.name}: unsupported file type (supported: .docx, .pdf, .pptx, .xlsx, "
+        f".jpg, .jpeg, .png, .webp)")
 
 
 class Document:
@@ -98,6 +101,10 @@ class Document:
 
     def close(self) -> None:
         pass
+
+    def page_image(self, n: int, dpi: int = 200):
+        """(image bytes, MIME type) of the whole page, for OCR. PDF pages and image files only."""
+        raise NotImplementedError(f"{self.file_type} pages have no page image")
 
     # --- common ---------------------------------------------------------------------------
     def __enter__(self):
@@ -171,7 +178,7 @@ def _ranges(numbers: List[int]) -> str:
 
 
 def open_document(path, config: Optional[ReaderConfig] = None) -> Document:
-    """Open a .docx, .pdf, .pptx or .xlsx file. Raises a ReaderError subclass on failure."""
+    """Open a .docx, .pdf, .pptx, .xlsx or image file. Raises a ReaderError subclass on failure."""
     config = (config or ReaderConfig.from_env()).validate()
     path = Path(path)
     if not path.is_file():
@@ -185,10 +192,12 @@ def open_document(path, config: Optional[ReaderConfig] = None) -> Document:
         from .pdf_reader import PdfDocument as cls
     elif kind == "pptx":
         from .pptx_reader import PptxDocument as cls
+    elif kind == "image":
+        from .image_reader import ImageDocument as cls
     else:
         from .xlsx_reader import XlsxDocument as cls
     doc = cls(path, config)
     ext = path.suffix.lower().lstrip(".")
-    if ext != kind:
+    if ext != kind and not (kind == "image" and ext in ("jpg", "jpeg", "png", "webp")):
         doc.warnings.append(f"file extension is .{ext} but the content is {kind}")
     return doc

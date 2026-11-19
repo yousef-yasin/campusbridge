@@ -4,11 +4,14 @@ from typing import Iterable, List, Optional, Union
 
 import re
 
-from .explain import AUTO_LABEL, MANUAL_LABEL, NO_DESCRIPTION, REVIEW_NO_TEXT, REVIEW_NUMBERS
+from .explain import (AUTO_LABEL, HANDWRITTEN_LABEL, MANUAL_LABEL, NEEDS_OCR, NO_DESCRIPTION, OCR_INTRO,
+                      OCR_INTRO_LOCAL, REVIEW_NO_TEXT, REVIEW_NUMBERS, UNCLEAR_WORD, explain_language)
 from .lang import detect_language
 from .model import Block, Page
 from .numbers import has_number
 from .tables import table_text
+
+_UNCLEAR = "[unclear]"                  # same marker as ocr.UNCLEAR
 
 _END = tuple(".!?؟…:؛")
 _SENTENCES = re.compile(r"(?:[^.!?؟؛\n]|(?<=\d)\.(?=\d))+(?:[.!?؟؛]+|$)")   # 95.4 is not a sentence end
@@ -62,8 +65,36 @@ def _image_speech(image: dict, detailed: bool) -> str:
     return "\n".join(parts)
 
 
-def block_speech(block: Block, include_notes: bool = True, detailed_images: bool = False) -> str:
-    """How one block is read aloud ('' when it is skipped)."""
+def block_speech(block: Block, include_notes: bool = True, detailed_images: bool = False,
+                 mode: Optional[str] = None) -> str:
+    """How one block is read aloud ('' when it is skipped).
+
+    Text read by OCR has its unreadable words marked [unclear]: they are said «كلمة غير واضحة»
+    ("unclear word" in en mode). A handwritten block is said «ملاحظة بخط اليد: ...».
+    """
+    if block.kind == "handwritten":
+        label = HANDWRITTEN_LABEL[mode or explain_language()]
+        text = _sentence(f"{label} {' '.join(block.text.split())}")
+    else:
+        text = _block_speech(block, include_notes, detailed_images)
+    if block.source == "ocr" and _UNCLEAR in text:
+        phrase = UNCLEAR_WORD[mode or explain_language()]
+        text = text.replace(_UNCLEAR, f"({phrase})")
+    return text
+
+
+def ocr_lead(page: Page) -> Optional[str]:
+    """What speech says first on a page that needed OCR (None for other pages)."""
+    ocr = page.ocr or {}
+    mode = ocr.get("language") or explain_language()
+    if any(b.source == "ocr" for b in page.blocks):
+        return (OCR_INTRO_LOCAL if ocr.get("engine") == "tesseract" else OCR_INTRO)[mode]
+    if page.needs_ocr and ocr.get("status") != "no_text":
+        return NEEDS_OCR[mode]
+    return None
+
+
+def _block_speech(block: Block, include_notes: bool, detailed_images: bool) -> str:
     if block.kind == "image":
         return _image_speech(block.image or {}, detailed_images)
     if block.kind == "chart":
@@ -105,16 +136,24 @@ def to_speech_text(source: Union[Page, Iterable[Page], Iterable[Block]],
     When a description has numbers that are not in the image (status needs_review), its
     sentences with those numbers are dropped and the text read from the image follows
     «الأرقام كما وردت في الصورة:».
+    A page whose text was read by OCR starts with «نص مستخرج تلقائياً من صورة الصفحة.»; a scanned
+    page whose text was not read yet says «صفحة ممسوحة لم يُستخرج نصها بعد، وتحتاج OCR.».
     """
     if isinstance(source, Page):
         source = [source]
     groups = {}
     for item in source:
         blocks = item.blocks if isinstance(item, Page) else [item]
+        mode = None
+        if isinstance(item, Page):
+            lead = ocr_lead(item)
+            mode = (item.ocr or {}).get("language")
+            if lead:
+                groups.setdefault((item.unit, item.unit_type, item.sheet), []).append(lead)
         for block in blocks:
             key = (block.unit, block.unit_type, block.sheet)
             groups.setdefault(key, [])
-            text = block_speech(block, include_notes, detailed_images)
+            text = block_speech(block, include_notes, detailed_images, mode)
             if text:
                 groups[key].append(text)
         if isinstance(item, Page):

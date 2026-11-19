@@ -53,6 +53,11 @@ class PdfDocument(Document):
     def close(self) -> None:
         self._doc.close()
 
+    def page_image(self, n: int, dpi: int = 200):
+        """The page rendered as PNG at dpi (for OCR)."""
+        pix = self._doc.load_page(n - 1).get_pixmap(dpi=dpi, alpha=False)
+        return pix.tobytes("png"), "image/png"
+
     @property
     def unit_count(self) -> int:
         return self._doc.page_count
@@ -255,6 +260,9 @@ class PdfDocument(Document):
 
         if chars < self.config.ocr_min_chars and covered >= 0.3 * area:
             page.needs_ocr = True             # reported once, by Page.needs_ocr and info.ocr_pages
+            for rect, blk in items:           # the scan itself: replaced by its text after OCR
+                if blk.kind == "image" and abs(self._fitz.Rect(rect) & pdf_page.rect) >= 0.3 * area:
+                    blk.image["covers_page"] = True
         rtl = is_rtl(" ".join(blk.text for _, blk in items))
         page.blocks = self._join_wrapped(order_boxes(items, rtl), sizes, n)
         for block in page.blocks:

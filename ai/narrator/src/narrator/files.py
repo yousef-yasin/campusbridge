@@ -65,29 +65,36 @@ class FileNarrator:
     # --- public ------------------------------------------------------------------------
     def narrate(self, path, meta: Optional[Dict[str, Any]] = None, now: Optional[datetime] = None,
                 describe: bool = False, describer=None, reader_config=None,
-                units: Optional[Iterable[int]] = None) -> FileNarration:
+                units: Optional[Iterable[int]] = None, ocr: bool = False, ocr_reader=None) -> FileNarration:
         """meta (from the platform, all optional): course, instructor, uploaded_at, title.
 
         describe=True runs the phase-2 image describer (images are sent to Google); describer
         can be an ImageDescriber prepared by the caller (tests inject one with a fake engine).
-        units: the pages/slides that will be read; only their images are described (every
-        unit is still narrated, so navigation works across the whole file).
+        units: the pages/slides that will be read; only their images are described and only
+        they get OCR (every unit is still narrated, so navigation works across the whole file).
+        ocr=True reads the text of scanned pages and photos (document-reader phase 4: page images
+        are sent to Google; Tesseract is the local fallback); ocr_reader can be a PageOCR prepared
+        by the caller. Such a page starts with «نص مستخرج تلقائياً من صورة الصفحة».
         """
         meta = meta or {}
         now = now or self.config.now()
         warnings: List[str] = []
+        wanted = set(units) if units is not None else None
         with self.reader.open_document(path, reader_config) as doc:
             info = doc.info
             pages = list(doc.pages())
+            if ocr or ocr_reader is not None:          # pages are rendered from the open file
+                ocr_reader = ocr_reader or self.reader.PageOCR(language=self.config.language)
+                warnings += ocr_reader.read_pages(doc, [p for p in pages if wanted is None or p.unit in wanted])
         warnings += info.warnings
         describing = describe or describer is not None
         describer = describer or self.reader.ImageDescriber(language=self.config.language)
         if describing:
-            wanted = set(units) if units is not None else None
             warnings += describer.describe_pages([p for p in pages if wanted is None or p.unit in wanted])
         describer.apply_cached(pages)           # earlier descriptions of the other pages: no network
-        useful = sum(1 for p in pages for b in p.blocks
-                     if b.kind == "image" and (b.image or {}).get("status") != "decorative")
+        useful = sum(1 for p in pages for b in p.blocks if b.kind == "image"
+                     and (b.image or {}).get("status") != "decorative"
+                     and not (b.image or {}).get("covers_page") and not (b.image or {}).get("page_image"))
         topics = self._topics(info, pages[0] if pages else None)
         starts = {t["unit"]: t for t in topics}
         units, current = [], None
@@ -229,17 +236,26 @@ class FileNarrator:
         if title and not said_title:
             where += f": {title}"
         out.append(Segment(sentence(where), "position", dict(pos)))
+        lead = self.reader.speech.ocr_lead(page)            # text read from the page image
+        if lead:
+            engine = (page.ocr or {}).get("engine")
+            out.append(Segment(lead, "ocr_notice", dict(pos, engine=engine) if engine else dict(pos)))
         spoken_title = bool(title)
         for index, block in enumerate(page.blocks):
             if block.kind == "heading" and spoken_title and " ".join(block.text.split()) == title:
                 continue                                    # already said (also repeated titles)
             if block.kind == "table" and block.table:
-                out += self._table(block.table, dict(pos, block=index))
+                out += self._table(block.table, dict(pos, block=index),
+                                   source="ocr" if block.source == "ocr" else "file")
             elif block.kind == "image":
+                scan = (block.image or {}).get("covers_page") or (block.image or {}).get("page_image")
+                if scan and page.needs_ocr and (page.ocr or {}).get("status") != "no_text":
+                    continue                                # the scan is the page: the notice says so
                 out += self._image(block, dict(pos, block=index))
             else:
-                text = self.reader.speech.block_speech(block)
-                kind = {"heading": "heading", "list": "list", "notes": "notes", "chart": "chart"}.get(block.kind, "content")
+                text = self.reader.speech.block_speech(block, mode=self.config.language)
+                kind = {"heading": "heading", "list": "list", "notes": "notes", "chart": "chart",
+                        "handwritten": "handwritten"}.get(block.kind, "content")
                 if text.strip():
                     out.append(Segment(text, kind, dict(pos, block=index)))
         return out

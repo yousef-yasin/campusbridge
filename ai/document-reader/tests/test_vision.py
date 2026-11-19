@@ -316,6 +316,12 @@ def test_gemini_errors_are_mapped_and_the_key_is_scrubbed(cfg, tmp_path):
         with pytest.raises(kind) as err:
             GeminiVision(cfg, client=Client(error=error)).describe(b"x", "image/png", "p", {})
         assert secret not in str(err.value)
+    blocks = {"type": "object", "properties": {"blocks": {"type": "array"}}, "required": ["blocks"]}
+    bare = Client(text='[{"kind": "paragraph", "text": "x"}]')             # seen in a real OCR answer
+    assert GeminiVision(cfg, client=bare).describe(b"x", "image/png", "p", blocks) == \
+        {"blocks": [{"kind": "paragraph", "text": "x"}]}
+    with pytest.raises(VisionError, match="not an object"):
+        GeminiVision(cfg, client=Client(text="[1, 2]")).describe(b"x", "image/png", "p", {"type": "object"})
     with pytest.raises(VisionError, match="no valid JSON"):
         GeminiVision(cfg, client=Client(text="not json")).describe(b"x", "image/png", "p", {})
 

@@ -6,7 +6,8 @@ Standalone Python module that turns lecture files into one structure that other 
 
 **Phase 1: content extraction**, without AI: the outline, headings and language come from the
 file structure and simple rules. **Phase 2: image descriptions** with a vision model (Gemini),
-on request only (`--describe` / `ImageDescriber`). OCR of scanned pages is not done yet.
+on request only (`--describe` / `ImageDescriber`). **Phase 4: OCR** of scanned PDF pages and
+photos of paper (`.jpg`, `.png`, `.webp`), on request only (`--ocr` / `PageOCR`).
 
 > **Privacy.** Describing images sends each image, the page/slide title and the text around the
 > image to Google (Gemini API). On the free tier Google states that content is used to improve
@@ -24,7 +25,7 @@ on request only (`--describe` / `ImageDescriber`). OCR of scanned pages is not d
 | Excel: sheet name, columns, row count; rows on request | `doc.info.sheets`, `doc.rows(sheet, start, count)` |
 | PowerPoint speaker notes as a separate block | `kind="notes"` |
 | Images saved by content hash, image block in place, tiny images and decorations skipped | `images.ImageStore`, `is_decoration()`, repeated-logo filter |
-| Scanned PDF reported as needing OCR | `Page.needs_ocr`, `info.needs_ocr`, `info.ocr_pages` |
+| Scanned PDF reported as needing OCR; text read by OCR on request (phase 4) | `Page.needs_ocr`, `info.ocr_pages`, `PageOCR` |
 | Direct access to one page/slide without processing the whole file | `doc.page(n)` |
 | Text ready for the TTS module, page by page | `to_speech_text()` |
 | CLI `reader extract FILE --page --outline --json` | `python -m reader extract ...` |
@@ -317,6 +318,79 @@ data: `chart = {"type", "title", "x_axis", "y_axis", "categories", "series": [{"
 charts use the values saved in the file. Excel charts use the values saved in the chart, else
 the referenced cells; formulas without saved results are reported (`missing_values` and a
 warning). `info.chart_count` counts them.
+
+## Phase 4: text inside page images (OCR)
+
+Scanned PDF pages (no text layer) and photos of paper (`.jpg`, `.jpeg`, `.png`, `.webp`, read
+as a file of one page) get their text from the same Gemini vision model as the image
+descriptions. **Page images are sent to Google**, like images in phase 2.
+
+```bash
+python -m reader extract scan.pdf --ocr                 # every page that needs it
+python -m reader extract scan.pdf --page 3 --ocr --speech
+python -m reader extract photo.jpg --ocr --speech
+```
+
+```python
+from reader import open_document, PageOCR, to_speech_text
+
+with open_document("scan.pdf") as doc:          # the document must stay open: pages are rendered
+    page = doc.page(3)                          # one page at a time, when asked
+    warnings = PageOCR().read_pages(doc, [page])   # only pages with needs_ocr are read
+    print(to_speech_text(page)[0].text)
+```
+
+**What is sent.** A PDF page is rendered at 200 dpi (`READER_OCR_DPI`). A photo is first turned
+upright from its EXIF orientation (phones store pictures sideways with a "rotate" tag). Images
+larger than 3072 px (`READER_OCR_MAX_SIDE`) are scaled down.
+
+**What comes back** is the unified structure:
+- blocks of kind `heading` (level 1-3), `paragraph`, `list` and `table`;
+- in natural reading order, right to left for Arabic (in Arabic pages with columns, the right
+  column first);
+- tables read row by row like any other table;
+- every block has `source: "ocr"`.
+
+The page image itself is replaced by its text, while other pictures on the page are kept. If no
+text is found, the image stays and `page.ocr.status` is `no_text`. `page.ocr` holds `status`,
+`engine` (gemini/tesseract), `model`, `cached`, `blocks` and `unclear_words`.
+
+**Text is copied exactly as written**, with no translation, summary or correction. A word that
+cannot be read is written `[unclear]` instead of being guessed, and speech says it as
+«(كلمة غير واضحة)» ("unclear word" in `en` mode).
+
+**Handwriting** (notes between lines, above words or in the margins) is not mixed into the
+printed text. Each note becomes its own block of kind `handwritten`, placed after the printed
+block it belongs to and copied exactly as written. Speech reads it as «ملاحظة بخط اليد: ...»
+("Handwritten note: ..." in `en` mode).
+
+**Speech** starts such a page with «نص مستخرج تلقائياً من صورة الصفحة.». A scanned page whose
+text was not read says «صفحة ممسوحة لم يُستخرج نصها بعد، وتحتاج OCR.».
+
+**Mixed PDFs** work: text pages are read normally and never sent, and only `needs_ocr` pages are.
+
+**Cache.** One JSON file per page image (sha256), model and prompt version in `ocr-cache/`
+(`READER_OCR_DIR`, git-ignored). At most 20 Gemini calls per run (`READER_OCR_MAX_PAGES`); cached
+pages do not count.
+
+**Local fallback.** When Gemini cannot be used (no key, quota or rate limit, no internet, service
+overloaded), [Tesseract](https://github.com/tesseract-ocr/tesseract) is used with `ara+eng`
+(`READER_TESSERACT_LANGS`), if it is installed:
+- The module does not install it. It looks on `PATH`, then in `C:\Program Files\Tesseract-OCR`, or
+  uses `READER_TESSERACT`.
+- A warning says the quality is lower, and speech says «… بقارئ محلي، وقد تكون فيه أخطاء».
+- Words below 30% confidence become `[unclear]`.
+- Tesseract results are not cached, so a later run tries Gemini again.
+- Without Tesseract, or without its Arabic data, a warning explains how to install it, and the
+  page keeps `needs_ocr` with `page.ocr.status = "needs_ocr"` and a `reason`.
+
+After a quota or connection error, Gemini is not called again in that run.
+
+**Limits.**
+- Handwriting, low light and shadows reduce accuracy.
+- Very small print may need a higher dpi.
+- The model can still misread a word without marking it, so check important pages.
+- Tesseract is much weaker on Arabic and does not detect headings, lists or tables (paragraphs only).
 
 ## Images
 
