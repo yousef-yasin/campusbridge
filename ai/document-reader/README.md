@@ -30,7 +30,7 @@ photos of paper (`.jpg`, `.png`, `.webp`), on request only (`--ocr` / `PageOCR`)
 | Text ready for the TTS module, page by page | `to_speech_text()` |
 | CLI `reader extract FILE --page --outline --json` | `python -m reader extract ...` |
 | Phase 2: image category, short and detailed description, text inside the image | `ImageDescriber`, `--describe` |
-| Explanation language ar / en / mixed, one shared setting | `CB_EXPLAIN_LANGUAGE`, `explain.py` |
+| Explanation language ar / en / mixed, one shared setting | `CB_EXPLAIN_LANGUAGE`, `explain.py` (now in `ai/shared`) |
 | Native charts in .pptx and .xlsx read from the file, without AI | `charts.py`, `kind="chart"` |
 
 ## Layout
@@ -50,7 +50,7 @@ src/reader/
   speech.py       to_speech_text
   describe.py     phase 2: ImageDescriber (prompt, JSON cache, per-category data)
   vision.py       phase 2: Gemini vision engine
-  explain.py      shared explanation language setting (ar / en / mixed)
+  explain.py      bridge to ai/shared/src/cb_shared/explain.py (explanation language ar / en / mixed)
   charts.py       native PowerPoint / Excel charts
   keys.py         API key lookup (.env / environment), scrubbing of secrets
   config.py       ReaderConfig (READER_* environment variables)

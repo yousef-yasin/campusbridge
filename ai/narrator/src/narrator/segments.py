@@ -5,7 +5,7 @@ from typing import Any, Dict, Iterable, List
 KINDS = ("intro", "topic_change", "position", "heading", "content", "list", "notes", "image",
          "table", "table_row", "chart", "outro", "question", "options", "confirm", "time_warning",
          "assignment", "summary", "message", "notification", "emergency", "navigation",
-         "ocr_notice", "handwritten", "references")
+         "ocr_notice", "handwritten", "references", "page_summary", "file_summary", "wait", "answer")
 
 
 @dataclass

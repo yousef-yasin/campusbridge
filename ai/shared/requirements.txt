@@ -1,0 +1,4 @@
+# Shared AI utilities: the Gemini text client (online, needs GEMINI_API_KEY)
+google-genai>=2.25,<4
+# Tests
+pytest>=7

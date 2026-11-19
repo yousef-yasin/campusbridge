@@ -15,6 +15,7 @@ class Navigator:
         self.n = narration
         self.en = narration.lang == "en"
         self.cursor = 0                                 # 0 intro, 1..len(units) units, len+1 outro
+        self._asked = {}                                # unit -> how many questions were asked
 
     # --- helpers -----------------------------------------------------------------------
     @property
@@ -74,6 +75,45 @@ class Navigator:
                 return self._say(f"There is no topic {number}; the file has {total}.")
             return self._say(f"الموضوع رقم {number} غير موجود، والملف فيه {total}.")
         return self.go_to(topic["unit"])
+
+    # --- summaries and questions (lecture-summarization, question-generation) ----------
+    def _unit(self) -> Optional[int]:
+        return None if self.cursor in (0, self._end) else self.n.unit_numbers[self.cursor - 1]
+
+    def summarize(self) -> List[Segment]:
+        """«لخّصلي الصفحة»: the summary of the current page; at the intro or the end, of the file."""
+        from .files import ai_modules
+        ai_modules()
+        from summarizer import file_summary_speech, summary_speech
+        unit = self._unit()
+        text = file_summary_speech(self.n.file_summary) if unit is None else \
+            summary_speech(self.n.summaries.get(unit) or {})
+        if not text:
+            return self._say("No summary is available here." if self.en else "لا يوجد ملخص متاح هنا.")
+        return [Segment(text, "page_summary" if unit else "file_summary", {"cursor": self.cursor, "unit": unit})]
+
+    def ask_me(self, wait_seconds: int = 8) -> List[Segment]:
+        """«اسألني»: a question on the current page, a pause to think, then its answer.
+
+        Each call asks the next question of the page (and starts again after the last one).
+        The frontend says the question, waits for the "wait" segment's seconds (or until the
+        student is ready), then says the answer.
+        """
+        unit = self._unit()
+        parts = []
+        if unit is not None and self.n.questions.get(unit):
+            from .files import ai_modules
+            ai_modules()
+            from questions import question_parts
+            parts = question_parts(self.n.questions[unit])
+        if not parts:
+            return self._say("No questions are available here." if self.en else "لا توجد أسئلة متاحة هنا.")
+        index = self._asked.get(unit, 0) % len(parts)
+        self._asked[unit] = index + 1
+        question, answer = parts[index]
+        pos = {"cursor": self.cursor, "unit": unit, "question": index + 1, "questions": len(parts)}
+        return [Segment(question, "question", pos), Segment("", "wait", dict(pos, seconds=wait_seconds)),
+                Segment(answer, "answer", pos)]
 
     def where_am_i(self) -> List[Segment]:
         if self.cursor == 0:
