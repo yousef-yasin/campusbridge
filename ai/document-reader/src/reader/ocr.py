@@ -32,10 +32,17 @@ from .tables import make_table, table_text
 
 log = logging.getLogger(__name__)
 
-PROMPT_VERSION = 3                         # bump when the prompt or schema change
+PROMPT_VERSION = 4                         # bump when the prompt or schema change
 UNCLEAR = "[unclear]"                      # stored in the text where a word could not be read
 _TESSERACT_HOME = Path(os.environ.get("ProgramFiles", r"C:\Program Files")) / "Tesseract-OCR" / "tesseract.exe"
 _MIN_CONFIDENCE = 30                       # Tesseract words below this confidence are UNCLEAR
+# Tesseract cannot read handwriting. On our pages its median word confidence was 52 for a
+# handwritten page and 88-96 for printed ones, with 25% vs 5-12% of words below 30. A page under
+# these limits is treated as handwritten (or unreadable): the student is told so instead of
+# hearing wrong text.
+_HANDWRITTEN_MEDIAN = 70
+_HANDWRITTEN_LOW_SHARE = 0.20
+_HANDWRITTEN_SHARE = 0.6                   # handwritten blocks holding this share of the text
 _INSTALL = ("Tesseract is not installed, so pages cannot be read without Gemini. To install it: "
             "Windows: https://github.com/UB-Mannheim/tesseract/wiki (tick Arabic in 'Additional "
             "language data'), or `winget install UB-Mannheim.TesseractOCR`; Ubuntu: "
@@ -57,6 +64,7 @@ SCHEMA = {
             },
             "required": ["kind"]}},
         "language": _STR,
+        "handwritten_page": {"type": "boolean"},
     },
     "required": ["blocks"],
 }
@@ -84,10 +92,14 @@ Rules:
    handwritten: a note written by hand (between lines, above a word, in the margin), as its
    own block placed right after the printed block it belongs to. Copy it exactly as written,
    in its own language; use [unclear] for words you cannot read. Never mix handwriting into
-   the printed blocks, and never put printed text into a handwritten block.
+   the printed blocks, and never put printed text into a handwritten block. This is only for
+   notes added by hand to a PRINTED page; see rule 7 for a page written by hand.
 5. Include page headers, footers and page numbers only if they are part of the content.
    Ignore stamps, folds, shadows and anything that is not text (handwriting is text: rule 4).
 6. language: "ar", "en" or "mixed".
+7. handwritten_page: true when all or most of the page is written by hand (notes, a handwritten
+   sheet). Then return its text as normal heading/paragraph/list/table blocks, in reading
+   order, NOT as handwritten blocks.
 If the image has no readable text, return an empty list of blocks."""
 
 
@@ -104,8 +116,24 @@ def _clean(text: Any) -> str:
     return _MOVED_MARK.sub(r"\1 ", text) if _ARABIC.search(text) else text
 
 
+def is_handwritten_page(result: Dict[str, Any]) -> bool:
+    """The model says so, or most of the text came back in handwritten blocks."""
+    if result.get("handwritten_page") is True:
+        return True
+    items = [i for i in result.get("blocks") or [] if isinstance(i, dict)]
+    size = lambda i: len(_clean(i.get("text")) or " ".join(map(str, i.get("items") or [])))
+    total = sum(size(i) for i in items)
+    hand = sum(size(i) for i in items if (i.get("kind") or i.get("type")) == "handwritten")
+    return total > 0 and hand / total >= _HANDWRITTEN_SHARE
+
+
 def to_blocks(result: Dict[str, Any], unit: int, unit_type: str = "page") -> List[Block]:
-    """The engine's answer as unified blocks, marked source="ocr"."""
+    """The engine's answer as unified blocks, marked source="ocr".
+
+    On a handwritten page the text is normal blocks (said once: «الورقة مكتوبة بخط اليد»);
+    "handwritten" blocks stay only for notes added by hand to a printed page.
+    """
+    handwritten_page = is_handwritten_page(result)
     out: List[Block] = []
     for item in result.get("blocks") or []:
         if not isinstance(item, dict):
@@ -132,8 +160,10 @@ def to_blocks(result: Dict[str, Any], unit: int, unit_type: str = "page") -> Lis
         text = _clean(item.get("text"))
         if not text:
             continue
-        if kind == "handwritten":
+        if kind == "handwritten" and not handwritten_page:
             out.append(Block("handwritten", text, detect_language(text), unit, unit_type, source="ocr"))
+        elif kind == "handwritten":
+            out.append(Block("paragraph", text, detect_language(text), unit, unit_type, source="ocr"))
         elif kind == "heading":
             level = item.get("level") if isinstance(item.get("level"), int) else 1
             out.append(Block("heading", text, detect_language(text), unit, unit_type,
@@ -180,7 +210,30 @@ class Tesseract:
                                   "--psm", "3", "tsv"], capture_output=True, timeout=300)
             if run.returncode != 0:
                 raise VisionError(f"tesseract failed: {run.stderr.decode('utf-8', 'replace')[:200]}")
-        return {"blocks": parse_tsv(run.stdout.decode("utf-8", "replace")), "language": ""}
+        tsv = run.stdout.decode("utf-8", "replace")
+        return {"blocks": parse_tsv(tsv), "language": "", "confidence": confidence_stats(tsv)}
+
+
+def confidence_stats(tsv: str) -> Dict[str, float]:
+    """Median word confidence and the share of words below 30 (Tesseract TSV)."""
+    confs = []
+    for row in csv.DictReader(io.StringIO(tsv), delimiter="\t", quoting=csv.QUOTE_NONE):
+        if row.get("level") == "5" and (row.get("text") or "").strip():
+            try:
+                confs.append(float(row.get("conf") or -1))
+            except ValueError:
+                confs.append(-1.0)
+    if not confs:
+        return {"words": 0, "median": 0.0, "low_share": 1.0}
+    ordered = sorted(confs)
+    return {"words": len(confs), "median": ordered[len(ordered) // 2],
+            "low_share": round(sum(c < _MIN_CONFIDENCE for c in confs) / len(confs), 3)}
+
+
+def looks_handwritten(stats: Optional[Dict[str, float]]) -> bool:
+    if not stats:
+        return False
+    return stats["median"] < _HANDWRITTEN_MEDIAN or stats["low_share"] >= _HANDWRITTEN_LOW_SHARE
 
 
 def parse_tsv(tsv: str) -> List[Dict[str, Any]]:
@@ -309,6 +362,12 @@ class PageOCR:
             result = tess.read(image)
         except Exception as exc:
             return self._needs_ocr(page, f"{reason}; tesseract failed: {exc}")
+        if looks_handwritten(result.get("confidence")):
+            self._warn(f"OCR with Gemini is not possible ({reason}); the page looks handwritten, and "
+                       f"Tesseract cannot read handwriting: nothing is read (internet needed)")
+            page.ocr = {"status": "handwritten_offline", "engine": "tesseract", "reason": reason,
+                        "language": self.language, "confidence": result.get("confidence")}
+            return page
         self._warn(f"OCR with Gemini is not possible ({reason}); used Tesseract "
                    f"({self.config.tesseract_langs}) instead: the text quality is lower, check it")
         return self._apply(page, result, "tesseract", None)
@@ -318,7 +377,8 @@ class PageOCR:
         blocks = to_blocks(result, page.unit, page.unit_type)
         unclear = sum(b.text.count(UNCLEAR) for b in blocks)
         page.ocr = {"status": "done", "engine": engine, "model": model, "language": self.language,
-                    "cached": cached, "blocks": len(blocks), "unclear_words": unclear}
+                    "cached": cached, "blocks": len(blocks), "unclear_words": unclear,
+                    "handwritten": is_handwritten_page(result)}
         if not blocks:
             page.ocr["status"] = "no_text"
             page.warnings.append("OCR found no readable text on this page")

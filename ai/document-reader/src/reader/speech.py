@@ -4,7 +4,8 @@ from typing import Iterable, List, Optional, Union
 
 import re
 
-from .explain import (AUTO_LABEL, HANDWRITTEN_LABEL, MANUAL_LABEL, NEEDS_OCR, NO_DESCRIPTION, OCR_INTRO,
+from .explain import (AUTO_LABEL, HANDWRITTEN_LABEL, HANDWRITTEN_OFFLINE, HANDWRITTEN_PAGE, MANUAL_LABEL,
+                      NEEDS_OCR, NO_DESCRIPTION, OCR_INTRO,
                       OCR_INTRO_LOCAL, REFERENCES_LABEL, REFERENCES_NOTE, REVIEW_NO_TEXT, REVIEW_NUMBERS,
                       UNCLEAR_WORD, explain_language)
 from .lang import detect_language
@@ -95,8 +96,11 @@ def ocr_lead(page: Page) -> Optional[str]:
     """What speech says first on a page that needed OCR (None for other pages)."""
     ocr = page.ocr or {}
     mode = ocr.get("language") or explain_language()
+    if ocr.get("status") == "handwritten_offline":
+        return HANDWRITTEN_OFFLINE[mode]
     if any(b.source == "ocr" for b in page.blocks):
-        return (OCR_INTRO_LOCAL if ocr.get("engine") == "tesseract" else OCR_INTRO)[mode]
+        lead = (OCR_INTRO_LOCAL if ocr.get("engine") == "tesseract" else OCR_INTRO)[mode]
+        return f"{lead} {HANDWRITTEN_PAGE[mode]}" if ocr.get("handwritten") else lead
     if page.needs_ocr and ocr.get("status") != "no_text":
         return NEEDS_OCR[mode]
     return None

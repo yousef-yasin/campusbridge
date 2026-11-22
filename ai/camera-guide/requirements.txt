@@ -1,0 +1,7 @@
+# Frame analysis: local, no AI, no internet
+opencv-python-headless>=4.9,<5
+numpy>=1.26
+# After capture: OCR through document-reader (and its dependencies)
+-r ../document-reader/requirements.txt
+# Tests
+pytest>=7

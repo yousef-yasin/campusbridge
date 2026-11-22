@@ -55,6 +55,11 @@ REFERENCES_NOTE = {"ar": "في مراجع بآخر الصفحة.", "mixed": "ف�
                    "en": "There are references at the end of the page."}
 REFERENCES_LABEL = {"ar": "المراجع:", "mixed": "المراجع:", "en": "References:"}
 HANDWRITTEN_LABEL = {"ar": "ملاحظة بخط اليد:", "mixed": "ملاحظة بخط اليد:", "en": "Handwritten note:"}
+HANDWRITTEN_PAGE = {"ar": "الورقة مكتوبة بخط اليد.", "mixed": "الورقة مكتوبة بخط اليد.",
+                    "en": "The page is handwritten."}
+HANDWRITTEN_OFFLINE = {"ar": "الورقة مكتوبة بخط اليد على الأغلب، ولا يمكن قراءتها بدون إنترنت. جرّب مرة أخرى عند توفر الاتصال.",
+                       "mixed": "الورقة مكتوبة بخط اليد على الأغلب، ولا يمكن قراءتها بدون إنترنت. جرّب مرة أخرى عند توفر الاتصال.",
+                       "en": "The page seems to be handwritten and cannot be read without the internet. Try again when you are online."}
 UNCLEAR_WORD = {"ar": "كلمة غير واضحة", "mixed": "كلمة غير واضحة", "en": "unclear word"}
 NEEDS_OCR = {"ar": "صفحة ممسوحة لم يُستخرج نصها بعد، وتحتاج OCR.",
              "mixed": "صفحة ممسوحة لم يُستخرج نصها بعد، وتحتاج OCR.",

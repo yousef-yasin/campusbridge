@@ -45,6 +45,10 @@ ai/document-reader/ocr-cache/
 ai/lecture-summarization/summaries/
 ai/question-generation/questions-cache/
 
+# Camera guide: generated command voices and captured pages
+ai/camera-guide/voices/
+ai/camera-guide/captures/
+
 # Audio: ignored everywhere in the project, except the demo MP3 files in docs/demo-audio
 *.wav
 *.mp3
