@@ -1,0 +1,4 @@
+# Input pages come from document-reader, and the number check is its numbers.py
+-r ../document-reader/requirements.txt
+# Gemini text client (ai/shared)
+-r ../shared/requirements.txt

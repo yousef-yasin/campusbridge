@@ -22,6 +22,17 @@ TYPE_EN = {"pptx": "a PowerPoint presentation", "pdf": "a PDF file", "docx": "a 
            "xlsx": "an Excel workbook"}
 
 
+def ai_modules(config: Optional[NarratorConfig] = None) -> None:
+    """Make ai/shared, lecture-summarization and question-generation importable."""
+    reader_path = (config or NarratorConfig()).reader_path
+    shared = Path(reader_path).resolve().parents[1] / "shared" / "src"
+    if str(shared) not in sys.path:
+        sys.path.insert(0, str(shared))
+    from cb_shared import use_module
+    use_module("lecture-summarization")
+    use_module("question-generation")
+
+
 def load_reader(config: NarratorConfig):
     """The document-reader package (ai/document-reader/src is added to the path if needed)."""
     path = str(Path(config.reader_path))
@@ -46,6 +57,9 @@ class FileNarration:
     lang: str
     sheets: List[Optional[str]] = field(default_factory=list)
     warnings: List[str] = field(default_factory=list)
+    summaries: Dict[int, Dict[str, Any]] = field(default_factory=dict)   # unit -> lecture-summarization result
+    questions: Dict[int, Dict[str, Any]] = field(default_factory=dict)   # unit -> question-generation result
+    file_summary: Optional[Dict[str, Any]] = None
 
     @property
     def segments(self) -> List[Segment]:
@@ -65,7 +79,9 @@ class FileNarrator:
     # --- public ------------------------------------------------------------------------
     def narrate(self, path, meta: Optional[Dict[str, Any]] = None, now: Optional[datetime] = None,
                 describe: bool = False, describer=None, reader_config=None,
-                units: Optional[Iterable[int]] = None, ocr: bool = False, ocr_reader=None) -> FileNarration:
+                units: Optional[Iterable[int]] = None, ocr: bool = False, ocr_reader=None,
+                summaries: bool = False, summarizer=None, questions: bool = False, questioner=None,
+                read_summaries: Optional[bool] = None) -> FileNarration:
         """meta (from the platform, all optional): course, instructor, uploaded_at, title.
 
         describe=True runs the phase-2 image describer (images are sent to Google); describer
@@ -75,6 +91,10 @@ class FileNarrator:
         ocr=True reads the text of scanned pages and photos (document-reader phase 4: page images
         are sent to Google; Tesseract is the local fallback); ocr_reader can be a PageOCR prepared
         by the caller. Such a page starts with «نص مستخرج تلقائياً من صورة الصفحة».
+        summaries=True makes page summaries with lecture-summarization (text is sent to Google),
+        read after each page («ملخص تلقائي: ...») unless read_summaries=False; questions=True
+        makes practice questions for Navigator.ask_me(). summarizer / questioner can be a
+        PageSummarizer / QuestionGenerator prepared by the caller. Only the requested units.
         """
         meta = meta or {}
         now = now or self.config.now()
@@ -107,9 +127,39 @@ class FileNarrator:
                     if s.kind != "image" and s.position.get("source") != "image")
         words += useful * self.config.words_per_image
         intro = self._intro(info, meta, now, topics, words, useful)
-        return FileNarration(intro=intro, units=units, outro=self._outro(info.unit_type, bool(topics)),
-                             unit_type=info.unit_type, unit_numbers=[p.unit for p in pages], topics=topics,
-                             lang=self.lang, sheets=[p.sheet for p in pages], warnings=warnings)
+        narration = FileNarration(intro=intro, units=units, outro=self._outro(info.unit_type, bool(topics)),
+                                  unit_type=info.unit_type, unit_numbers=[p.unit for p in pages], topics=topics,
+                                  lang=self.lang, sheets=[p.sheet for p in pages], warnings=warnings)
+        if summaries or summarizer is not None or questions or questioner is not None:
+            self._ai(narration, pages, wanted, summaries or summarizer is not None,
+                     questions or questioner is not None, summarizer, questioner, meta.get("title") or info.title)
+            if read_summaries if read_summaries is not None else (summaries or summarizer is not None):
+                from summarizer import summary_speech
+                for unit, segments in zip(narration.unit_numbers, narration.units):
+                    text = summary_speech(narration.summaries.get(unit) or {}, terms=False)
+                    if text:
+                        segments.append(Segment(text, "page_summary", dict(segments[0].position)))
+        return narration
+
+    def _ai(self, narration, pages, wanted, make_summaries, make_questions, summarizer, questioner, title):
+        """Page summaries and questions for the requested units (lecture-summarization, question-generation)."""
+        ai_modules(self.config)
+        from cb_shared import from_pages, use_module
+        chosen = from_pages([p for p in pages if wanted is None or p.unit in wanted])
+        if make_summaries:
+            use_module("lecture-summarization")
+            from summarizer import FileSummarizer, PageSummarizer
+            summarizer = summarizer or PageSummarizer(language=self.config.language)
+            results = summarizer.run(chosen)
+            narration.summaries = {r["unit"]: r for r in results}
+            narration.file_summary = FileSummarizer(summarizer).summarize(results, chosen, title)
+            narration.warnings += summarizer.warnings
+        if make_questions:
+            use_module("question-generation")
+            from questions import QuestionGenerator
+            questioner = questioner or QuestionGenerator(language=self.config.language)
+            narration.questions = {r["unit"]: r for r in questioner.run(chosen)}
+            narration.warnings += questioner.warnings
 
     # --- parts -------------------------------------------------------------------------
     @staticmethod
@@ -317,7 +367,8 @@ class FileNarrator:
         if image.get("status") == "decorative":
             return []
         table = image.pop("table", None) if image.get("category") == "table" else None
-        labels = self.reader.explain
+        ai_modules(self.config)
+        from cb_shared import explain as labels
         copy = self.reader.Block("image", block.text, block.lang, block.unit, block.unit_type, block.sheet, image=image)
         text = self.reader.speech.block_speech(copy).strip() if image.get("status") else ""
         en = self.lang == "en"

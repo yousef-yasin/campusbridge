@@ -24,6 +24,9 @@ def clean_env(monkeypatch, tmp_path):
     monkeypatch.setenv("READER_DESCRIPTIONS_DIR", str(tmp_path / "descriptions"))
     monkeypatch.setenv("READER_ENV_FILE", str(tmp_path / "no.env"))     # never the real key
     monkeypatch.setenv("READER_OCR_DIR", str(tmp_path / "ocr"))
+    for prefix in ("SUMMARY", "QUESTIONS"):
+        monkeypatch.setenv(f"{prefix}_CACHE_DIR", str(tmp_path / prefix.lower()))
+        monkeypatch.setenv(f"{prefix}_ENV_FILE", str(tmp_path / "no.env"))     # never the real key
 
     def no_network(*args, **kwargs):
         raise AssertionError("test tried to reach Gemini; inject a fake vision engine")

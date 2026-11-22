@@ -161,6 +161,20 @@ first: «الموضوع الثاني من 15: ...». The title is then not repea
   document-reader's cache. Only the images of the requested pages are described (`--units`,
   or `units=` in Python). The other pages are still narrated, so navigation works. **Images are then sent to Google**; see the document-reader README.
 
+**Summaries and questions.** These come from `ai/lecture-summarization` and
+`ai/question-generation`. **Text is sent to Google.**
+- `--summaries` (`summaries=True`) reads a page summary right after each requested page, as a
+  segment of kind `page_summary`: «ملخص تلقائي: …» and the key points.
+- `--questions` (`questions=True`) makes practice questions. `read_summaries=False` makes the
+  summaries without reading them after each page.
+- `Navigator.summarize()` («لخّصلي الصفحة») returns the current page's summary. At the intro or
+  the end it returns the file summary.
+- `Navigator.ask_me(wait_seconds=8)` («اسألني») returns three segments: `question`, then `wait`
+  (the frontend pauses for `position.seconds` or until the student is ready), then `answer`. Each
+  call asks the next question of the page.
+- Without summaries or questions, these return «لا يوجد ملخص متاح هنا.» or
+  «لا توجد أسئلة متاحة هنا.».
+
 **Scanned pages and photos (OCR).** With `--ocr` (or `ocr=True`), the requested pages that need
 OCR are read with the document-reader's phase 4. **Page images are sent to Google**, with
 Tesseract as the local fallback.

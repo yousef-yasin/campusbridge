@@ -41,6 +41,10 @@ ai/document-reader/extracted-images/
 ai/document-reader/image-descriptions/
 ai/document-reader/ocr-cache/
 
+# Summaries and questions: reviewable AI result caches
+ai/lecture-summarization/summaries/
+ai/question-generation/questions-cache/
+
 # Audio: ignored everywhere in the project, except the demo MP3 files in docs/demo-audio
 *.wav
 *.mp3
