@@ -1,0 +1,21 @@
+[
+  {
+    "sender": "د. ليال الزبن",
+    "role": "instructor",
+    "sent_at": "2026-11-18T09:30:00+03:00",
+    "text": "تم رفع حل الواجب الثاني على صفحة المساق.",
+    "attachments": ["HW2-solution.pdf"]
+  },
+  {
+    "sender": "أحمد خالد",
+    "role": "student",
+    "sent_at": "2026-11-18T10:05:00+03:00",
+    "text": "Is the quiz open book?"
+  },
+  {
+    "sender": "سارة يوسف",
+    "role": "teaching_assistant",
+    "sent_at": "2026-11-17T18:00:00+03:00",
+    "text": "ساعات المكتب يوم الأربعاء من 12 إلى 2."
+  }
+]

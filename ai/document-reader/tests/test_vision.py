@@ -144,6 +144,26 @@ def test_each_category_is_read_aloud_its_own_way(three_images, cfg):
     assert "وصف تلقائي: تفصيل المعادلة." in detailed
 
 
+def test_a_photo_without_lesson_information_is_decorative(three_images, cfg):
+    # Real case, CLT slide 1: "a person in front of screens" came back as photo (v3) instead of
+    # decorative (v2). The model now answers informative true/false, and the code decides.
+    mood = {"category": "photo", "short_description": "شخص يجلس أمام شاشات تعرض رسوماً بيانية.",
+            "detailed_description": "...", "text_in_image": "", "informative": False,
+            "photo": {"role": "تمهيد بصري لموضوع الدرس"}}
+    lab = dict(mood, short_description="صورة لجهاز قياس الضغط المستخدم في التجربة.", informative=True)
+    engine = FakeVision(mood, lab)
+    with open_document(three_images, cfg) as doc:
+        pages = [doc.page(1), doc.page(2)]
+        ImageDescriber(cfg, engine=engine).describe_pages(pages)
+    prompt = engine.calls[0]["prompt"]
+    assert "informative: true only if" in prompt and "a person at a computer or in front of screens" in prompt
+    assert engine.calls[0]["schema"]["properties"]["informative"] == {"type": "boolean"}
+    assert first_image(pages[0]).image["status"] == "decorative"
+    assert to_speech_text(pages[0])[0].text == "Slide 1."                 # skipped
+    assert (first_image(pages[1]).image["status"], first_image(pages[1]).image["category"]) == ("described", "photo")
+    assert "جهاز قياس الضغط" in to_speech_text(pages[1])[0].text
+
+
 def test_image_limit_per_run_and_cached_images_do_not_count(three_images, cfg):
     cfg.vision_max_images = 2
     engine = FakeVision()

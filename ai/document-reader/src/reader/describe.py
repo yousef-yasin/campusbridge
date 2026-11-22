@@ -26,7 +26,7 @@ from .tables import make_table
 
 log = logging.getLogger(__name__)
 
-PROMPT_VERSION = 3                         # bump when the prompt, schema or language rules change
+PROMPT_VERSION = 4                         # bump when the prompt, schema or language rules change
 CATEGORIES = ("table", "chart", "diagram", "equation", "text", "screenshot", "photo", "decorative")
 _SENDABLE = {"PNG": "image/png", "JPEG": "image/jpeg", "WEBP": "image/webp"}
 _MAX_SIDE = 2048                           # larger images are scaled down before sending
@@ -52,6 +52,7 @@ SCHEMA = {
             "relations": {"type": "array", "items": _STR}}},
         "equation": {"type": "object", "properties": {"written": _STR, "spoken": _STR}},
         "photo": {"type": "object", "properties": {"role": _STR}},
+        "informative": {"type": "boolean"},
     },
     "required": ["category", "short_description", "detailed_description", "text_in_image"],
 }
@@ -64,8 +65,14 @@ Title of this {unit}: {title}
 Text around the image in the material:
 {context}
 
+0. informative: true only if the image shows information the student needs for the lesson:
+   data, values, structure, steps, labels, an example, an experiment, a real object being studied.
+   false if it only sets a mood or illustrates the topic in general, even when it fits the topic:
+   a person at a computer or in front of screens, people in a meeting, generic charts used as
+   decoration, backgrounds, ornaments, logos, icons, clip art, stock photos, the picture of a
+   title slide.
 1. category: one of table, chart, diagram, equation, text, screenshot, photo, decorative.
-   decorative = adds nothing to the lesson (background, ornament, logo, stock decoration).
+   decorative = any image with informative false.
 2. short_description: one or two sentences saying what the image shows and why it matters here.
 3. detailed_description: a complete explanation for a student who cannot see the image.
 4. text_in_image: every piece of text visible in the image, exactly as written, in its original
@@ -181,6 +188,8 @@ class ImageDescriber:
         result = record.get("result") or {}
         manual = record.get("manual") or {}
         category = result.get("category") if result.get("category") in CATEGORIES else "photo"
+        if result.get("informative") is False and category == "photo":
+            category = "decorative"         # a photo that carries no lesson information is skipped
         image.update({
             "category": category,
             "description": clean_text(result.get("short_description", "")),
@@ -214,6 +223,21 @@ class ImageDescriber:
         image.update({"status": "undescribed", "reason": reason})
 
     # --- main --------------------------------------------------------------------------
+    def apply_cached(self, pages: Iterable[Page]) -> int:
+        """Fill image blocks from the cache only: no network call, nothing is sent.
+
+        Returns how many images were found in the cache. Others are left untouched.
+        """
+        found = 0
+        for page in pages:
+            for index, block in enumerate(page.blocks):
+                image = block.image if block.kind == "image" else None
+                record = self._load(image["sha256"]) if image and image.get("sha256") else None
+                if record:
+                    self._apply(image, record, self._context(page, index))
+                    found += 1
+        return found
+
     def describe_pages(self, pages: Iterable[Page]) -> List[str]:
         """Describe every image block in the pages (in place). Returns the warnings."""
         for page in pages:

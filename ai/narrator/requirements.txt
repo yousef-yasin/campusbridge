@@ -1,0 +1,7 @@
+# The narrator reads files with the document-reader module (ai/document-reader/src is put on
+# the path at run time; see config.reader_path). Install its dependencies too.
+-r ../document-reader/requirements.txt
+# Time zone data for zoneinfo (Windows has none built in)
+tzdata>=2024.1
+# Tests
+pytest>=7

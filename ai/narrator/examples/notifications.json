@@ -1,0 +1,40 @@
+[
+  {
+    "type": "lecture_reminder",
+    "course": "الإحصاء",
+    "starts_at": "2026-11-18T12:30:00+03:00",
+    "room": "204"
+  },
+  {
+    "type": "room_change",
+    "course": "الإحصاء",
+    "starts_at": "2026-11-19T10:00:00+03:00",
+    "old_room": "204",
+    "new_room": "310"
+  },
+  {
+    "type": "quiz_reminder",
+    "title": "Quiz 2: Central Limit Theorem",
+    "course": "الإحصاء",
+    "closes_at": "2026-11-19T23:59:00+03:00"
+  },
+  {
+    "type": "assignment_due",
+    "title": "Homework 3: Sampling Distributions",
+    "course": "الإحصاء",
+    "due_at": "2026-11-21T23:59:00+03:00"
+  },
+  {
+    "type": "emergency",
+    "message": "يجب إخلاء مبنى كلية العلوم فوراً بسبب إنذار حريق.",
+    "location": "مبنى كلية العلوم",
+    "instructions": "التوجه إلى الساحة الرئيسية عبر أقرب مخرج، وعدم استخدام المصاعد.",
+    "sent_at": "2026-11-18T11:55:00+03:00"
+  },
+  {
+    "type": "technical_issue",
+    "message": "رفع الملفات على المنصة متوقف مؤقتاً.",
+    "service": "رفع الواجبات",
+    "expected_fix_at": "2026-11-18T15:00:00+03:00"
+  }
+]
