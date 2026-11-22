@@ -2,7 +2,7 @@
 from dataclasses import asdict, dataclass, field
 from typing import Any, Dict, List, Optional
 
-KINDS = ("heading", "paragraph", "list", "table", "image", "chart", "notes")
+KINDS = ("heading", "paragraph", "list", "table", "image", "chart", "notes", "handwritten", "references")
 
 
 @dataclass
@@ -24,6 +24,7 @@ class Block:
     table: Optional[Dict[str, Any]] = None  # {"columns": [...], "rows": [[...]], "total_rows": n}
     image: Optional[Dict[str, Any]] = None  # {"path", "sha256", "ext", "width", "height", "description", ...}
     chart: Optional[Dict[str, Any]] = None  # native chart: {"type", "title", "categories", "series", ...}
+    source: Optional[str] = None            # "ocr" when the text was read from an image of the page
 
     @property
     def location(self) -> Dict[str, Any]:
@@ -42,8 +43,9 @@ class Page:
     unit_type: str
     blocks: List[Block] = field(default_factory=list)
     sheet: Optional[str] = None
-    needs_ocr: bool = False                 # PDF page with images but no text layer
+    needs_ocr: bool = False                 # PDF page with images but no text layer, or an image file
     warnings: List[str] = field(default_factory=list)
+    ocr: Optional[Dict[str, Any]] = None    # set by PageOCR: {"status", "engine", "model", "language", ...}
 
     @property
     def label(self) -> str:
@@ -60,6 +62,8 @@ class Page:
             data["sheet"] = self.sheet
         if self.warnings:
             data["warnings"] = self.warnings
+        if self.ocr:
+            data["ocr"] = self.ocr
         return data
 
 

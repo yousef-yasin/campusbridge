@@ -45,6 +45,8 @@ def build_parser() -> argparse.ArgumentParser:
     f.add_argument("--course"), f.add_argument("--instructor"), f.add_argument("--uploaded-at"), f.add_argument("--title")
     f.add_argument("--units", help="only these pages/slides, e.g. 1-3 or 4,21 (intro and outro are kept)")
     f.add_argument("--describe", action="store_true", help="describe images with Gemini (sent to Google)")
+    f.add_argument("--ocr", action="store_true",
+                   help="read scanned pages and photos (page images are sent to Google; Tesseract fallback)")
 
     q = sub.add_parser("quiz", help="narrate a quiz JSON")
     q.add_argument("path")
@@ -74,7 +76,8 @@ def run(args) -> list:
             if getattr(args, key):
                 meta[key] = getattr(args, key)
         wanted = _units(args.units) if args.units else None
-        narration = FileNarrator(config).narrate(args.path, meta, now=now, describe=args.describe, units=wanted)
+        narration = FileNarrator(config).narrate(args.path, meta, now=now, describe=args.describe, units=wanted,
+                                                 ocr=args.ocr)
         for w in narration.warnings:
             print(f"warning: {w}", file=sys.stderr)
         if not args.units:

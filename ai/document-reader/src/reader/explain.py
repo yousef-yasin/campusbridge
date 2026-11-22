@@ -41,6 +41,21 @@ NO_DESCRIPTION = {"ar": "صورة بدون وصف.", "mixed": "صورة بدون
 # A description whose numbers were not found in the image (status needs_review)
 REVIEW_NUMBERS = {"ar": "الأرقام كما وردت في الصورة:", "mixed": "الأرقام كما وردت في الصورة:",
                   "en": "Numbers as written in the image:"}
+# Phase 4: text read from an image of the page (OCR)
+OCR_INTRO = {"ar": "نص مستخرج تلقائياً من صورة الصفحة.", "mixed": "نص مستخرج تلقائياً من صورة الصفحة.",
+             "en": "Text extracted automatically from the page image."}
+OCR_INTRO_LOCAL = {"ar": "نص مستخرج تلقائياً من صورة الصفحة بقارئ محلي، وقد تكون فيه أخطاء.",
+                   "mixed": "نص مستخرج تلقائياً من صورة الصفحة بقارئ محلي، وقد تكون فيه أخطاء.",
+                   "en": "Text extracted automatically from the page image with a local reader; it may contain mistakes."}
+# References and footnotes (not read by default)
+REFERENCES_NOTE = {"ar": "في مراجع بآخر الصفحة.", "mixed": "في مراجع بآخر الصفحة.",
+                   "en": "There are references at the end of the page."}
+REFERENCES_LABEL = {"ar": "المراجع:", "mixed": "المراجع:", "en": "References:"}
+HANDWRITTEN_LABEL = {"ar": "ملاحظة بخط اليد:", "mixed": "ملاحظة بخط اليد:", "en": "Handwritten note:"}
+UNCLEAR_WORD = {"ar": "كلمة غير واضحة", "mixed": "كلمة غير واضحة", "en": "unclear word"}
+NEEDS_OCR = {"ar": "صفحة ممسوحة لم يُستخرج نصها بعد، وتحتاج OCR.",
+             "mixed": "صفحة ممسوحة لم يُستخرج نصها بعد، وتحتاج OCR.",
+             "en": "Scanned page: its text has not been extracted yet (OCR needed)."}
 REVIEW_NO_TEXT = {"ar": "أرقام هذا الوصف غير مؤكدة.", "mixed": "أرقام هذا الوصف غير مؤكدة.",
                   "en": "The numbers in this description are not confirmed."}
 

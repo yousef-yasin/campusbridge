@@ -23,6 +23,7 @@ def clean_env(monkeypatch, tmp_path):
     monkeypatch.setenv("READER_IMAGES_DIR", str(tmp_path / "images"))
     monkeypatch.setenv("READER_DESCRIPTIONS_DIR", str(tmp_path / "descriptions"))
     monkeypatch.setenv("READER_ENV_FILE", str(tmp_path / "no.env"))     # never the real key
+    monkeypatch.setenv("READER_OCR_DIR", str(tmp_path / "ocr"))
 
     def no_network(*args, **kwargs):
         raise AssertionError("test tried to reach Gemini; inject a fake vision engine")
@@ -34,7 +35,7 @@ def clean_env(monkeypatch, tmp_path):
 def cfg(tmp_path):
     from reader import ReaderConfig
     return ReaderConfig(images_dir=str(tmp_path / "images"), descriptions_dir=str(tmp_path / "descriptions"),
-                        env_file=str(tmp_path / "test.env"))
+                        env_file=str(tmp_path / "test.env"), ocr_dir=str(tmp_path / "ocr"))
 
 
 @pytest.fixture

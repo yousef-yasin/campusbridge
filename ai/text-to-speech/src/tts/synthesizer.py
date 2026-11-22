@@ -7,6 +7,7 @@ from .config import TTSConfig, check_speed
 from .engines import EdgeEngine, Engine, PiperEngine, get_engine
 from .errors import (ConfigError, EmptyTextError, EngineUnavailableError, InputNotFoundError,
                      SynthesisError, TTSError)
+from .pronunciation import Pronunciations
 from .text import Segment, detect_language, prepare, split_paragraphs
 
 log = logging.getLogger(__name__)
@@ -28,6 +29,7 @@ class Synthesizer:
         self.config = (config or TTSConfig.from_env()).validate()
         self._engine = engine   # injected engine (tests)
         self.cache = cache or AudioCache(self.config.cache_dir, self.config.cache)
+        self.pronunciations = Pronunciations(self.config.pronunciation_file, self.config.pronunciation)
         self.last_error: Optional[str] = None
         self.fallbacks: List[str] = []          # e.g. ["edge:ar-JO-SanaNeural"] or ["piper"]
         self.fallback_reasons: List[str] = []   # the errors that led to the fallback
@@ -42,6 +44,7 @@ class Synthesizer:
                  engine: Optional[Engine] = None) -> List[Segment]:
         """The normalized pieces that would be spoken, each with its language.
 
+        The pronunciation dictionary is applied first (place names, scientific terms).
         With a single multilingual voice the whole text is one piece (no language split).
         A raw-text engine (Gemini) gets the text as written, split only at paragraph breaks
         when it is longer than the engine's request limit.
@@ -50,6 +53,7 @@ class Synthesizer:
         if language not in ("auto", "ar", "en"):
             raise ConfigError(f"Unknown language '{language}' (use: auto, ar, en)")
         engine = engine or self.engine
+        text = self.pronunciations.apply(text or "")      # spoken form only; the caller's text is unchanged
         if getattr(engine, "raw_text", False):
             return [Segment(detect_language(p, self.config.fallback_language), p)
                     for p in split_paragraphs(text, getattr(engine, "max_chars", 0))]

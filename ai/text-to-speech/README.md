@@ -238,6 +238,38 @@ Errors (all subclasses of `TTSError`): `ConfigError`, `EmptyTextError`, `InputNo
 `EngineUnavailableError` (and its subclass `QuotaExceededError` for 429), `VoiceNotFoundError`,
 `SynthesisError`, `PhraseError`.
 
+## Pronunciation dictionary
+
+`pronunciation.json` (committed, in this folder) lists words with their correct diacritics:
+Jordanian places (الرصيفة → الرُّصَيْفَة, الحسا, الشيدية, صويلح, ناعور, الأزرق, الريشة,
+وادي عربة, ضانا, ...) and scientific terms (المغنيسيوم, البوتاسيوم, المنغنيز, اليورانيوم,
+...).
+
+How it is applied:
+- It runs on the text right before it is sent to any engine (Gemini, Edge or Piper). It changes
+  only what is spoken; the text the caller passed, and what the app shows, stay as written.
+- It matches whole words, alone or with the prefixes و ف ب ك ل, and للـ for words starting with
+  ال (للرصيفة).
+- Words already written with diacritics are left alone.
+- Spoken segments are cached by their spoken text, so a new entry gives new audio.
+
+Adding words:
+- Edit the JSON (any group, or a new group), or use the API:
+
+  ```python
+  from tts import Pronunciations
+  book = Pronunciations("pronunciation.json")
+  book.add("الطفيلة", "الطَّفِيلَة")            # group "custom" unless given; the file is saved
+  book.apply("في الطفيلة")                     # -> "في الطَّفِيلَة"
+  ```
+- The spoken form must be the same word with diacritics only. `add` refuses anything else, and a
+  test checks the whole file.
+- Leave out words whose vocalization depends on meaning, such as عمان (Amman or Oman) and معان
+  (the city, or "meanings").
+
+Settings: `TTS_PRONUNCIATION_FILE` points to another file, and `TTS_PRONUNCIATION=0` turns the
+dictionary off.
+
 ## API key safety
 
 - The key lives only in `.env` (git-ignored) or the process environment. It is read at request

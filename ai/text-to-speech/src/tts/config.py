@@ -43,6 +43,8 @@ class TTSConfig:
     cache: bool = True
     cache_dir: str = str(_ROOT / ".tts-cache")
     phrases_file: str = str(_ROOT / "data" / "phrases.json")
+    pronunciation_file: str = str(_ROOT / "pronunciation.json")   # word -> spoken form (diacritics)
+    pronunciation: bool = True                    # apply it to the text before any engine
     max_chars: int = 250                          # longer sentences are split further
     timeout: int = 30                             # edge network timeout, seconds
 
@@ -72,6 +74,8 @@ class TTSConfig:
                 cache=e("TTS_CACHE", "1").lower() not in ("0", "false", "no"),
                 cache_dir=e("TTS_CACHE_DIR", cls.cache_dir),
                 phrases_file=e("TTS_PHRASES_FILE", cls.phrases_file),
+                pronunciation_file=e("TTS_PRONUNCIATION_FILE", cls.pronunciation_file),
+                pronunciation=e("TTS_PRONUNCIATION", "1").lower() not in ("0", "false", "no"),
                 max_chars=int(e("TTS_MAX_CHARS", cls.max_chars)),
                 timeout=int(e("TTS_TIMEOUT", cls.timeout)),
             )
