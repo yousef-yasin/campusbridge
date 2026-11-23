@@ -55,7 +55,7 @@ def test_semantic_search_failure_falls_back_to_keywords(built):
 def test_answer_cites_sources_and_is_ready_for_speech(built):
     a, engine = make(built, cite("عندما يكون حجم العينة 30 على الأقل يقترب توزيع المعاينة للمتوسط من "
                                  "normal distribution (التوزيع الطبيعي) [S]."))
-    r = a.ask("متى يصبح توزيع المعاينة طبيعياً؟", ["STAT101"])
+    r = a.ask("متى يقترب توزيع المعاينة للمتوسط من التوزيع الطبيعي؟", ["STAT101"])
     assert r.status == "answered" and r.intent == "question" and r.problems == []
     assert r.answer.endswith("(التوزيع الطبيعي) [CLT.pptx، سلايد 3].")
     assert r.sources[0]["file"] == "CLT.pptx" and r.sources[0]["unit"] == 3 and r.sources[0]["blocks"] == ["b1", "b2", "b3"]
@@ -70,7 +70,7 @@ def test_answer_cites_sources_and_is_ready_for_speech(built):
 def test_numbers_and_terms_not_in_the_chunks_need_review(built):
     a, _ = make(built, {"found": True, "sources": ["S1"],
                         "answer": "يكفي حجم عينة 25 حسب Chebyshev theorem [S1]."})
-    r = a.ask("متى يصبح توزيع المعاينة طبيعياً؟", ["STAT101"])
+    r = a.ask("متى يقترب توزيع المعاينة للمتوسط من التوزيع الطبيعي؟", ["STAT101"])
     assert r.status == "needs_review"
     assert any("25" in p for p in r.problems) and any("chebyshev" in p for p in r.problems)
     assert "قد يحتاج هذا الجواب إلى مراجعة" in r.speech
@@ -79,7 +79,7 @@ def test_numbers_and_terms_not_in_the_chunks_need_review(built):
 def test_wrong_glossary_meaning_and_missing_source_need_review(built):
     a, _ = make(built, {"found": True, "sources": [],
                         "answer": "يقترب التوزيع من normal distribution (التوزيع العادي) عند حجم عينة كبير."})
-    r = a.ask("متى يصبح توزيع المعاينة طبيعياً؟", ["STAT101"])
+    r = a.ask("متى يقترب توزيع المعاينة للمتوسط من التوزيع الطبيعي؟", ["STAT101"])
     assert r.status == "needs_review"
     assert any("glossary" in p for p in r.problems) and "the answer names no source" in r.problems
 
@@ -115,8 +115,8 @@ def test_summarise_the_lecture_uses_lecture_summarization(built):
     a, engine = make(built, summarize=summarize)
     r = a.ask("لخص المحاضرة", ["STAT101"])
     assert r.intent == "summary" and r.status == "answered" and r.answer == "المحاضرة عن توزيع المعاينة."
-    assert seen == {"units": [1, 2, 3], "title": "Sampling Distributions"} and engine.prompts == []
-    assert [s["unit"] for s in r.sources] == [1, 2, 3]
+    assert seen == {"units": [2, 3], "title": "Sampling Distributions"} and engine.prompts == []   # no title slide
+    assert [s["unit"] for s in r.sources] == [2, 3]
     both = a.ask("لخص المحاضرة", ["STAT101", "AGR100"])
     assert both.status == "clarify" and "CLT.pptx" in both.answer and "olive.docx" in both.answer
 

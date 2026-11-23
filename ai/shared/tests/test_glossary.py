@@ -14,11 +14,12 @@ STT_SRC = Path(__file__).resolve().parents[2] / "speech-to-text" / "src"
 
 def test_default_glossary_loads_with_the_required_terms():
     g = load_glossary()
-    assert (g.course, g.version) == ("CB-GENERAL", 1)
+    assert (g.course, g.version) == ("CB-GENERAL", 2)               # 2: health terms of the Cancer file
     assert g.entries["sampling distribution"].meaning == "توزيع المعاينة"
     assert g.entries["central limit theorem"].meaning == "نظرية النهاية المركزية"
     domains = {e.domain for e in g.entries.values()}
-    assert {"statistics", "information security", "machine learning"} <= domains
+    assert {"statistics", "information security", "machine learning", "health"} <= domains
+    assert g.entries["biopsy"].meaning == "الخزعة"
 
 
 def test_integrity_check_refuses_an_edited_file(tmp_path):
@@ -28,10 +29,10 @@ def test_integrity_check_refuses_an_edited_file(tmp_path):
     path.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
     with pytest.raises(GlossaryError, match="integrity"):
         load_glossary(path)
-    data["version"] = 2
+    data["version"] = 3
     data["sha256"] = canonical_sha256(data)                       # a new, sealed version is fine
     path.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
-    assert load_glossary(path).version == 2
+    assert load_glossary(path).version == 3
 
 
 @pytest.mark.skipif(not (STT_SRC / "stt" / "glossary.py").is_file(), reason="speech-to-text module not present")
@@ -45,7 +46,7 @@ def test_speech_to_text_loader_accepts_the_same_file():
         from stt.glossary import compute_sha256, load_glossary as stt_load
         g = stt_load(DEFAULT_PATH)
         data = json.loads(DEFAULT_PATH.read_text(encoding="utf-8"))
-        assert (g.course, g.version, g.sha256) == ("CB-GENERAL", 1, compute_sha256(data))
+        assert (g.course, g.version, g.sha256) == ("CB-GENERAL", 2, compute_sha256(data))
         assert len(g.terms) == len(load_glossary().entries)
     finally:
         for k in [k for k in sys.modules if k == "stt" or k.startswith("stt.")]:

@@ -1,0 +1,2046 @@
+{
+ "run": "2026-11-24T00:08:19",
+ "questions_file": "C:\\Projects\\Takamul\\ai\\lecture-assistant\\eval\\questions.json",
+ "questions_version": 2,
+ "glossary": {
+  "course": "CB-GENERAL",
+  "version": 2,
+  "sha256": "8a06a0c1f51c8c9a52a21cce7722448794e600d9760aa72b8d95f2337b8f7a77"
+ },
+ "summary": {
+  "questions": 32,
+  "evaluated": 32,
+  "unavailable": 0,
+  "decision_accuracy": 0.969,
+  "refusal_precision": 0.875,
+  "refusal_recall": 1.0,
+  "hit_at_1": 0.76,
+  "hit_at_5": 1.0,
+  "complete_answers": 0.76,
+  "correct_sources": 0.958,
+  "needs_review": 1,
+  "mean_seconds": 12.3,
+  "leaks": 0
+ },
+ "by_type": {
+  "text": {
+   "questions": 12,
+   "evaluated": 12,
+   "unavailable": 0,
+   "decision_accuracy": 1.0,
+   "refusal_precision": null,
+   "refusal_recall": null,
+   "hit_at_1": 0.75,
+   "hit_at_5": 1.0,
+   "complete_answers": 0.917,
+   "correct_sources": 1.0,
+   "needs_review": 0,
+   "mean_seconds": 20.5,
+   "leaks": 0
+  },
+  "visual": {
+   "questions": 4,
+   "evaluated": 4,
+   "unavailable": 0,
+   "decision_accuracy": 1.0,
+   "refusal_precision": null,
+   "refusal_recall": null,
+   "hit_at_1": 1.0,
+   "hit_at_5": 1.0,
+   "complete_answers": 1.0,
+   "correct_sources": 1.0,
+   "needs_review": 0,
+   "mean_seconds": 17.0,
+   "leaks": 0
+  },
+  "cross_language": {
+   "questions": 5,
+   "evaluated": 5,
+   "unavailable": 0,
+   "decision_accuracy": 0.8,
+   "refusal_precision": 0.0,
+   "refusal_recall": null,
+   "hit_at_1": 0.8,
+   "hit_at_5": 1.0,
+   "complete_answers": 0.6,
+   "correct_sources": 1.0,
+   "needs_review": 0,
+   "mean_seconds": 7.9,
+   "leaks": 0
+  },
+  "not_found": {
+   "questions": 5,
+   "evaluated": 5,
+   "unavailable": 0,
+   "decision_accuracy": 1.0,
+   "refusal_precision": 1.0,
+   "refusal_recall": 1.0,
+   "hit_at_1": null,
+   "hit_at_5": null,
+   "complete_answers": null,
+   "correct_sources": null,
+   "needs_review": 0,
+   "mean_seconds": 2.0,
+   "leaks": 0
+  },
+  "follow_up": {
+   "questions": 2,
+   "evaluated": 2,
+   "unavailable": 0,
+   "decision_accuracy": 1.0,
+   "refusal_precision": null,
+   "refusal_recall": null,
+   "hit_at_1": 0.0,
+   "hit_at_5": 1.0,
+   "complete_answers": 0.0,
+   "correct_sources": 0.5,
+   "needs_review": 1,
+   "mean_seconds": 4.7,
+   "leaks": 0
+  },
+  "colloquial": {
+   "questions": 2,
+   "evaluated": 2,
+   "unavailable": 0,
+   "decision_accuracy": 1.0,
+   "refusal_precision": null,
+   "refusal_recall": null,
+   "hit_at_1": 1.0,
+   "hit_at_5": 1.0,
+   "complete_answers": 0.5,
+   "correct_sources": 1.0,
+   "needs_review": 0,
+   "mean_seconds": 10.8,
+   "leaks": 0
+  },
+  "permission": {
+   "questions": 2,
+   "evaluated": 2,
+   "unavailable": 0,
+   "decision_accuracy": 1.0,
+   "refusal_precision": 1.0,
+   "refusal_recall": 1.0,
+   "hit_at_1": null,
+   "hit_at_5": null,
+   "complete_answers": null,
+   "correct_sources": null,
+   "needs_review": 0,
+   "mean_seconds": 0.0,
+   "leaks": 0
+  }
+ },
+ "rows": [
+  {
+   "id": "T01",
+   "type": "text",
+   "question": "What's the formula for the standard error of the sample means, and what do its letters stand for?",
+   "courses": [
+    "STAT-CLT",
+    "SEC-CH1-INFOSEC"
+   ],
+   "expected_status": "answered",
+   "status": "answered",
+   "intent": "question",
+   "answer": "تعتمد صيغة standard error (الخطأ المعياري) على قسمة standard deviation (الانحراف المعياري) للمجتمع على الجذر التربيعي لـ sample size (حجم العينة) [CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx، سلايد 11]. وترمز فيه σ إلى الانحراف المعياري للمجتمع بأكمله، وترمز σx̄ إلى الانحراف المعياري لمتوسطات العينات، بينما يمثل n عدد الملاحظات في كل عينة [CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx، سلايد 11].",
+   "needs_review": false,
+   "problems": [],
+   "notes": [],
+   "unavailable": false,
+   "decision_ok": true,
+   "retrieved": [
+    {
+     "file": "CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx",
+     "unit": 12,
+     "similarity": 0.684,
+     "coverage": 0.4
+    },
+    {
+     "file": "CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx",
+     "unit": 11,
+     "similarity": 0.724,
+     "coverage": 0.4
+    },
+    {
+     "file": "CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx",
+     "unit": 5,
+     "similarity": 0.677,
+     "coverage": 0.2
+    },
+    {
+     "file": "CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx",
+     "unit": 16,
+     "similarity": 0.672,
+     "coverage": 0.0
+    },
+    {
+     "file": "CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx",
+     "unit": 7,
+     "similarity": 0.652,
+     "coverage": 0.2
+    }
+   ],
+   "best_similarity": 0.724,
+   "best_coverage": 0.4,
+   "hit1": false,
+   "hit5": true,
+   "rank": 2,
+   "missing": [
+    "σ / √n",
+    "population standard deviation | standard deviation of the whole population"
+   ],
+   "complete": false,
+   "cited": [
+    "CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx slide 11"
+   ],
+   "source_ok": true,
+   "seconds": 3.4,
+   "attempts": 1,
+   "model": "gemini-3.5-flash-lite"
+  },
+  {
+   "id": "T02",
+   "type": "text",
+   "question": "In the second example, what's the chance that a student gets a score between 350 and 400?",
+   "courses": [
+    "STAT-CLT"
+   ],
+   "expected_status": "answered",
+   "status": "answered",
+   "intent": "question",
+   "answer": "تساوي probability (الاحتمال) لأن يحصل الطالب على درجة بين 350 و 400 حوالي 40.03% [CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx، سلايد 19].",
+   "needs_review": false,
+   "problems": [],
+   "notes": [],
+   "unavailable": false,
+   "decision_ok": true,
+   "retrieved": [
+    {
+     "file": "CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx",
+     "unit": 19,
+     "similarity": 0.856,
+     "coverage": 0.67
+    },
+    {
+     "file": "CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx",
+     "unit": 16,
+     "similarity": 0.667,
+     "coverage": 0.22
+    },
+    {
+     "file": "CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx",
+     "unit": 18,
+     "similarity": 0.746,
+     "coverage": 0.22
+    },
+    {
+     "file": "CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx",
+     "unit": 7,
+     "similarity": 0.659,
+     "coverage": 0.22
+    },
+    {
+     "file": "CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx",
+     "unit": 9,
+     "similarity": 0.651,
+     "coverage": 0.22
+    }
+   ],
+   "best_similarity": 0.856,
+   "best_coverage": 0.67,
+   "hit1": true,
+   "hit5": true,
+   "rank": 1,
+   "missing": [],
+   "complete": true,
+   "cited": [
+    "CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx slide 19"
+   ],
+   "source_ok": true,
+   "seconds": 1.3,
+   "attempts": 1,
+   "model": "gemini-3.5-flash-lite"
+  },
+  {
+   "id": "T03",
+   "type": "text",
+   "question": "In the Aramex challenge, how likely is it that the Cessna can take all 36 boxes from Amman to Cairo?",
+   "courses": [
+    "STAT-CLT"
+   ],
+   "expected_status": "answered",
+   "status": "answered",
+   "intent": "question",
+   "answer": "There is a 98.3% probability that the plane can carry the 36 boxes from Amman湯 to Cairo within its capacity [CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx، سلايد 21].",
+   "needs_review": false,
+   "problems": [],
+   "notes": [],
+   "unavailable": false,
+   "decision_ok": true,
+   "retrieved": [
+    {
+     "file": "CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx",
+     "unit": 20,
+     "similarity": 0.821,
+     "coverage": 0.8
+    },
+    {
+     "file": "CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx",
+     "unit": 21,
+     "similarity": 0.806,
+     "coverage": 0.5
+    },
+    {
+     "file": "CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx",
+     "unit": 18,
+     "similarity": 0.589,
+     "coverage": 0.1
+    },
+    {
+     "file": "CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx",
+     "unit": 10,
+     "similarity": 0.561,
+     "coverage": 0.2
+    },
+    {
+     "file": "CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx",
+     "unit": 9,
+     "similarity": 0.562,
+     "coverage": 0.1
+    }
+   ],
+   "best_similarity": 0.821,
+   "best_coverage": 0.8,
+   "hit1": false,
+   "hit5": true,
+   "rank": 2,
+   "missing": [],
+   "complete": true,
+   "cited": [
+    "CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx slide 21"
+   ],
+   "source_ok": true,
+   "seconds": 13.5,
+   "attempts": 1,
+   "model": "gemini-3.5-flash-lite"
+  },
+  {
+   "id": "T04",
+   "type": "text",
+   "question": "When they asked five retirees at random, what average retirement age did that first sample give?",
+   "courses": [
+    "STAT-CLT",
+    "HEALTH-CANCER"
+   ],
+   "expected_status": "answered",
+   "status": "answered",
+   "intent": "question",
+   "answer": "عندما تم أخذ عينة عشوائية من خمسة متقاعدين، كانت النتيجة للسсем عينة أو متوسط العينة x̄ للمجموعة الأولى هي 67.2 years [CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx، سلايد 14].",
+   "needs_review": false,
+   "problems": [],
+   "notes": [],
+   "unavailable": false,
+   "decision_ok": true,
+   "retrieved": [
+    {
+     "file": "CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx",
+     "unit": 13,
+     "similarity": 0.738,
+     "coverage": 0.36
+    },
+    {
+     "file": "CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx",
+     "unit": 14,
+     "similarity": 0.778,
+     "coverage": 0.55
+    },
+    {
+     "file": "CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx",
+     "unit": 7,
+     "similarity": 0.648,
+     "coverage": 0.27
+    },
+    {
+     "file": "CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx",
+     "unit": 5,
+     "similarity": 0.654,
+     "coverage": 0.18
+    },
+    {
+     "file": "CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx",
+     "unit": 6,
+     "similarity": 0.648,
+     "coverage": 0.18
+    }
+   ],
+   "best_similarity": 0.778,
+   "best_coverage": 0.55,
+   "hit1": false,
+   "hit5": true,
+   "rank": 2,
+   "missing": [],
+   "complete": true,
+   "cited": [
+    "CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx slide 14"
+   ],
+   "source_ok": true,
+   "seconds": 1.8,
+   "attempts": 1,
+   "model": "gemini-3.5-flash-lite"
+  },
+  {
+   "id": "T05",
+   "type": "text",
+   "question": "Which techniques does the chapter mention for keeping data integrity?",
+   "courses": [
+    "SEC-CH1-INFOSEC"
+   ],
+   "expected_status": "answered",
+   "status": "answered",
+   "intent": "question",
+   "answer": "تتحقق Integrity (السلامة) باستخدام Hashing algorithms مثل SHA-256 والتوقيعات الرقمية digital signatures وإجراءات التحكم الصارم في التغيير strict change control procedures [Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf، صفحة 6].",
+   "needs_review": false,
+   "problems": [],
+   "notes": [],
+   "unavailable": false,
+   "decision_ok": true,
+   "retrieved": [
+    {
+     "file": "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf",
+     "unit": 6,
+     "similarity": 0.743,
+     "coverage": 0.33
+    },
+    {
+     "file": "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf",
+     "unit": 4,
+     "similarity": 0.675,
+     "coverage": 0.17
+    },
+    {
+     "file": "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf",
+     "unit": 10,
+     "similarity": 0.656,
+     "coverage": 0.17
+    },
+    {
+     "file": "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf",
+     "unit": 2,
+     "similarity": 0.621,
+     "coverage": 0.33
+    },
+    {
+     "file": "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf",
+     "unit": 5,
+     "similarity": 0.664,
+     "coverage": 0.17
+    }
+   ],
+   "best_similarity": 0.743,
+   "best_coverage": 0.33,
+   "hit1": true,
+   "hit5": true,
+   "rank": 1,
+   "missing": [],
+   "complete": true,
+   "cited": [
+    "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf page 6"
+   ],
+   "source_ok": true,
+   "seconds": 2.7,
+   "attempts": 1,
+   "model": "gemini-3.5-flash-lite"
+  },
+  {
+   "id": "T06",
+   "type": "text",
+   "question": "How much ransom was paid in the Colonial Pipeline case, and when did it happen?",
+   "courses": [
+    "SEC-CH1-INFOSEC",
+    "STAT-CLT"
+   ],
+   "expected_status": "answered",
+   "status": "answered",
+   "intent": "question",
+   "answer": "حدث الهجوم المذكور في عام 2021 [Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf، صفحة 18]. تم دفع فدية بقيمة 4.4 مليون دولار في هذه القضية [Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf، صفحة 18].",
+   "needs_review": false,
+   "problems": [],
+   "notes": [],
+   "unavailable": false,
+   "decision_ok": true,
+   "retrieved": [
+    {
+     "file": "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf",
+     "unit": 18,
+     "similarity": 0.753,
+     "coverage": 0.43
+    },
+    {
+     "file": "CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx",
+     "unit": 21,
+     "similarity": 0.506,
+     "coverage": 0.14
+    },
+    {
+     "file": "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf",
+     "unit": 16,
+     "similarity": 0.62,
+     "coverage": 0.0
+    },
+    {
+     "file": "CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx",
+     "unit": 6,
+     "similarity": null,
+     "coverage": 0.14
+    },
+    {
+     "file": "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf",
+     "unit": 19,
+     "similarity": 0.602,
+     "coverage": 0.0
+    }
+   ],
+   "best_similarity": 0.753,
+   "best_coverage": 0.43,
+   "hit1": true,
+   "hit5": true,
+   "rank": 1,
+   "missing": [],
+   "complete": true,
+   "cited": [
+    "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf page 18"
+   ],
+   "source_ok": true,
+   "seconds": 84.1,
+   "attempts": 1,
+   "model": "gemini-3.5-flash-lite"
+  },
+  {
+   "id": "T07",
+   "type": "text",
+   "question": "The SolarWinds hack is given as an example of which type of attack?",
+   "courses": [
+    "SEC-CH1-INFOSEC"
+   ],
+   "expected_status": "answered",
+   "status": "answered",
+   "intent": "question",
+   "answer": "يعتبر SolarWinds Attack مثالاً كلاسيكياً على Supply Chain Attack [Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf، صفحة 16].",
+   "needs_review": false,
+   "problems": [],
+   "notes": [],
+   "unavailable": false,
+   "decision_ok": true,
+   "retrieved": [
+    {
+     "file": "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf",
+     "unit": 16,
+     "similarity": 0.819,
+     "coverage": 0.5
+    },
+    {
+     "file": "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf",
+     "unit": 18,
+     "similarity": 0.713,
+     "coverage": 0.5
+    },
+    {
+     "file": "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf",
+     "unit": 17,
+     "similarity": 0.699,
+     "coverage": 0.33
+    },
+    {
+     "file": "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf",
+     "unit": 7,
+     "similarity": 0.662,
+     "coverage": 0.33
+    },
+    {
+     "file": "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf",
+     "unit": 20,
+     "similarity": 0.707,
+     "coverage": 0.17
+    }
+   ],
+   "best_similarity": 0.819,
+   "best_coverage": 0.5,
+   "hit1": true,
+   "hit5": true,
+   "rank": 1,
+   "missing": [],
+   "complete": true,
+   "cited": [
+    "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf page 16"
+   ],
+   "source_ok": true,
+   "seconds": 5.6,
+   "attempts": 1,
+   "model": "gemini-3.5-flash-lite"
+  },
+  {
+   "id": "T08",
+   "type": "text",
+   "question": "Back in the mainframe days, what was security mostly about?",
+   "courses": [
+    "SEC-CH1-INFOSEC"
+   ],
+   "expected_status": "answered",
+   "status": "answered",
+   "intent": "question",
+   "answer": "في فترة الحواسيب الكبيرة أو ما تعرف بـ Mainframe Era، كان التركيز منصباً على physical security (الأمن المادي) وAccess Control [Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf، صفحة 14]. وكان الأمن يعني إغلاق غرفة الكمبيوتر واستخدام كلمات مرور بسيطة للتحكم في صلاحيات تسجيل الدخول [Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf، صفحة 14].",
+   "needs_review": false,
+   "problems": [],
+   "notes": [],
+   "unavailable": false,
+   "decision_ok": true,
+   "retrieved": [
+    {
+     "file": "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf",
+     "unit": 14,
+     "similarity": 0.78,
+     "coverage": 0.4
+    },
+    {
+     "file": "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf",
+     "unit": 9,
+     "similarity": 0.692,
+     "coverage": 0.2
+    },
+    {
+     "file": "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf",
+     "unit": 13,
+     "similarity": 0.681,
+     "coverage": 0.2
+    },
+    {
+     "file": "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf",
+     "unit": 3,
+     "similarity": 0.686,
+     "coverage": 0.2
+    },
+    {
+     "file": "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf",
+     "unit": 8,
+     "similarity": 0.661,
+     "coverage": 0.2
+    }
+   ],
+   "best_similarity": 0.78,
+   "best_coverage": 0.4,
+   "hit1": true,
+   "hit5": true,
+   "rank": 1,
+   "missing": [],
+   "complete": true,
+   "cited": [
+    "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf page 14"
+   ],
+   "source_ok": true,
+   "seconds": 7.1,
+   "attempts": 1,
+   "model": "gemini-3.5-flash-lite"
+  },
+  {
+   "id": "T09",
+   "type": "text",
+   "question": "How many people got cancer and how many died from it worldwide in 2022?",
+   "courses": [
+    "HEALTH-CANCER"
+   ],
+   "expected_status": "answered",
+   "status": "answered",
+   "intent": "question",
+   "answer": "في عام 2022، كان هناك ما يقدر بنحو 20 million new cancer cases حالة جديدة من السرطان و9.7 million cancer deaths حالة وفاة بسبب السرطان في جميع أنحاء العالم [Cancer_Awareness_English.docx، صفحة 1].",
+   "needs_review": false,
+   "problems": [],
+   "notes": [],
+   "unavailable": false,
+   "decision_ok": true,
+   "retrieved": [
+    {
+     "file": "Cancer_Awareness_English.docx",
+     "unit": 1,
+     "similarity": 0.777,
+     "coverage": 0.71
+    },
+    {
+     "file": "Cancer_Awareness_English.docx",
+     "unit": 3,
+     "similarity": 0.655,
+     "coverage": 0.29
+    },
+    {
+     "file": "Cancer_Awareness_English.docx",
+     "unit": 2,
+     "similarity": 0.652,
+     "coverage": 0.14
+    }
+   ],
+   "best_similarity": 0.777,
+   "best_coverage": 0.71,
+   "hit1": true,
+   "hit5": true,
+   "rank": 1,
+   "missing": [],
+   "complete": true,
+   "cited": [
+    "Cancer_Awareness_English.docx page 1"
+   ],
+   "source_ok": true,
+   "seconds": 100.0,
+   "attempts": 1,
+   "model": "gemini-3.5-flash-lite"
+  },
+  {
+   "id": "T10",
+   "type": "text",
+   "question": "Are there any infections that can lead to cancer?",
+   "courses": [
+    "HEALTH-CANCER",
+    "SEC-CH1-INFOSEC"
+   ],
+   "expected_status": "answered",
+   "status": "answered",
+   "intent": "question",
+   "answer": "نعم، ترتبط بعض أنواع العدوى مثل human papillomavirus (فيروس الورم الحليمي البشري) والتهاب الكبد B وC بأسرطان معين [Cancer_Awareness_English.docx، صفحة 2].",
+   "needs_review": false,
+   "problems": [],
+   "notes": [],
+   "unavailable": false,
+   "decision_ok": true,
+   "retrieved": [
+    {
+     "file": "Cancer_Awareness_English.docx",
+     "unit": 2,
+     "similarity": 0.741,
+     "coverage": 0.5
+    },
+    {
+     "file": "Cancer_Awareness_English.docx",
+     "unit": 1,
+     "similarity": 0.692,
+     "coverage": 0.25
+    },
+    {
+     "file": "Cancer_Awareness_English.docx",
+     "unit": 3,
+     "similarity": 0.683,
+     "coverage": 0.25
+    },
+    {
+     "file": "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf",
+     "unit": 4,
+     "similarity": 0.571,
+     "coverage": 0.25
+    },
+    {
+     "file": "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf",
+     "unit": 16,
+     "similarity": 0.525,
+     "coverage": 0.25
+    }
+   ],
+   "best_similarity": 0.741,
+   "best_coverage": 0.5,
+   "hit1": true,
+   "hit5": true,
+   "rank": 1,
+   "missing": [],
+   "complete": true,
+   "cited": [
+    "Cancer_Awareness_English.docx page 2"
+   ],
+   "source_ok": true,
+   "seconds": 2.4,
+   "attempts": 1,
+   "model": "gemini-3.5-flash-lite"
+  },
+  {
+   "id": "T11",
+   "type": "text",
+   "question": "ما المقصود بطباق السلب؟ وأعطني مثالاً عليه من المحاضرة.",
+   "courses": [
+    "ARABIC-TIBAQ"
+   ],
+   "expected_status": "answered",
+   "status": "answered",
+   "intent": "question",
+   "answer": "يعرف طباق السلب (طباق السلب) بأنه ذكر كلمة ونقيضها عن طريق النفي أو الإثبات [Copy of qaadh-altbaq-walmqablh-fy-allghh-alarbyh.pptx (2).pptx، سلايد 5]. ومن الأمثلة عليه يعلم ولا يعلم، أو تفعل ولا تفعل، أو يحب ولا يكره [Copy of qaadh-altbaq-walmqablh-fy-allghh-alarbyh.pptx (2).pptx، سلايد 5]. كما ورد مثال شعري في قول الشاعر جزعت ولم أجزع من البين مجزعا [Copy of qaadh-altbaq-walmqablh-fy-allghh-alarbyh.pptx (2).pptx، سلايد 8].",
+   "needs_review": false,
+   "problems": [],
+   "notes": [],
+   "unavailable": false,
+   "decision_ok": true,
+   "retrieved": [
+    {
+     "file": "Copy of qaadh-altbaq-walmqablh-fy-allghh-alarbyh.pptx (2).pptx",
+     "unit": 5,
+     "similarity": 0.783,
+     "coverage": 0.14
+    },
+    {
+     "file": "Copy of qaadh-altbaq-walmqablh-fy-allghh-alarbyh.pptx (2).pptx",
+     "unit": 8,
+     "similarity": 0.758,
+     "coverage": 0.14
+    },
+    {
+     "file": "Copy of qaadh-altbaq-walmqablh-fy-allghh-alarbyh.pptx (2).pptx",
+     "unit": 2,
+     "similarity": 0.742,
+     "coverage": 0.0
+    },
+    {
+     "file": "Copy of qaadh-altbaq-walmqablh-fy-allghh-alarbyh.pptx (2).pptx",
+     "unit": 4,
+     "similarity": 0.723,
+     "coverage": 0.0
+    },
+    {
+     "file": "Copy of qaadh-altbaq-walmqablh-fy-allghh-alarbyh.pptx (2).pptx",
+     "unit": 9,
+     "similarity": 0.715,
+     "coverage": 0.0
+    }
+   ],
+   "best_similarity": 0.783,
+   "best_coverage": 0.14,
+   "hit1": true,
+   "hit5": true,
+   "rank": 1,
+   "missing": [],
+   "complete": true,
+   "cited": [
+    "Copy of qaadh-altbaq-walmqablh-fy-allghh-alarbyh.pptx (2).pptx slide 5",
+    "Copy of qaadh-altbaq-walmqablh-fy-allghh-alarbyh.pptx (2).pptx slide 8"
+   ],
+   "source_ok": true,
+   "seconds": 15.2,
+   "attempts": 1,
+   "model": "gemini-3.5-flash-lite"
+  },
+  {
+   "id": "T12",
+   "type": "text",
+   "question": "كم عدد الطلبة ذوي الإعاقة المتقدمين في العام الجامعي 2021/2022، وكم نسبة المكفوفين والصم بينهم؟",
+   "courses": [
+    "PROJECT-TAKAMUL"
+   ],
+   "expected_status": "answered",
+   "status": "answered",
+   "intent": "question",
+   "answer": "بلغ عدد الطلبة ذوي الإعاقة المتقدمين المستوفين للمعايير في العام الجامعي 2021/2022 ما هو 201 [تكامل CampusBridge.pdf، صفحة 3]. وبلغت نسبة المكفوفين أو الصم بينهم 53.3% [تكامل CampusBridge.pdf، صفحة 3].",
+   "needs_review": false,
+   "problems": [],
+   "notes": [],
+   "unavailable": false,
+   "decision_ok": true,
+   "retrieved": [
+    {
+     "file": "تكامل CampusBridge.pdf",
+     "unit": 3,
+     "similarity": 0.808,
+     "coverage": 0.62
+    },
+    {
+     "file": "تكامل CampusBridge.pdf",
+     "unit": 8,
+     "similarity": 0.711,
+     "coverage": 0.15
+    },
+    {
+     "file": "تكامل CampusBridge.pdf",
+     "unit": 2,
+     "similarity": 0.683,
+     "coverage": 0.15
+    },
+    {
+     "file": "تكامل CampusBridge.pdf",
+     "unit": 6,
+     "similarity": 0.667,
+     "coverage": 0.23
+    },
+    {
+     "file": "تكامل CampusBridge.pdf",
+     "unit": 9,
+     "similarity": 0.655,
+     "coverage": 0.08
+    }
+   ],
+   "best_similarity": 0.808,
+   "best_coverage": 0.62,
+   "hit1": true,
+   "hit5": true,
+   "rank": 1,
+   "missing": [],
+   "complete": true,
+   "cited": [
+    "تكامل CampusBridge.pdf page 3"
+   ],
+   "source_ok": true,
+   "seconds": 8.7,
+   "attempts": 1,
+   "model": "gemini-3.5-flash-lite"
+  },
+  {
+   "id": "V01",
+   "type": "visual",
+   "question": "بالرسم اللي بسلايد Z-Score، شو النسبة المكتوبة على المنطقة الواقعة بين 1σ و 2σ؟",
+   "courses": [
+    "STAT-CLT"
+   ],
+   "expected_status": "answered",
+   "status": "answered",
+   "intent": "question",
+   "answer": "تظهر في Normal curve (منحنى طبيعي) نسبة مئوية قدرها 13.6% على المنطقة الواقعة بين 1σ و 2σ [CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx، سلايد 16].",
+   "needs_review": false,
+   "problems": [],
+   "notes": [],
+   "unavailable": false,
+   "decision_ok": true,
+   "retrieved": [
+    {
+     "file": "CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx",
+     "unit": 16,
+     "similarity": 0.769,
+     "coverage": 0.3
+    },
+    {
+     "file": "CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx",
+     "unit": 18,
+     "similarity": 0.713,
+     "coverage": 0.3
+    },
+    {
+     "file": "CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx",
+     "unit": 17,
+     "similarity": 0.701,
+     "coverage": 0.3
+    },
+    {
+     "file": "CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx",
+     "unit": 19,
+     "similarity": 0.692,
+     "coverage": 0.2
+    },
+    {
+     "file": "CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx",
+     "unit": 10,
+     "similarity": 0.61,
+     "coverage": 0.2
+    }
+   ],
+   "best_similarity": 0.769,
+   "best_coverage": 0.3,
+   "hit1": true,
+   "hit5": true,
+   "rank": 1,
+   "missing": [],
+   "complete": true,
+   "cited": [
+    "CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx slide 16"
+   ],
+   "source_ok": true,
+   "seconds": 50.6,
+   "attempts": 1,
+   "model": "gemini-3.5-flash-lite"
+  },
+  {
+   "id": "V02",
+   "type": "visual",
+   "question": "What did Reem Basel get in Mathematics?",
+   "courses": [
+    "GRADES-EN"
+   ],
+   "expected_status": "answered",
+   "status": "answered",
+   "intent": "question",
+   "answer": "حصلت Reem Basel في مادة Mathematics على 98 [Student_Grades_and_Chart.xlsx، ورقة 1].",
+   "needs_review": false,
+   "problems": [],
+   "notes": [],
+   "unavailable": false,
+   "decision_ok": true,
+   "retrieved": [
+    {
+     "file": "Student_Grades_and_Chart.xlsx",
+     "unit": 1,
+     "similarity": 0.736,
+     "coverage": 0.75
+    },
+    {
+     "file": "Student_Grades_and_Chart.xlsx",
+     "unit": 1,
+     "similarity": 0.736,
+     "coverage": 0.75
+    },
+    {
+     "file": "Student_Grades_and_Chart.xlsx",
+     "unit": 1,
+     "similarity": 0.661,
+     "coverage": 0.25
+    }
+   ],
+   "best_similarity": 0.736,
+   "best_coverage": 0.75,
+   "hit1": true,
+   "hit5": true,
+   "rank": 1,
+   "missing": [],
+   "complete": true,
+   "cited": [
+    "Student_Grades_and_Chart.xlsx sheet 1"
+   ],
+   "source_ok": true,
+   "seconds": 8.3,
+   "attempts": 1,
+   "model": "gemini-3.5-flash-lite"
+  },
+  {
+   "id": "V03",
+   "type": "visual",
+   "question": "في أي فصل من السنة يتم قطف الزيتون وعصره؟",
+   "courses": [
+    "AGRI-OLIVE"
+   ],
+   "expected_status": "answered",
+   "status": "answered",
+   "intent": "question",
+   "answer": "يتم القطاف والعصر في فصل الخريف وبداية الشتاء [بحث_عن_شجرة_الزيتون.docx، صفحة 3].",
+   "needs_review": false,
+   "problems": [],
+   "notes": [],
+   "unavailable": false,
+   "decision_ok": true,
+   "retrieved": [
+    {
+     "file": "بحث_عن_شجرة_الزيتون.docx",
+     "unit": 3,
+     "similarity": 0.756,
+     "coverage": 0.17
+    },
+    {
+     "file": "بحث_عن_شجرة_الزيتون.docx",
+     "unit": 2,
+     "similarity": 0.689,
+     "coverage": 0.17
+    },
+    {
+     "file": "بحث_عن_شجرة_الزيتون.docx",
+     "unit": 1,
+     "similarity": 0.708,
+     "coverage": 0.17
+    }
+   ],
+   "best_similarity": 0.756,
+   "best_coverage": 0.17,
+   "hit1": true,
+   "hit5": true,
+   "rank": 1,
+   "missing": [],
+   "complete": true,
+   "cited": [
+    "بحث_عن_شجرة_الزيتون.docx page 3"
+   ],
+   "source_ok": true,
+   "seconds": 2.1,
+   "attempts": 1,
+   "model": "gemini-3.5-flash-lite"
+  },
+  {
+   "id": "V04",
+   "type": "visual",
+   "question": "في جدول المقارنة مع المنافسين، هل Note Depot فيه تحويل الكلام إلى نص؟",
+   "courses": [
+    "PROJECT-TAKAMUL"
+   ],
+   "expected_status": "answered",
+   "status": "answered",
+   "intent": "question",
+   "answer": "لا، في جدول المقارنة مع المنافسين، لا يحتوي Note Depot على ميزة تحويل الكلام إلى نص [تكامل CampusBridge.pdf، صفحة 7].",
+   "needs_review": false,
+   "problems": [],
+   "notes": [],
+   "unavailable": false,
+   "decision_ok": true,
+   "retrieved": [
+    {
+     "file": "تكامل CampusBridge.pdf",
+     "unit": 7,
+     "similarity": 0.77,
+     "coverage": 0.7
+    },
+    {
+     "file": "تكامل CampusBridge.pdf",
+     "unit": 4,
+     "similarity": 0.595,
+     "coverage": 0.3
+    },
+    {
+     "file": "تكامل CampusBridge.pdf",
+     "unit": 5,
+     "similarity": 0.596,
+     "coverage": 0.2
+    },
+    {
+     "file": "تكامل CampusBridge.pdf",
+     "unit": 2,
+     "similarity": 0.571,
+     "coverage": 0.1
+    },
+    {
+     "file": "تكامل CampusBridge.pdf",
+     "unit": 6,
+     "similarity": 0.541,
+     "coverage": 0.1
+    }
+   ],
+   "best_similarity": 0.77,
+   "best_coverage": 0.7,
+   "hit1": true,
+   "hit5": true,
+   "rank": 1,
+   "missing": [],
+   "complete": true,
+   "cited": [
+    "تكامل CampusBridge.pdf page 7"
+   ],
+   "source_ok": true,
+   "seconds": 6.9,
+   "attempts": 1,
+   "model": "gemini-3.5-flash-lite"
+  },
+  {
+   "id": "A01",
+   "type": "cross_language",
+   "question": "ماذا يحدث للخطأ المعياري عندما نكبّر حجم العينة، وما أثر ذلك على تقدير متوسط المجتمع؟",
+   "courses": [
+    "STAT-CLT"
+   ],
+   "expected_status": "answered",
+   "status": "answered",
+   "intent": "question",
+   "answer": "عندما يكون sample size (حجم العينة) كبيراً، فإن standard error (الخطأ المعياري) يكون صغيراً وتكون sample means (متوسطات العينات) متجمعة بإحكام [CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx، سلايد 12]. وهذا يؤدي إلى تقدير population mean (متوسط المجتمع) بدقة [CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx، سلايد 12].",
+   "needs_review": false,
+   "problems": [],
+   "notes": [],
+   "unavailable": false,
+   "decision_ok": true,
+   "retrieved": [
+    {
+     "file": "CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx",
+     "unit": 12,
+     "similarity": 0.764,
+     "coverage": 0.45
+    },
+    {
+     "file": "CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx",
+     "unit": 11,
+     "similarity": 0.687,
+     "coverage": 0.45
+    },
+    {
+     "file": "CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx",
+     "unit": 8,
+     "similarity": 0.673,
+     "coverage": 0.36
+    },
+    {
+     "file": "CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx",
+     "unit": 6,
+     "similarity": 0.652,
+     "coverage": 0.36
+    },
+    {
+     "file": "CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx",
+     "unit": 2,
+     "similarity": 0.656,
+     "coverage": 0.36
+    }
+   ],
+   "best_similarity": 0.764,
+   "best_coverage": 0.45,
+   "hit1": true,
+   "hit5": true,
+   "rank": 1,
+   "missing": [],
+   "complete": true,
+   "cited": [
+    "CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx slide 12"
+   ],
+   "source_ok": true,
+   "seconds": 7.3,
+   "attempts": 1,
+   "model": "gemini-3.5-flash-lite"
+  },
+  {
+   "id": "A02",
+   "type": "cross_language",
+   "question": "كيف نستخدم الدرجة المعيارية لنكتشف القيم المتطرفة في البيانات؟",
+   "courses": [
+    "STAT-CLT"
+   ],
+   "expected_status": "answered",
+   "status": "answered",
+   "intent": "question",
+   "answer": "نكتشف القيم المتطرفة عبر جمع مجموعة البيانات وحساب متوسطها وstandard deviation (الانحراف المعياري) الخاص بها، ثم استخدامها لحساب z-score (الدرجة المعيارية) لكل نقطة بيانات [CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx، سلايد 17]. يتم بعد ذلك اختيار z-score cutoff كقيمة يتم تحديدها حسب الحاجة والتي تكون غالباً 3، بحيث تعتبر نقطة البيانات outlier (القيمة المتطرفة) إذا تجاوزت قيمتها المطلقة هذه العتبة [CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx، سلايد 17].",
+   "needs_review": false,
+   "problems": [],
+   "notes": [],
+   "unavailable": false,
+   "decision_ok": true,
+   "retrieved": [
+    {
+     "file": "CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx",
+     "unit": 17,
+     "similarity": 0.761,
+     "coverage": 0.4
+    },
+    {
+     "file": "CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx",
+     "unit": 16,
+     "similarity": 0.737,
+     "coverage": 0.4
+    },
+    {
+     "file": "CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx",
+     "unit": 18,
+     "similarity": 0.659,
+     "coverage": 0.2
+    },
+    {
+     "file": "CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx",
+     "unit": 19,
+     "similarity": 0.603,
+     "coverage": 0.2
+    },
+    {
+     "file": "CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx",
+     "unit": 10,
+     "similarity": 0.622,
+     "coverage": 0.2
+    }
+   ],
+   "best_similarity": 0.761,
+   "best_coverage": 0.4,
+   "hit1": true,
+   "hit5": true,
+   "rank": 1,
+   "missing": [],
+   "complete": true,
+   "cited": [
+    "CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx slide 17"
+   ],
+   "source_ok": true,
+   "seconds": 14.3,
+   "attempts": 1,
+   "model": "gemini-3.5-flash-lite"
+  },
+  {
+   "id": "A03",
+   "type": "cross_language",
+   "question": "كيف تضمن المؤسسة أن تبقى أنظمتها ومعلوماتها متاحة لمستخدميها دائماً؟ وما الوسائل المذكورة للتوافر؟",
+   "courses": [
+    "SEC-CH1-INFOSEC"
+   ],
+   "expected_status": "answered",
+   "status": "answered",
+   "intent": "question",
+   "answer": "يُحقق Availability (التوافر) من خلال ضمان أن المعلومات والأنظمة التي تعالجها متاحة وقابلة للاستخدام من قبل المستخدمين المصرح لهم كلما احتاجوا إليها [Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf، صفحة 7]. ويتم تحقيق ذلك عبر Redundant systems (خوادم احتياطية)، وrobust network architecture، وdisaster recovery plans، وحماية ضد Denial-of-Service (DoS) attacks [Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf، صفحة 7].",
+   "needs_review": false,
+   "problems": [],
+   "notes": [],
+   "unavailable": false,
+   "decision_ok": true,
+   "retrieved": [
+    {
+     "file": "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf",
+     "unit": 4,
+     "similarity": 0.661,
+     "coverage": 0.09
+    },
+    {
+     "file": "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf",
+     "unit": 7,
+     "similarity": 0.763,
+     "coverage": 0.09
+    },
+    {
+     "file": "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf",
+     "unit": 2,
+     "similarity": 0.598,
+     "coverage": 0.09
+    },
+    {
+     "file": "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf",
+     "unit": 6,
+     "similarity": 0.643,
+     "coverage": 0.0
+    },
+    {
+     "file": "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf",
+     "unit": 3,
+     "similarity": 0.642,
+     "coverage": 0.0
+    }
+   ],
+   "best_similarity": 0.763,
+   "best_coverage": 0.09,
+   "hit1": false,
+   "hit5": true,
+   "rank": 2,
+   "missing": [],
+   "complete": true,
+   "cited": [
+    "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf page 7"
+   ],
+   "source_ok": true,
+   "seconds": 12.9,
+   "attempts": 1,
+   "model": "gemini-3.5-flash-lite"
+  },
+  {
+   "id": "A04",
+   "type": "cross_language",
+   "question": "ما هي الخزعة، ومتى يُلجأ إليها في تشخيص السرطان؟",
+   "courses": [
+    "HEALTH-CANCER"
+   ],
+   "expected_status": "answered",
+   "status": "not_found",
+   "intent": "question",
+   "answer": "هذا غير موجود في محاضرات المساق.",
+   "needs_review": false,
+   "problems": [],
+   "notes": [
+    "no lecture chunk matches well enough: the text model was not called"
+   ],
+   "unavailable": false,
+   "decision_ok": false,
+   "retrieved": [
+    {
+     "file": "Cancer_Awareness_English.docx",
+     "unit": 3,
+     "similarity": 0.668,
+     "coverage": 0.5
+    },
+    {
+     "file": "Cancer_Awareness_English.docx",
+     "unit": 1,
+     "similarity": 0.652,
+     "coverage": 0.17
+    },
+    {
+     "file": "Cancer_Awareness_English.docx",
+     "unit": 2,
+     "similarity": 0.59,
+     "coverage": 0.17
+    }
+   ],
+   "best_similarity": 0.668,
+   "best_coverage": 0.5,
+   "hit1": true,
+   "hit5": true,
+   "rank": 1,
+   "missing": [
+    "biopsy",
+    "small tissue sample | عينة صغيرة من النسيج | عينة نسيج"
+   ],
+   "complete": false,
+   "cited": [],
+   "source_ok": false,
+   "seconds": 0.9,
+   "attempts": 1,
+   "model": null
+  },
+  {
+   "id": "A05",
+   "type": "cross_language",
+   "question": "ما الفرق بين التهديد الداخلي المتعمّد والتهديد الداخلي غير المقصود؟",
+   "courses": [
+    "SEC-CH1-INFOSEC"
+   ],
+   "expected_status": "answered",
+   "status": "answered",
+   "intent": "question",
+   "answer": "يُعرف Insider Threats (التهديدات الداخلية) بأنه خطر أمني ينشأ من داخل المنظمة المستهدفة [Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf، صفحة 20]. ويكون Malicious (التهديد الداخلي المتعمّد) على شكل موظف ساخط يسرق البيانات قبل أن يستقيل [Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf، صفحة 20]. أما Negligent/Accidental (التهديد الداخلي غير المقصود) فهو عندما ينقر موظف على رسالة تصيد هشعري مما يؤدي إلى تثبيت malware (البرمجيات الخبيثة) عن غير قصد [Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf، صفحة 20].",
+   "needs_review": false,
+   "problems": [],
+   "notes": [],
+   "unavailable": false,
+   "decision_ok": true,
+   "retrieved": [
+    {
+     "file": "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf",
+     "unit": 20,
+     "similarity": 0.751,
+     "coverage": 0.2
+    },
+    {
+     "file": "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf",
+     "unit": 14,
+     "similarity": 0.581,
+     "coverage": 0.0
+    },
+    {
+     "file": "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf",
+     "unit": 15,
+     "similarity": 0.555,
+     "coverage": 0.0
+    },
+    {
+     "file": "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf",
+     "unit": 2,
+     "similarity": 0.57,
+     "coverage": 0.0
+    },
+    {
+     "file": "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf",
+     "unit": 13,
+     "similarity": 0.556,
+     "coverage": 0.0
+    }
+   ],
+   "best_similarity": 0.751,
+   "best_coverage": 0.2,
+   "hit1": true,
+   "hit5": true,
+   "rank": 1,
+   "missing": [
+    "phishing"
+   ],
+   "complete": false,
+   "cited": [
+    "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf page 20"
+   ],
+   "source_ok": true,
+   "seconds": 4.0,
+   "attempts": 1,
+   "model": "gemini-3.5-flash-lite"
+  },
+  {
+   "id": "N01",
+   "type": "not_found",
+   "question": "How do I build a 95% confidence interval for the population mean using the CLT?",
+   "courses": [
+    "STAT-CLT"
+   ],
+   "expected_status": "not_found",
+   "status": "not_found",
+   "intent": "question",
+   "answer": "هذا غير موجود في محاضرات المساق.",
+   "needs_review": false,
+   "problems": [],
+   "notes": [
+    "the model found no answer in the retrieved chunks"
+   ],
+   "unavailable": false,
+   "decision_ok": true,
+   "retrieved": [
+    {
+     "file": "CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx",
+     "unit": 7,
+     "similarity": 0.722,
+     "coverage": 0.29
+    },
+    {
+     "file": "CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx",
+     "unit": 9,
+     "similarity": 0.707,
+     "coverage": 0.29
+    },
+    {
+     "file": "CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx",
+     "unit": 2,
+     "similarity": 0.707,
+     "coverage": 0.29
+    },
+    {
+     "file": "CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx",
+     "unit": 10,
+     "similarity": 0.711,
+     "coverage": 0.29
+    },
+    {
+     "file": "CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx",
+     "unit": 3,
+     "similarity": 0.676,
+     "coverage": 0.14
+    }
+   ],
+   "best_similarity": 0.722,
+   "best_coverage": 0.29,
+   "seconds": 6.7,
+   "attempts": 1,
+   "model": "gemini-3.5-flash-lite"
+  },
+  {
+   "id": "N02",
+   "type": "not_found",
+   "question": "What is a man-in-the-middle attack and how can encryption stop it?",
+   "courses": [
+    "SEC-CH1-INFOSEC"
+   ],
+   "expected_status": "not_found",
+   "status": "not_found",
+   "intent": "question",
+   "answer": "هذا غير موجود في محاضرات المساق.",
+   "needs_review": false,
+   "problems": [],
+   "notes": [
+    "no lecture chunk matches well enough: the text model was not called"
+   ],
+   "unavailable": false,
+   "decision_ok": true,
+   "retrieved": [
+    {
+     "file": "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf",
+     "unit": 5,
+     "similarity": 0.653,
+     "coverage": 0.2
+    },
+    {
+     "file": "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf",
+     "unit": 10,
+     "similarity": 0.617,
+     "coverage": 0.2
+    },
+    {
+     "file": "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf",
+     "unit": 7,
+     "similarity": 0.623,
+     "coverage": 0.2
+    },
+    {
+     "file": "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf",
+     "unit": 18,
+     "similarity": 0.619,
+     "coverage": 0.2
+    },
+    {
+     "file": "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf",
+     "unit": 16,
+     "similarity": 0.592,
+     "coverage": 0.2
+    }
+   ],
+   "best_similarity": 0.653,
+   "best_coverage": 0.2,
+   "seconds": 0.0,
+   "attempts": 1,
+   "model": null
+  },
+  {
+   "id": "N03",
+   "type": "not_found",
+   "question": "كم لتر زيت تعطي شجرة الزيتون الواحدة في السنة تقريباً؟",
+   "courses": [
+    "AGRI-OLIVE"
+   ],
+   "expected_status": "not_found",
+   "status": "not_found",
+   "intent": "question",
+   "answer": "هذا غير موجود في محاضرات المساق.",
+   "needs_review": false,
+   "problems": [],
+   "notes": [
+    "the model found no answer in the retrieved chunks"
+   ],
+   "unavailable": false,
+   "decision_ok": true,
+   "retrieved": [
+    {
+     "file": "بحث_عن_شجرة_الزيتون.docx",
+     "unit": 2,
+     "similarity": 0.728,
+     "coverage": 0.38
+    },
+    {
+     "file": "بحث_عن_شجرة_الزيتون.docx",
+     "unit": 1,
+     "similarity": 0.72,
+     "coverage": 0.38
+    },
+    {
+     "file": "بحث_عن_شجرة_الزيتون.docx",
+     "unit": 3,
+     "similarity": 0.711,
+     "coverage": 0.38
+    }
+   ],
+   "best_similarity": 0.728,
+   "best_coverage": 0.38,
+   "seconds": 1.3,
+   "attempts": 1,
+   "model": "gemini-3.5-flash-lite"
+  },
+  {
+   "id": "N04",
+   "type": "not_found",
+   "question": "What is the survival rate for cancer when it is detected early?",
+   "courses": [
+    "HEALTH-CANCER"
+   ],
+   "expected_status": "not_found",
+   "status": "not_found",
+   "intent": "question",
+   "answer": "هذا غير موجود في محاضرات المساق.",
+   "needs_review": false,
+   "problems": [],
+   "notes": [
+    "the model found no answer in the retrieved chunks"
+   ],
+   "unavailable": false,
+   "decision_ok": true,
+   "retrieved": [
+    {
+     "file": "Cancer_Awareness_English.docx",
+     "unit": 3,
+     "similarity": 0.706,
+     "coverage": 0.4
+    },
+    {
+     "file": "Cancer_Awareness_English.docx",
+     "unit": 1,
+     "similarity": 0.688,
+     "coverage": 0.4
+    },
+    {
+     "file": "Cancer_Awareness_English.docx",
+     "unit": 2,
+     "similarity": 0.682,
+     "coverage": 0.2
+    }
+   ],
+   "best_similarity": 0.706,
+   "best_coverage": 0.4,
+   "seconds": 2.0,
+   "attempts": 1,
+   "model": "gemini-3.5-flash-lite"
+  },
+  {
+   "id": "N05",
+   "type": "not_found",
+   "question": "How big can the GDPR fine be for a company that doesn't comply?",
+   "courses": [
+    "SEC-CH1-INFOSEC"
+   ],
+   "expected_status": "not_found",
+   "status": "not_found",
+   "intent": "question",
+   "answer": "هذا غير موجود في محاضرات المساق.",
+   "needs_review": false,
+   "problems": [],
+   "notes": [
+    "no lecture chunk matches well enough: the text model was not called"
+   ],
+   "unavailable": false,
+   "decision_ok": true,
+   "retrieved": [
+    {
+     "file": "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf",
+     "unit": 12,
+     "similarity": 0.577,
+     "coverage": 0.5
+    },
+    {
+     "file": "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf",
+     "unit": 19,
+     "similarity": 0.603,
+     "coverage": 0.0
+    },
+    {
+     "file": "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf",
+     "unit": 9,
+     "similarity": 0.559,
+     "coverage": 0.0
+    },
+    {
+     "file": "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf",
+     "unit": 20,
+     "similarity": 0.557,
+     "coverage": 0.0
+    },
+    {
+     "file": "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf",
+     "unit": 5,
+     "similarity": 0.555,
+     "coverage": 0.0
+    }
+   ],
+   "best_similarity": 0.603,
+   "best_coverage": 0.5,
+   "seconds": 0.0,
+   "attempts": 1,
+   "model": null
+  },
+  {
+   "id": "F01",
+   "type": "follow_up",
+   "question": "وليش قسمنا 2,630 على عدد الصناديق؟ شو بتمثل النتيجة؟",
+   "courses": [
+    "STAT-CLT"
+   ],
+   "expected_status": "answered",
+   "status": "answered",
+   "intent": "question",
+   "answer": "تم قسمة سعة الطائرة Plane capacity البالغة 2,630 lb على 36 صندوقاً لتمثل الحد الأقصى لمتوسط الوزن لكل صندوق xcrit [CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx، سلايد 21].",
+   "needs_review": false,
+   "problems": [],
+   "notes": [],
+   "unavailable": false,
+   "decision_ok": true,
+   "retrieved": [
+    {
+     "file": "CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx",
+     "unit": 20,
+     "similarity": 0.817,
+     "coverage": 0.22
+    },
+    {
+     "file": "CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx",
+     "unit": 21,
+     "similarity": 0.81,
+     "coverage": 0.22
+    },
+    {
+     "file": "CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx",
+     "unit": 18,
+     "similarity": 0.591,
+     "coverage": 0.11
+    },
+    {
+     "file": "CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx",
+     "unit": 10,
+     "similarity": 0.567,
+     "coverage": 0.0
+    },
+    {
+     "file": "CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx",
+     "unit": 16,
+     "similarity": 0.608,
+     "coverage": 0.11
+    }
+   ],
+   "best_similarity": 0.817,
+   "best_coverage": 0.22,
+   "hit1": false,
+   "hit5": true,
+   "rank": 2,
+   "missing": [
+    "73.06"
+   ],
+   "complete": false,
+   "cited": [
+    "CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx slide 21"
+   ],
+   "source_ok": true,
+   "seconds": 7.9,
+   "attempts": 1,
+   "model": "gemini-3.5-flash-lite"
+  },
+  {
+   "id": "F02",
+   "type": "follow_up",
+   "question": "وما مثال الاختراق الذي ذكرته المحاضرة لهذا المبدأ؟",
+   "courses": [
+    "SEC-CH1-INFOSEC"
+   ],
+   "expected_status": "answered",
+   "status": "needs_review",
+   "intent": "question",
+   "answer": "تمثل Confidentiality (السرية) أحد مبادئ CIA Triad (ثالوث أمن المعلومات)، ويُعد مثال الاختراق لها قيام هاكر بسرقة قاعدة بيانات تحتوي على أسماء مستخدمين وكلمات مرور العملاء [S1, S5].",
+   "needs_review": true,
+   "problems": [
+    "1 sentence(s) without a source"
+   ],
+   "notes": [],
+   "unavailable": false,
+   "decision_ok": true,
+   "retrieved": [
+    {
+     "file": "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf",
+     "unit": 4,
+     "similarity": 0.685,
+     "coverage": 0.0
+    },
+    {
+     "file": "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf",
+     "unit": 7,
+     "similarity": 0.79,
+     "coverage": 0.0
+    },
+    {
+     "file": "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf",
+     "unit": 2,
+     "similarity": 0.621,
+     "coverage": 0.0
+    },
+    {
+     "file": "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf",
+     "unit": 6,
+     "similarity": 0.683,
+     "coverage": 0.0
+    },
+    {
+     "file": "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf",
+     "unit": 5,
+     "similarity": 0.663,
+     "coverage": 0.0
+    }
+   ],
+   "best_similarity": 0.79,
+   "best_coverage": 0,
+   "hit1": false,
+   "hit5": true,
+   "rank": 2,
+   "missing": [
+    "Denial-of-Service",
+    "flooding | traffic | إغراق"
+   ],
+   "complete": false,
+   "cited": [
+    "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf page 4",
+    "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf page 5"
+   ],
+   "source_ok": false,
+   "seconds": 1.5,
+   "attempts": 1,
+   "model": "gemini-3.5-flash-lite"
+  },
+  {
+   "id": "D01",
+   "type": "colloquial",
+   "question": "شو يعني طباق الايجاب؟ اعطيني مثال عليه",
+   "courses": [
+    "ARABIC-TIBAQ"
+   ],
+   "expected_status": "answered",
+   "status": "answered",
+   "intent": "question",
+   "answer": "يُعرف طباق الإيجاب بأنه الجمع بين كلمة وضدها دون تغيير في الصيغة، أي أن الكلمتين موجبتان [Copy of qaadh-altbaq-walmqablh-fy-allghh-alarbyh.pptx (2).pptx، سلايد 5]. ومن الأمثلة على طباق الإيجاب جميل وقبيح، أو الحق والباطل، أو السماء والأرض [Copy of qaadh-altbaq-walmqablh-fy-allghh-alarbyh.pptx (2).pptx، سلايد 5].",
+   "needs_review": false,
+   "problems": [],
+   "notes": [],
+   "unavailable": false,
+   "decision_ok": true,
+   "retrieved": [
+    {
+     "file": "Copy of qaadh-altbaq-walmqablh-fy-allghh-alarbyh.pptx (2).pptx",
+     "unit": 5,
+     "similarity": 0.826,
+     "coverage": 0.6
+    },
+    {
+     "file": "Copy of qaadh-altbaq-walmqablh-fy-allghh-alarbyh.pptx (2).pptx",
+     "unit": 2,
+     "similarity": 0.809,
+     "coverage": 0.4
+    },
+    {
+     "file": "Copy of qaadh-altbaq-walmqablh-fy-allghh-alarbyh.pptx (2).pptx",
+     "unit": 4,
+     "similarity": 0.756,
+     "coverage": 0.4
+    },
+    {
+     "file": "Copy of qaadh-altbaq-walmqablh-fy-allghh-alarbyh.pptx (2).pptx",
+     "unit": 3,
+     "similarity": 0.748,
+     "coverage": 0.4
+    },
+    {
+     "file": "Copy of qaadh-altbaq-walmqablh-fy-allghh-alarbyh.pptx (2).pptx",
+     "unit": 8,
+     "similarity": 0.758,
+     "coverage": 0.2
+    }
+   ],
+   "best_similarity": 0.826,
+   "best_coverage": 0.6,
+   "hit1": true,
+   "hit5": true,
+   "rank": 1,
+   "missing": [],
+   "complete": true,
+   "cited": [
+    "Copy of qaadh-altbaq-walmqablh-fy-allghh-alarbyh.pptx (2).pptx slide 5"
+   ],
+   "source_ok": true,
+   "seconds": 12.6,
+   "attempts": 1,
+   "model": "gemini-3.5-flash-lite"
+  },
+  {
+   "id": "D02",
+   "type": "colloquial",
+   "question": "wats the diffrence betwen data security and infosec in the chapter??",
+   "courses": [
+    "SEC-CH1-INFOSEC"
+   ],
+   "expected_status": "answered",
+   "status": "answered",
+   "intent": "question",
+   "answer": "يعتبر Information Security (InfoSec) المظلة الأوسع ويشمل حماية جميع أشكال المعلومات الرقمية والمادية والفكرية من خلال نهج شامل يضم الأفراد والعمليات والتكنولوجيا [Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf، صفحة 9]. في المقابل، يمثل Data Security (أمن البيانات) مجموعة فرعية من InfoSec ويركز بشكل خاص على حماية البيانات الرقمية أثناء الراحة والنقل والاستخدام من خلال ضوابط تقنية مثل التشفير [Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf، صفحة 10].",
+   "needs_review": false,
+   "problems": [],
+   "notes": [],
+   "unavailable": false,
+   "decision_ok": true,
+   "retrieved": [
+    {
+     "file": "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf",
+     "unit": 10,
+     "similarity": 0.806,
+     "coverage": 0.33
+    },
+    {
+     "file": "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf",
+     "unit": 8,
+     "similarity": 0.741,
+     "coverage": 0.33
+    },
+    {
+     "file": "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf",
+     "unit": 4,
+     "similarity": 0.716,
+     "coverage": 0.17
+    },
+    {
+     "file": "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf",
+     "unit": 11,
+     "similarity": 0.744,
+     "coverage": 0.33
+    },
+    {
+     "file": "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf",
+     "unit": 9,
+     "similarity": 0.747,
+     "coverage": 0.17
+    }
+   ],
+   "best_similarity": 0.806,
+   "best_coverage": 0.33,
+   "hit1": true,
+   "hit5": true,
+   "rank": 1,
+   "missing": [
+    "subset",
+    "broadest umbrella | all forms of information",
+    "encryption | data masking | data loss prevention"
+   ],
+   "complete": false,
+   "cited": [
+    "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf page 9",
+    "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf page 10"
+   ],
+   "source_ok": true,
+   "seconds": 9.1,
+   "attempts": 1,
+   "model": "gemini-3.5-flash-lite"
+  },
+  {
+   "id": "P01",
+   "type": "permission",
+   "question": "ما الفرق بين الطباق والمقابلة؟ وأيهما أشمل؟",
+   "courses": [
+    "STAT-CLT",
+    "SEC-CH1-INFOSEC"
+   ],
+   "expected_status": "not_found",
+   "status": "not_found",
+   "intent": "question",
+   "answer": "هذا غير موجود في محاضرات المساق.",
+   "needs_review": false,
+   "problems": [],
+   "notes": [
+    "no lecture chunk matches well enough: the text model was not called"
+   ],
+   "unavailable": false,
+   "decision_ok": true,
+   "retrieved": [
+    {
+     "file": "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf",
+     "unit": 9,
+     "similarity": 0.587,
+     "coverage": 0.0
+    },
+    {
+     "file": "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf",
+     "unit": 10,
+     "similarity": 0.545,
+     "coverage": 0.0
+    },
+    {
+     "file": "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf",
+     "unit": 8,
+     "similarity": 0.543,
+     "coverage": 0.0
+    },
+    {
+     "file": "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf",
+     "unit": 11,
+     "similarity": 0.532,
+     "coverage": 0.0
+    },
+    {
+     "file": "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf",
+     "unit": 4,
+     "similarity": 0.525,
+     "coverage": 0.0
+    }
+   ],
+   "best_similarity": 0.587,
+   "best_coverage": 0,
+   "leak": false,
+   "seconds": 0.0,
+   "attempts": 1,
+   "model": null
+  },
+  {
+   "id": "P02",
+   "type": "permission",
+   "question": "في أي فصل تزهر شجرة الزيتون، وكيف تبدو أزهارها؟",
+   "courses": [
+    "HEALTH-CANCER"
+   ],
+   "expected_status": "not_found",
+   "status": "not_found",
+   "intent": "question",
+   "answer": "هذا غير موجود في محاضرات المساق.",
+   "needs_review": false,
+   "problems": [],
+   "notes": [
+    "no lecture chunk matches well enough: the text model was not called"
+   ],
+   "unavailable": false,
+   "decision_ok": true,
+   "retrieved": [
+    {
+     "file": "Cancer_Awareness_English.docx",
+     "unit": 1,
+     "similarity": 0.438,
+     "coverage": 0.0
+    },
+    {
+     "file": "Cancer_Awareness_English.docx",
+     "unit": 3,
+     "similarity": 0.428,
+     "coverage": 0.0
+    },
+    {
+     "file": "Cancer_Awareness_English.docx",
+     "unit": 2,
+     "similarity": 0.408,
+     "coverage": 0.0
+    }
+   ],
+   "best_similarity": 0.438,
+   "best_coverage": 0,
+   "leak": false,
+   "seconds": 0.0,
+   "attempts": 1,
+   "model": null
+  }
+ ]
+}
