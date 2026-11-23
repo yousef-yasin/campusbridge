@@ -18,7 +18,7 @@ def png(width, height, color=(30, 120, 200)) -> bytes:
 @pytest.fixture(autouse=True)
 def clean_env(monkeypatch, tmp_path):
     import os
-    for k in [k for k in os.environ if k.startswith("READER_") or k in ("GEMINI_API_KEY", "CB_EXPLAIN_LANGUAGE")]:
+    for k in [k for k in os.environ if k.startswith("READER_") or k in ("GEMINI_API_KEY", "CB_EXPLAIN_LANGUAGE", "CB_GEMINI_IPV4")]:
         monkeypatch.delenv(k)
     monkeypatch.setenv("READER_IMAGES_DIR", str(tmp_path / "images"))
     monkeypatch.setenv("READER_DESCRIPTIONS_DIR", str(tmp_path / "descriptions"))

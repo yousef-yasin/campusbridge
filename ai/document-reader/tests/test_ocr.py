@@ -358,3 +358,23 @@ def test_handwritten_page_without_internet_is_not_read_by_tesseract(tmp_path, cf
     printed = head + "".join(f"5\t1\t1\t1\t1\t{i}\t0\t0\t1\t1\t{c}\tw{i}\n" for i, c in enumerate([96, 91, 88, 20, 95]))
     assert confidence_stats(printed) == {"words": 5, "median": 91.0, "low_share": 0.2}
     assert not looks_handwritten({"median": 88, "low_share": 0.12}) and looks_handwritten({"median": 52, "low_share": 0.25})
+
+
+@pytest.mark.parametrize("ipv4", [False, True])
+def test_ocr_client_uses_the_shared_ipv4_option(cfg, monkeypatch, ipv4):
+    """OCR (and image descriptions) build their Gemini client with ai/shared's http_options:
+    CB_GEMINI_IPV4=1 binds the connection to IPv4, otherwise the defaults are kept."""
+    from google import genai
+    made = {}
+    monkeypatch.setattr(genai, "Client", lambda **kw: made.update(kw) or "client")
+    if ipv4:
+        monkeypatch.setenv("CB_GEMINI_IPV4", "1")
+    ocr = PageOCR(cfg, tesseract=None)
+    assert ocr.engine._get_client("test-key") == "client"
+    options = made["http_options"]
+    assert made["api_key"] == "test-key" and options.timeout == cfg.vision_timeout * 1000
+    if ipv4:
+        pool = options.client_args["transport"]._pool
+        assert pool._local_address == "0.0.0.0"
+    else:
+        assert options.client_args is None

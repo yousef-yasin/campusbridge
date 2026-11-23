@@ -1,0 +1,6 @@
+# Input units come from document-reader, the number check is its numbers.py
+-r ../document-reader/requirements.txt
+# Gemini text client and embeddings (ai/shared: google-genai)
+-r ../shared/requirements.txt
+# «لخص المحاضرة» uses lecture-summarization (same requirements as above)
+# pgvector store (production only, not installed here): psycopg[binary]>=3.2

@@ -18,6 +18,7 @@ class UnitBlock:
     id: str                      # "b1", "b2", ... (unique inside the unit)
     kind: str                    # heading, paragraph, list, table, image, chart, notes, handwritten, speech
     text: str
+    origin: str = "text"         # "text", "image" (an image description) or "ocr" (read from a page image)
 
 
 @dataclass
@@ -104,7 +105,8 @@ def from_pages(pages: Iterable[Any]) -> List[TextUnit]:
                 continue
             if kind == "heading" and not title:
                 title = " ".join(text.split())
-            blocks.append(UnitBlock(f"b{len(blocks) + 1}", kind, text))
+            origin = "image" if kind == "image" else ("ocr" if getattr(block, "source", None) == "ocr" else "text")
+            blocks.append(UnitBlock(f"b{len(blocks) + 1}", kind, text, origin))
         units.append(TextUnit(page.unit, page.unit_type, blocks, title,
                               meta={"sheet": page.sheet} if getattr(page, "sheet", None) else {}))
     return units
@@ -124,6 +126,6 @@ def from_transcript(segments: Iterable[Dict[str, Any]], seconds_per_unit: float 
             current = TextUnit(len(units) + 1, "part", [], title, source="transcript",
                                meta={"start": start, "end": start})
             units.append(current)
-        current.blocks.append(UnitBlock(f"b{len(current.blocks) + 1}", "speech", text))
+        current.blocks.append(UnitBlock(f"b{len(current.blocks) + 1}", "speech", text, "transcript"))
         current.meta["end"] = float(seg.get("end", start))
     return units

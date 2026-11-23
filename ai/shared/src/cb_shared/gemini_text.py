@@ -31,6 +31,21 @@ _AI = Path(__file__).resolve().parents[3]                    # ai/
 DEFAULT_MODELS = ("gemini-3.5-flash-lite", "gemini-4-hydrogen", "gemini-3.8-flash")
 
 
+def http_options(timeout_s: int):
+    """google-genai HttpOptions. CB_GEMINI_IPV4=1 connects over IPv4 only: on a network where
+    IPv6 to Google does not work, the first request otherwise waits minutes for IPv6 to fail."""
+    import os
+    from google.genai import types
+    args = {}
+    if os.environ.get("CB_GEMINI_IPV4", "").strip().lower() in ("1", "true", "yes"):
+        try:
+            import httpx2 as httpx                   # the fork google-genai 3.x installs
+        except ImportError:
+            import httpx
+        args["client_args"] = {"transport": httpx.HTTPTransport(local_address="0.0.0.0")}
+    return types.HttpOptions(timeout=timeout_s * 1000, **args)
+
+
 @dataclass
 class GeminiTextConfig:
     models: Sequence[str] = DEFAULT_MODELS        # tried in order
@@ -88,7 +103,7 @@ class GeminiText:
         if not key:
             where = ", ".join(str(p) for p in self.config.env_files) or "the environment"
             raise AIUnavailableError(f"GEMINI_API_KEY is not set (environment, or one of: {where})")
-        return genai.Client(api_key=key, http_options=types.HttpOptions(timeout=self.config.timeout * 1000))
+        return genai.Client(api_key=key, http_options=http_options(self.config.timeout))
 
     def generate_json(self, prompt: str, schema: Dict[str, Any]) -> Dict[str, Any]:
         key = get_key("GEMINI_API_KEY", self.config.env_files)

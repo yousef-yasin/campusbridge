@@ -41,6 +41,11 @@ answered a probe: Hydrogen gave 503, and 3.8/3.6 Flash timed out (504). Change t
 - **429** (quota) moves to the next model, since free-tier limits are per model.
 - **No key, 401/403, or no internet** stop at once, because every model would fail the same way.
 
+**IPv6:** on a network where IPv6 to Google does not work, the first request waits minutes for
+the IPv6 connection to fail. `CB_GEMINI_IPV4=1` connects over IPv4 only (off by default).
+`http_options(timeout)` builds the client settings; the lecture assistant's embeddings and
+document-reader's image descriptions and OCR use it too.
+
 **Settings and limit:**
 - Calls are counted, and `max_calls` (`<PREFIX>_MAX_CALLS`, default 30) stops a run before it
   uses up the daily quota. 0 means no request at all.
