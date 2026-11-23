@@ -81,9 +81,19 @@ def _content(gray: np.ndarray):
     x_lo, x_hi = np.percentile(xs, [0.2, 99.8])
     y_lo, y_hi = np.percentile(ys, [0.2, 99.8])
     keep = (xs >= x_lo) & (xs <= x_hi) & (ys >= y_lo) & (ys <= y_hi)
-    points = np.column_stack([xs[keep], ys[keep]]).astype(np.float32)
     on_page = cv2.bitwise_and(strokes, region)
-    return order_corners(cv2.boxPoints(cv2.minAreaRect(points))), on_page
+    return order_corners(cv2.boxPoints(cv2.minAreaRect(_row_ends(xs[keep], ys[keep])))), on_page
+
+
+def _row_ends(xs: np.ndarray, ys: np.ndarray) -> np.ndarray:
+    """The leftmost and rightmost point of each row. Every other point lies between the two on
+    its row, so these have the same convex hull, and so the same minAreaRect, as all the points:
+    about 2 thousand points instead of tens of thousands (minAreaRect: ~0.5 ms instead of ~11).
+    xs, ys come from np.nonzero, so they are already sorted by row."""
+    starts = np.flatnonzero(np.r_[True, ys[1:] != ys[:-1]])
+    rows = ys[starts]
+    left, right = np.minimum.reduceat(xs, starts), np.maximum.reduceat(xs, starts)
+    return np.column_stack([np.r_[left, right], np.r_[rows, rows]]).astype(np.float32)
 
 
 def _cut_sides(strokes: np.ndarray, margin: float, share: float) -> List[str]:
