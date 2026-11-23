@@ -13,6 +13,14 @@ from .errors import ReaderError, VisionBusyError, VisionError, VisionQuotaError,
 from .keys import get_key, scrub
 
 
+def _http_options(timeout_s: int):
+    """The shared google-genai HttpOptions (ai/shared): CB_GEMINI_IPV4=1 connects over IPv4 only,
+    for networks where IPv6 to Google does not work (the first request otherwise waits minutes)."""
+    from . import explain                                    # noqa: F401  (puts ai/shared/src on the path)
+    from cb_shared.gemini_text import http_options
+    return http_options(timeout_s)
+
+
 class GeminiVision:
     """describe(image, mime, prompt, schema) -> dict parsed from the model's JSON answer."""
     name = "gemini"
@@ -27,14 +35,12 @@ class GeminiVision:
             return self._client
         try:
             from google import genai
-            from google.genai import types
         except Exception as exc:
             raise VisionUnavailableError(
                 f"google-genai is not installed (pip install google-genai): {exc}") from exc
         if not key:
             raise VisionUnavailableError(f"GEMINI_API_KEY is not set (put it in {self.config.env_file})")
-        return genai.Client(api_key=key, http_options=types.HttpOptions(
-            timeout=self.config.vision_timeout * 1000))
+        return genai.Client(api_key=key, http_options=_http_options(self.config.vision_timeout))
 
     # Server errors (500/503 "high demand") are retried after these pauses. The last attempt asks
     # for plain JSON without the schema: schema-constrained requests failed more often with 503

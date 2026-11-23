@@ -45,6 +45,11 @@ ai/document-reader/ocr-cache/
 ai/lecture-summarization/summaries/
 ai/question-generation/questions-cache/
 
+# Lecture assistant: local vector index, embeddings cache, saved questions and answers
+ai/lecture-assistant/index/
+ai/lecture-assistant/embeddings-cache/
+ai/lecture-assistant/qa-log/
+
 # Camera guide: generated command voices and captured pages
 ai/camera-guide/voices/
 ai/camera-guide/captures/

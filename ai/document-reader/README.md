@@ -77,6 +77,10 @@ Phase 1 runs locally; no file content is sent anywhere. For phase 2 put a Gemini
 `ai/document-reader/.env` as `GEMINI_API_KEY=...` (the file is ignored by git; a
 `GEMINI_API_KEY` environment variable takes priority).
 
+On a network where IPv6 to Google does not work, the first Gemini request (image descriptions
+and OCR) waits minutes for IPv6 to fail. `CB_GEMINI_IPV4=1` connects over IPv4 only; the option
+comes from `ai/shared` (`cb_shared.gemini_text.http_options`) and is off by default.
+
 ## Usage
 
 CLI (run from `ai/document-reader`, with `src` on the path):

@@ -6,7 +6,8 @@ from pathlib import Path
 AI = Path(__file__).resolve().parents[3]          # ai/
 
 SOURCES = {"document-reader": "src", "narrator": "src", "lecture-summarization": "src",
-           "question-generation": "src", "text-to-speech": "src", "shared": "src"}
+           "question-generation": "src", "text-to-speech": "src", "shared": "src",
+           "lecture-assistant": "src"}
 
 
 def use_module(name: str) -> Path:
