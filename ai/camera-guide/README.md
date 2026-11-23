@@ -91,8 +91,10 @@ If the paper's own edges are clear, its four corners are used instead, and they 
 tilted phone (perspective). "Cut" is measured on the frame border: real cut-off writing covers
 much of a side, while scattered marks (the pages underneath, a pen) do not.
 
-**Speed:** about 20 ms per frame on a laptop CPU for 720 to 1080 px frames (the median over the
-test video). The first frame of a new process takes 40 to 55 ms. The test requires under 50 ms.
+**Speed:** about 22 ms per frame on a laptop CPU for a 720x1280 frame and about 24 ms for a
+full-HD frame (1080x1920), measured outside the tests. The first frame of a new process takes
+longer. The test requires under 50 ms for a 720x1280 frame; the full-HD time is printed by the
+tests but not checked, because it depends on machine load.
 
 ## After the capture
 
