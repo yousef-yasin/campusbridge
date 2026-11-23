@@ -61,7 +61,7 @@ def test_failed_embeddings_keep_the_file_searchable_by_words():
     store = LocalStore(cfg.store_path)
     indexer = Indexer(store, FakeEmbedder(fail=AIUnavailableError("GEMINI_API_KEY is not set")), cfg)
     report = indexer.index_units(STATS, "STAT101", "CLT.pptx")
-    assert report["chunks"] == 3 and report["embedded"] == 0
+    assert report["chunks"] == 2 and report["embedded"] == 0 and report["skipped_title_units"] == [1]
     assert "keyword search only" in indexer.warnings[0]
     assert all(c.vector is None for c in store.chunks())
 
@@ -180,3 +180,26 @@ def test_pgvector_store_uses_the_sql_table_and_course_filter():
     assert "course = ANY(%s)" in nearest[0] and nearest[1][1] == ["STAT101"]
     table = (__import__("pathlib").Path(__file__).resolve().parents[1] / "sql" / "pgvector.sql").read_text(encoding="utf-8")
     assert "vector(768)" in table and "vector_cosine_ops" in table
+
+
+def test_title_pages_and_university_ids_are_not_indexed():
+    from assistant.privacy import filter_units, has_university_id
+    title = unit(1, ("heading", "قاعدة الطباق والمقابلة في اللغة العربية"),
+                 ("paragraph", "رحلة استكشافية في عالم المحسنات البديعية"),
+                 ("paragraph", "الطالبة: سارة أحمد"), ("paragraph", "شعبة: (1)"),
+                 ("paragraph", "الرقم الجامعي: 202012345"))
+    body = unit(2, ("heading", "ما هو الطباق؟"),
+                ("paragraph", "الطباق هو الجمع بين كلمة ونقيضها في سياق واحد لإبراز التضاد والمعنى في النص."),
+                ("paragraph", "Student ID 202199887 wrote this note."))
+    cfg = AssistantConfig.from_env()
+    store = LocalStore(cfg.store_path)
+    report = Indexer(store, FakeEmbedder(), cfg).index_units([title, body], "AR101", "tibaq.pptx")
+    assert report["skipped_title_units"] == [1] and report["dropped_id_blocks"] == 1
+    text = "\n".join(c.text for c in store.chunks())
+    assert "سارة" not in text and "202012345" not in text and "202199887" not in text
+    assert [c.unit for c in store.chunks()] == [2] and "الطباق هو الجمع" in text
+    # a first page with real content, and a one-page file, are kept
+    assert filter_units(OLIVE)[1] == [] and filter_units(STATS)[1] == [1]
+    assert filter_units([title])[1] == []
+    assert has_university_id("رقم الطالب 1234") and has_university_id("University No. 55")
+    assert not has_university_id("In 2022 there were 20 million new cases") and not has_university_id("201 متقدماً")

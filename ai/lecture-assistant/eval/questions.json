@@ -1,0 +1,788 @@
+{
+  "version": 2,
+  "status": "draft",
+  "created": "2026-11-23",
+  "description": "Evaluation questions for the lecture assistant, written from the files of ai/samples-in as indexed on 2026-11-23 (one course per file). Not run yet.",
+  "courses": {
+    "STAT-CLT": "CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx (Chapter 2 - Central Limit Theorem)",
+    "SEC-CH1-INFOSEC": "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf (Chapter 1 - Information Security)",
+    "HEALTH-CANCER": "Cancer_Awareness_English.docx",
+    "ARABIC-TIBAQ": "Copy of qaadh-altbaq-walmqablh-fy-allghh-alarbyh.pptx (2).pptx",
+    "AGRI-OLIVE": "بحث_عن_شجرة_الزيتون.docx",
+    "PROJECT-TAKAMUL": "تكامل CampusBridge.pdf",
+    "GRADES-EN": "Student_Grades_and_Chart.xlsx"
+  },
+  "fields": {
+    "id": "unique id",
+    "question": "the student's question, as typed",
+    "type": "text | visual | cross_language | not_found | follow_up | colloquial | permission",
+    "follows": "follow_up only: the id of the previous question in the same conversation (ask it first)",
+    "courses": "the courses the student may search (permission questions: the answer is only in a course that is not listed)",
+    "expected_status": "answered or not_found",
+    "sources": "the correct file and page/slide; an answer is right when it cites at least one of them. Empty for not_found",
+    "must_include": "facts the answer must contain, copied exactly as written in the source (numbers, English terms, Arabic phrases). Every item is required",
+    "any_of": "optional: groups of alternatives, at least one item of each group must appear",
+    "note": "why the question is there, or what makes it hard",
+    "answer_in": "permission only: where the answer is, in a course the student may not search"
+  },
+  "scoring": "answered: status answered (or needs_review), at least one expected source cited, every must_include item present (numbers compared by value, text without diacritics; a term of the shared glossary also matches its Arabic meaning or an accepted wording). not_found: status not_found and no invented content.",
+  "questions": [
+    {
+      "id": "T01",
+      "question": "What's the formula for the standard error of the sample means, and what do its letters stand for?",
+      "type": "text",
+      "courses": [
+        "STAT-CLT",
+        "SEC-CH1-INFOSEC"
+      ],
+      "expected_status": "answered",
+      "sources": [
+        {
+          "file": "CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx",
+          "unit_type": "slide",
+          "unit": 11
+        }
+      ],
+      "must_include": [
+        "σ / √n"
+      ],
+      "any_of": [
+        [
+          "sample size",
+          "number of observations"
+        ],
+        [
+          "population standard deviation",
+          "standard deviation of the whole population"
+        ]
+      ],
+      "note": "Formula with symbols; the answer must keep the formula as written."
+    },
+    {
+      "id": "T02",
+      "question": "In the second example, what's the chance that a student gets a score between 350 and 400?",
+      "type": "text",
+      "courses": [
+        "STAT-CLT"
+      ],
+      "expected_status": "answered",
+      "sources": [
+        {
+          "file": "CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx",
+          "unit_type": "slide",
+          "unit": 19
+        }
+      ],
+      "must_include": [],
+      "any_of": [
+        [
+          "40.03%",
+          "40.03",
+          "0.40033"
+        ]
+      ],
+      "note": "Several numbers on the slide (z1, z2, p1, p2): the answer must give the final probability, not an intermediate value."
+    },
+    {
+      "id": "T03",
+      "question": "In the Aramex challenge, how likely is it that the Cessna can take all 36 boxes from Amman to Cairo?",
+      "type": "text",
+      "courses": [
+        "STAT-CLT"
+      ],
+      "expected_status": "answered",
+      "sources": [
+        {
+          "file": "CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx",
+          "unit_type": "slide",
+          "unit": 21
+        }
+      ],
+      "must_include": [
+        "98.3%"
+      ],
+      "note": "The question is on slide 20, the answer on slide 21: retrieval must reach the solution slide. F01 follows this question."
+    },
+    {
+      "id": "T04",
+      "question": "When they asked five retirees at random, what average retirement age did that first sample give?",
+      "type": "text",
+      "courses": [
+        "STAT-CLT",
+        "HEALTH-CANCER"
+      ],
+      "expected_status": "answered",
+      "sources": [
+        {
+          "file": "CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx",
+          "unit_type": "slide",
+          "unit": 14
+        }
+      ],
+      "must_include": [
+        "67.2"
+      ],
+      "note": "Slide 13 gives the population mean (65); the answer must give the first sample's mean, not 65."
+    },
+    {
+      "id": "T05",
+      "question": "Which techniques does the chapter mention for keeping data integrity?",
+      "type": "text",
+      "courses": [
+        "SEC-CH1-INFOSEC"
+      ],
+      "expected_status": "answered",
+      "sources": [
+        {
+          "file": "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf",
+          "unit_type": "page",
+          "unit": 6
+        }
+      ],
+      "must_include": [
+        "SHA-256",
+        "digital signatures"
+      ],
+      "any_of": [
+        [
+          "Hashing",
+          "hashing"
+        ],
+        [
+          "change control"
+        ]
+      ],
+      "note": "List answer from one page."
+    },
+    {
+      "id": "T06",
+      "question": "How much ransom was paid in the Colonial Pipeline case, and when did it happen?",
+      "type": "text",
+      "courses": [
+        "SEC-CH1-INFOSEC",
+        "STAT-CLT"
+      ],
+      "expected_status": "answered",
+      "sources": [
+        {
+          "file": "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf",
+          "unit_type": "page",
+          "unit": 18
+        }
+      ],
+      "must_include": [
+        "$4.4 million",
+        "2021"
+      ],
+      "note": "A money amount and a year from the same example."
+    },
+    {
+      "id": "T07",
+      "question": "The SolarWinds hack is given as an example of which type of attack?",
+      "type": "text",
+      "courses": [
+        "SEC-CH1-INFOSEC"
+      ],
+      "expected_status": "answered",
+      "sources": [
+        {
+          "file": "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf",
+          "unit_type": "page",
+          "unit": 16
+        }
+      ],
+      "must_include": [
+        "Supply Chain Attack"
+      ],
+      "note": "The term is in the last line of the page, after the description."
+    },
+    {
+      "id": "T08",
+      "question": "Back in the mainframe days, what was security mostly about?",
+      "type": "text",
+      "courses": [
+        "SEC-CH1-INFOSEC"
+      ],
+      "expected_status": "answered",
+      "sources": [
+        {
+          "file": "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf",
+          "unit_type": "page",
+          "unit": 14
+        }
+      ],
+      "must_include": [
+        "Physical Security",
+        "Access Control"
+      ],
+      "note": "Page 14 has three eras; the answer must take the mainframe era (1970s - 1980s), not the 1990s or 2000s."
+    },
+    {
+      "id": "T09",
+      "question": "How many people got cancer and how many died from it worldwide in 2022?",
+      "type": "text",
+      "courses": [
+        "HEALTH-CANCER"
+      ],
+      "expected_status": "answered",
+      "sources": [
+        {
+          "file": "Cancer_Awareness_English.docx",
+          "unit_type": "page",
+          "unit": 1
+        }
+      ],
+      "must_include": [
+        "20 million",
+        "9.7 million"
+      ],
+      "note": "Two figures; the source says they are estimates."
+    },
+    {
+      "id": "T10",
+      "question": "Are there any infections that can lead to cancer?",
+      "type": "text",
+      "courses": [
+        "HEALTH-CANCER",
+        "SEC-CH1-INFOSEC"
+      ],
+      "expected_status": "answered",
+      "sources": [
+        {
+          "file": "Cancer_Awareness_English.docx",
+          "unit_type": "page",
+          "unit": 2
+        }
+      ],
+      "must_include": [
+        "HPV"
+      ],
+      "any_of": [
+        [
+          "hepatitis B and C",
+          "hepatitis B",
+          "hepatitis"
+        ]
+      ],
+      "note": "A yes/no question whose answer needs the named infections. 'infections' could also match malware words in the security course."
+    },
+    {
+      "id": "T11",
+      "question": "ما المقصود بطباق السلب؟ وأعطني مثالاً عليه من المحاضرة.",
+      "type": "text",
+      "courses": [
+        "ARABIC-TIBAQ"
+      ],
+      "expected_status": "answered",
+      "sources": [
+        {
+          "file": "Copy of qaadh-altbaq-walmqablh-fy-allghh-alarbyh.pptx (2).pptx",
+          "unit_type": "slide",
+          "unit": 5
+        },
+        {
+          "file": "Copy of qaadh-altbaq-walmqablh-fy-allghh-alarbyh.pptx (2).pptx",
+          "unit_type": "slide",
+          "unit": 8
+        }
+      ],
+      "must_include": [
+        "النفي"
+      ],
+      "any_of": [
+        [
+          "يعلم ولا يعلم",
+          "تفعل ولا تفعل",
+          "يحب ولا يكره",
+          "جزعت ولم أجزع"
+        ]
+      ],
+      "note": "Arabic question on an Arabic file. Slide 8 has another example (جزعت ولم أجزع)."
+    },
+    {
+      "id": "T12",
+      "question": "كم عدد الطلبة ذوي الإعاقة المتقدمين في العام الجامعي 2021/2022، وكم نسبة المكفوفين والصم بينهم؟",
+      "type": "text",
+      "courses": [
+        "PROJECT-TAKAMUL"
+      ],
+      "expected_status": "answered",
+      "sources": [
+        {
+          "file": "تكامل CampusBridge.pdf",
+          "unit_type": "page",
+          "unit": 3
+        }
+      ],
+      "must_include": [
+        "201",
+        "53.3%"
+      ],
+      "note": "The numbers are headings on the page, apart from their sentences."
+    },
+    {
+      "id": "V01",
+      "question": "بالرسم اللي بسلايد Z-Score، شو النسبة المكتوبة على المنطقة الواقعة بين 1σ و 2σ؟",
+      "type": "visual",
+      "courses": [
+        "STAT-CLT"
+      ],
+      "expected_status": "answered",
+      "sources": [
+        {
+          "file": "CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx",
+          "unit_type": "slide",
+          "unit": 16
+        }
+      ],
+      "must_include": [
+        "13.6%"
+      ],
+      "note": "Only in the image description (labels 34.1% 13.6% 2.1% 0.1%). Not the calibration question (between -1 and +1). The model must not add up or reinterpret the labels."
+    },
+    {
+      "id": "V02",
+      "question": "What did Reem Basel get in Mathematics?",
+      "type": "visual",
+      "courses": [
+        "GRADES-EN"
+      ],
+      "expected_status": "answered",
+      "sources": [
+        {
+          "file": "Student_Grades_and_Chart.xlsx",
+          "unit_type": "sheet",
+          "unit": 1
+        }
+      ],
+      "must_include": [
+        "98"
+      ],
+      "note": "From the table. The row also has 96, 93 and 97: the answer must pick the right column. The sheet is in 3 chunks; the table is in parts 2 and 3."
+    },
+    {
+      "id": "V03",
+      "question": "في أي فصل من السنة يتم قطف الزيتون وعصره؟",
+      "type": "visual",
+      "courses": [
+        "AGRI-OLIVE"
+      ],
+      "expected_status": "answered",
+      "sources": [
+        {
+          "file": "بحث_عن_شجرة_الزيتون.docx",
+          "unit_type": "page",
+          "unit": 3
+        }
+      ],
+      "must_include": [
+        "الخريف",
+        "بداية الشتاء"
+      ],
+      "note": "From the table «مراحل موسم الزيتون». Ripening (النضج) is also in autumn: the answer must give the harvest row."
+    },
+    {
+      "id": "V04",
+      "question": "في جدول المقارنة مع المنافسين، هل Note Depot فيه تحويل الكلام إلى نص؟",
+      "type": "visual",
+      "courses": [
+        "PROJECT-TAKAMUL"
+      ],
+      "expected_status": "answered",
+      "sources": [
+        {
+          "file": "تكامل CampusBridge.pdf",
+          "unit_type": "page",
+          "unit": 7
+        }
+      ],
+      "must_include": [
+        "Note Depot"
+      ],
+      "any_of": [
+        [
+          "لا",
+          "لا يدعم",
+          "لا يوفر",
+          "غير متوفر",
+          "ليس"
+        ]
+      ],
+      "note": "The table uses ✓ and ✗; the answer is no (✗). A yes is a wrong answer."
+    },
+    {
+      "id": "A01",
+      "question": "ماذا يحدث للخطأ المعياري عندما نكبّر حجم العينة، وما أثر ذلك على تقدير متوسط المجتمع؟",
+      "type": "cross_language",
+      "courses": [
+        "STAT-CLT"
+      ],
+      "expected_status": "answered",
+      "sources": [
+        {
+          "file": "CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx",
+          "unit_type": "slide",
+          "unit": 12
+        }
+      ],
+      "must_include": [
+        "standard error"
+      ],
+      "any_of": [
+        [
+          "σ/√n",
+          "σ / √n",
+          "صغير",
+          "يصغر",
+          "أصغر",
+          "يقل"
+        ]
+      ],
+      "note": "Arabic question, English slide. Glossary: standard error = الخطأ المعياري, sample size = حجم العينة, population mean = متوسط المجتمع."
+    },
+    {
+      "id": "A02",
+      "question": "كيف نستخدم الدرجة المعيارية لنكتشف القيم المتطرفة في البيانات؟",
+      "type": "cross_language",
+      "courses": [
+        "STAT-CLT"
+      ],
+      "expected_status": "answered",
+      "sources": [
+        {
+          "file": "CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx",
+          "unit_type": "slide",
+          "unit": 17
+        }
+      ],
+      "must_include": [
+        "3"
+      ],
+      "any_of": [
+        [
+          "cutoff",
+          "حد",
+          "عتبة"
+        ],
+        [
+          "99.73%",
+          "|z| > 3"
+        ]
+      ],
+      "note": "Glossary: z-score = الدرجة المعيارية, outlier = القيمة المتطرفة. The answer should give the steps and the usual cutoff 3."
+    },
+    {
+      "id": "A03",
+      "question": "كيف تضمن المؤسسة أن تبقى أنظمتها ومعلوماتها متاحة لمستخدميها دائماً؟ وما الوسائل المذكورة للتوافر؟",
+      "type": "cross_language",
+      "courses": [
+        "SEC-CH1-INFOSEC"
+      ],
+      "expected_status": "answered",
+      "sources": [
+        {
+          "file": "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf",
+          "unit_type": "page",
+          "unit": 7
+        }
+      ],
+      "must_include": [
+        "Denial-of-Service"
+      ],
+      "any_of": [
+        [
+          "Redundant systems",
+          "backup servers"
+        ],
+        [
+          "disaster recovery plans",
+          "disaster recovery"
+        ]
+      ],
+      "note": "Glossary: availability = التوافر. F02 follows this question."
+    },
+    {
+      "id": "A04",
+      "question": "ما هي الخزعة، ومتى يُلجأ إليها في تشخيص السرطان؟",
+      "type": "cross_language",
+      "courses": [
+        "HEALTH-CANCER"
+      ],
+      "expected_status": "answered",
+      "sources": [
+        {
+          "file": "Cancer_Awareness_English.docx",
+          "unit_type": "page",
+          "unit": 3
+        }
+      ],
+      "must_include": [
+        "biopsy"
+      ],
+      "any_of": [
+        [
+          "small tissue sample",
+          "عينة صغيرة من النسيج",
+          "عينة نسيج"
+        ]
+      ],
+      "note": "«الخزعة» is not in the glossary: only the embeddings can link it to 'biopsy'. The source says only 'sometimes'; the answer must not invent when it is used."
+    },
+    {
+      "id": "A05",
+      "question": "ما الفرق بين التهديد الداخلي المتعمّد والتهديد الداخلي غير المقصود؟",
+      "type": "cross_language",
+      "courses": [
+        "SEC-CH1-INFOSEC"
+      ],
+      "expected_status": "answered",
+      "sources": [
+        {
+          "file": "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf",
+          "unit_type": "page",
+          "unit": 20
+        }
+      ],
+      "must_include": [
+        "Malicious"
+      ],
+      "any_of": [
+        [
+          "Negligent",
+          "Accidental"
+        ],
+        [
+          "phishing"
+        ]
+      ],
+      "note": "Glossary: insider threat = التهديد الداخلي. A comparison of two items on one page."
+    },
+    {
+      "id": "N01",
+      "question": "How do I build a 95% confidence interval for the population mean using the CLT?",
+      "type": "not_found",
+      "courses": [
+        "STAT-CLT"
+      ],
+      "expected_status": "not_found",
+      "sources": [],
+      "must_include": [],
+      "note": "Very close to the chapter (CLT, sampling distribution, 95% in the Empirical Rule, standard error) but confidence intervals are never covered. Easy to answer from general knowledge: a trap."
+    },
+    {
+      "id": "N02",
+      "question": "What is a man-in-the-middle attack and how can encryption stop it?",
+      "type": "not_found",
+      "courses": [
+        "SEC-CH1-INFOSEC"
+      ],
+      "expected_status": "not_found",
+      "sources": [],
+      "must_include": [],
+      "note": "Encryption and attacks are both in the chapter (confidentiality, ransomware), but man-in-the-middle is not."
+    },
+    {
+      "id": "N03",
+      "question": "كم لتر زيت تعطي شجرة الزيتون الواحدة في السنة تقريباً؟",
+      "type": "not_found",
+      "courses": [
+        "AGRI-OLIVE"
+      ],
+      "expected_status": "not_found",
+      "sources": [],
+      "must_include": [],
+      "note": "The file talks about oil production and a world production chart, but gives no yield per tree (and the chart has no numbers in the text). Any number is invented."
+    },
+    {
+      "id": "N04",
+      "question": "What is the survival rate for cancer when it is detected early?",
+      "type": "not_found",
+      "courses": [
+        "HEALTH-CANCER"
+      ],
+      "expected_status": "not_found",
+      "sources": [],
+      "must_include": [],
+      "note": "Early detection and figures (20 million, 9.7 million) are in the file, but no survival rate. Any percentage is invented."
+    },
+    {
+      "id": "N05",
+      "question": "How big can the GDPR fine be for a company that doesn't comply?",
+      "type": "not_found",
+      "courses": [
+        "SEC-CH1-INFOSEC"
+      ],
+      "expected_status": "not_found",
+      "sources": [],
+      "must_include": [],
+      "note": "Page 12 names GDPR and says non-compliance results in 'massive fines', but gives no amount. Correct: say the amount is not in the lectures (stating only 'massive fines' with its source is acceptable; any amount is a failure)."
+    },
+    {
+      "id": "F01",
+      "question": "وليش قسمنا 2,630 على عدد الصناديق؟ شو بتمثل النتيجة؟",
+      "type": "follow_up",
+      "follows": "T03",
+      "courses": [
+        "STAT-CLT"
+      ],
+      "expected_status": "answered",
+      "sources": [
+        {
+          "file": "CLT_Chapter2_CLT_2b49d63d854e12d54014f9c86203aec3.pptx",
+          "unit_type": "slide",
+          "unit": 21
+        }
+      ],
+      "must_include": [
+        "73.06"
+      ],
+      "any_of": [
+        [
+          "maximum average weight",
+          "أقصى متوسط",
+          "الحد الأقصى",
+          "xcrit"
+        ]
+      ],
+      "note": "Ask after T03 in the same conversation. «عدد الصناديق» refers to the 36 boxes of the previous answer."
+    },
+    {
+      "id": "F02",
+      "question": "وما مثال الاختراق الذي ذكرته المحاضرة لهذا المبدأ؟",
+      "type": "follow_up",
+      "follows": "A03",
+      "courses": [
+        "SEC-CH1-INFOSEC"
+      ],
+      "expected_status": "answered",
+      "sources": [
+        {
+          "file": "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf",
+          "unit_type": "page",
+          "unit": 7
+        }
+      ],
+      "must_include": [
+        "Denial-of-Service"
+      ],
+      "any_of": [
+        [
+          "flooding",
+          "traffic",
+          "إغراق"
+        ]
+      ],
+      "note": "Ask after A03. «هذا المبدأ» is availability: an example of a confidentiality or integrity breach (pages 5, 6) is wrong."
+    },
+    {
+      "id": "D01",
+      "question": "شو يعني طباق الايجاب؟ اعطيني مثال عليه",
+      "type": "colloquial",
+      "courses": [
+        "ARABIC-TIBAQ"
+      ],
+      "expected_status": "answered",
+      "sources": [
+        {
+          "file": "Copy of qaadh-altbaq-walmqablh-fy-allghh-alarbyh.pptx (2).pptx",
+          "unit_type": "slide",
+          "unit": 5
+        }
+      ],
+      "must_include": [
+        "ضدها"
+      ],
+      "any_of": [
+        [
+          "جميل وقبيح",
+          "الحق والباطل",
+          "السماء والأرض"
+        ]
+      ],
+      "note": "Levantine wording, and «الايجاب» without hamza (the slide writes «الإيجاب»)."
+    },
+    {
+      "id": "D02",
+      "question": "wats the diffrence betwen data security and infosec in the chapter??",
+      "type": "colloquial",
+      "courses": [
+        "SEC-CH1-INFOSEC"
+      ],
+      "expected_status": "answered",
+      "sources": [
+        {
+          "file": "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf",
+          "unit_type": "page",
+          "unit": 10
+        },
+        {
+          "file": "Ch 1_5e7cf8dcf4cde52e80cc9670ce63e3a6.pdf",
+          "unit_type": "page",
+          "unit": 9
+        }
+      ],
+      "must_include": [
+        "subset"
+      ],
+      "any_of": [
+        [
+          "broadest umbrella",
+          "all forms of information"
+        ],
+        [
+          "encryption",
+          "data masking",
+          "data loss prevention"
+        ]
+      ],
+      "note": "English spelling mistakes (wats, diffrence, betwen) that keyword search will not match; the answer needs pages 9 and 10."
+    },
+    {
+      "id": "P01",
+      "question": "ما الفرق بين الطباق والمقابلة؟ وأيهما أشمل؟",
+      "type": "permission",
+      "courses": [
+        "STAT-CLT",
+        "SEC-CH1-INFOSEC"
+      ],
+      "expected_status": "not_found",
+      "sources": [],
+      "must_include": [],
+      "answer_in": [
+        {
+          "course": "ARABIC-TIBAQ",
+          "file": "Copy of qaadh-altbaq-walmqablh-fy-allghh-alarbyh.pptx (2).pptx",
+          "unit_type": "slide",
+          "unit": 4
+        }
+      ],
+      "note": "The answer is in ARABIC-TIBAQ (slides 3-4), which this student does not take. Nothing from that course may be retrieved or cited."
+    },
+    {
+      "id": "P02",
+      "question": "في أي فصل تزهر شجرة الزيتون، وكيف تبدو أزهارها؟",
+      "type": "permission",
+      "courses": [
+        "HEALTH-CANCER"
+      ],
+      "expected_status": "not_found",
+      "sources": [],
+      "must_include": [],
+      "answer_in": [
+        {
+          "course": "AGRI-OLIVE",
+          "file": "بحث_عن_شجرة_الزيتون.docx",
+          "unit_type": "page",
+          "unit": 1
+        },
+        {
+          "course": "AGRI-OLIVE",
+          "file": "بحث_عن_شجرة_الزيتون.docx",
+          "unit_type": "page",
+          "unit": 3
+        }
+      ],
+      "note": "The answer is in AGRI-OLIVE (spring, small flowers); the student only takes HEALTH-CANCER."
+    }
+  ]
+}

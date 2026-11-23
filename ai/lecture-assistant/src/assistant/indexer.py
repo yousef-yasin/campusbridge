@@ -6,6 +6,7 @@ from cb_shared import TextUnit
 
 from .chunks import Chunk, chunk_units
 from .config import AssistantConfig
+from .privacy import filter_units
 from .store import VectorStore
 
 
@@ -17,7 +18,8 @@ class Indexer:
 
     def index_units(self, units: List[TextUnit], course: str, file: str, file_title: str = "") -> Dict:
         cfg = self.config
-        chunks = chunk_units(units, course, file, file_title, cfg.max_words, cfg.part_words, cfg.overlap_blocks)
+        kept, skipped, dropped = filter_units(units)          # no title pages, no university IDs
+        chunks = chunk_units(kept, course, file, file_title, cfg.max_words, cfg.part_words, cfg.overlap_blocks)
         embedded = 0
         if chunks and self.embedder is not None:
             self.store.set_model(self.embedder.model, self.embedder.dimensions)
@@ -31,7 +33,8 @@ class Indexer:
         self.store.replace_file(course, file, chunks)
         return {"course": course, "file": file, "title": file_title, "units": len(units), "chunks": len(chunks),
                 "embedded": embedded, "split_units": sorted({c.unit for c in chunks if c.parts > 1}),
-                "sources": sorted({s for c in chunks for s in c.sources})}
+                "sources": sorted({s for c in chunks for s in c.sources}),
+                "skipped_title_units": skipped, "dropped_id_blocks": dropped}
 
     def index_file(self, path, course: str, ocr: bool = False, describe: bool = False,
                    language: Optional[str] = None) -> Dict:

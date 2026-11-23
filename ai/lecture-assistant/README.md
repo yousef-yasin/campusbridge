@@ -39,6 +39,14 @@ lecture-assistant/
   - the page or slide number, its title and its block ids;
   - the language (`ar`, `en`, `mixed`);
   - where its text comes from: `text`, `image` (an image description), `ocr` or `transcript`.
+- **Not indexed** (`privacy.py`):
+  - **Title pages:** the first page or slide of a multi-page file, when it is only a title,
+    or a short page (40 words or fewer) with a heading and no full sentence. These hold the
+    lecture name and often the presenter's name and student number, and answer no question.
+  - **University IDs:** any block with a university ID, by its label («الرقم الجامعي»,
+    «رقم الطالب», "Student ID"…) or a 9-digit number starting with a year (2000-2029).
+  - A one-page file (a photo, a single sheet) is never skipped.
+  - The index report lists the skipped pages and the number of dropped blocks.
 - **Embeddings:** `gemini-embedding-2` at 768 dimensions. Checked in Google's embeddings, models
   and pricing pages on 2026-11-23:
   - the latest embedding model, for over 100 languages;
@@ -185,6 +193,42 @@ descriptions (indexing with `--ocr`) use the same option.
 
 `GEMINI_API_KEY`: the module's own `.env`, else `ai/document-reader/.env` (git-ignored, never
 printed). The API draft for the Web team is `docs/api-contracts/lecture-assistant.md`.
+
+## Evaluation
+
+`eval/questions.json` holds 32 questions written from the files of `ai/samples-in`, of eight
+kinds:
+- text: 12;
+- an image, chart or table: 4;
+- Arabic about an English file: 5;
+- not in the material: 5;
+- follow-ups: 2;
+- colloquial or misspelled: 2;
+- permission: 2. The answer is only in a course the student does not take.
+
+Each question gives the allowed courses, the correct page or slide, and the facts the answer must
+contain, written exactly as in the source.
+
+```bash
+python -m assistant eval                       # eval/questions.json -> eval/results/eval-<time>.json + .md
+python -m assistant eval --retries 3 --pause 30
+```
+
+**What is measured:**
+- the decision (answer or refuse): accuracy, and refusal precision and recall;
+- Hit@1 and Hit@5 of the correct page in the retrieved chunks;
+- complete answers, where every required fact is present;
+- correct cited sources;
+- `needs_review`, time per question, and chunks from a course the student does not take.
+- Everything is reported overall and by question kind.
+
+**How it runs:**
+- Follow-ups are asked in the conversation of the question they follow.
+- An `unavailable` answer (busy, quota) is retried, and if it stays unavailable it is counted
+  apart, not as an error.
+- The run uses a temporary question log, so `qa-log/` is not touched.
+- It raises only the per-run request cap (`max_calls`) to 200, so 32 questions fit. No
+  threshold, prompt or answer setting is changed.
 
 ## Tests
 

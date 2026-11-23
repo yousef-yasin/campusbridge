@@ -2,6 +2,7 @@
   python -m assistant index <file> --course <name> [--ocr] [--describe]
   python -m assistant ask "<question>" --course <name> [--course <other>] [--conversation <id>]
   python -m assistant courses
+  python -m assistant eval [--questions eval/questions.json] [--out eval/results]
 """
 import argparse
 import json
@@ -9,6 +10,7 @@ import logging
 import sys
 
 from . import AssistantConfig, Assistant, GeminiEmbedder, Indexer, open_store   # noqa: F401 (sets the path)
+from .config import ROOT
 from .store import StoreError
 
 
@@ -31,6 +33,12 @@ def build_parser():
     a.add_argument("--speech", action="store_true", help="print only the text for text-to-speech")
     a.add_argument("--max-calls", type=int, help="text-model requests (ASSISTANT_MAX_CALLS)")
     sub.add_parser("courses", help="indexed courses and files")
+    e = sub.add_parser("eval", help="run the evaluation questions and save the results")
+    e.add_argument("--questions", default=str(ROOT / "eval" / "questions.json"))
+    e.add_argument("--out", default=str(ROOT / "eval" / "results"))
+    e.add_argument("--retries", type=int, default=3, help="retries of an unavailable answer (busy, quota)")
+    e.add_argument("--pause", type=float, default=30.0, help="seconds before a retry")
+    e.add_argument("--name", help="file name of the results (e.g. round2); default eval-<time>")
     return p
 
 
@@ -59,7 +67,18 @@ def main(argv=None) -> int:
             else:
                 print(f"{report['course']} / {report['file']}: {report['units']} units -> {report['chunks']} chunks, "
                       f"{report['embedded']} embedded; split: {report['split_units'] or '-'}; "
-                      f"from: {', '.join(report['sources']) or '-'}")
+                      f"from: {', '.join(report['sources']) or '-'}; title pages skipped: {report['skipped_title_units'] or '-'}; "
+                      f"blocks with a university ID dropped: {report['dropped_id_blocks']}")
+            return 0
+        if args.command == "eval":
+            from .evaluate import markdown, run, save
+            cfg.ai.max_calls = max(cfg.ai.max_calls, 200)      # one run asks every question (not a setting of the answers)
+            result = run(args.questions, lambda log: Assistant(store, embedder, config=cfg, language=args.lang, log=log),
+                         args.retries, args.pause, progress=lambda m: print(m, file=sys.stderr))
+            paths = save(result, args.out, args.name)
+            print(json.dumps(result["summary"], indent=2) if args.json else markdown(result))
+            print(f"saved: {paths['json']}", file=sys.stderr)
+            print(f"       {paths['markdown']}", file=sys.stderr)
             return 0
         if args.max_calls is not None:
             cfg.ai.max_calls = args.max_calls

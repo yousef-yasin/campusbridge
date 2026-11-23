@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "course": "CB-GENERAL",
-  "version": 1,
+  "version": 2,
   "approved_by": "draft - to be reviewed by the course instructors",
   "approved_at": "",
   "about": "CampusBridge shared glossary: English term -> correct Arabic meaning, for summaries, questions and explanations. Same format as the speech-to-text glossary (schema 1): its loader ignores meaning_ar/accepted_ar, and this loader ignores aliases. sha256 is the hash of the canonical content: publish a new version instead of editing one.",
@@ -390,8 +390,109 @@
       "domain": "machine learning",
       "meaning_ar": "الميزة التنافسية",
       "aliases": []
+    },
+    {
+      "term": "cancer",
+      "kind": "word",
+      "domain": "health",
+      "meaning_ar": "السرطان",
+      "aliases": []
+    },
+    {
+      "term": "metastasis",
+      "kind": "word",
+      "domain": "health",
+      "meaning_ar": "النقائل",
+      "aliases": [],
+      "accepted_ar": [
+        "انتشار السرطان",
+        "الانتشار"
+      ]
+    },
+    {
+      "term": "biopsy",
+      "kind": "word",
+      "domain": "health",
+      "meaning_ar": "الخزعة",
+      "aliases": [],
+      "accepted_ar": [
+        "خزعة"
+      ]
+    },
+    {
+      "term": "screening",
+      "kind": "word",
+      "domain": "health",
+      "meaning_ar": "الفحص المبكر",
+      "aliases": [],
+      "accepted_ar": [
+        "التحري",
+        "الفحص الدوري"
+      ]
+    },
+    {
+      "term": "diagnosis",
+      "kind": "word",
+      "domain": "health",
+      "meaning_ar": "التشخيص",
+      "aliases": []
+    },
+    {
+      "term": "early detection",
+      "kind": "phrase",
+      "domain": "health",
+      "meaning_ar": "الكشف المبكر",
+      "aliases": []
+    },
+    {
+      "term": "risk factors",
+      "kind": "phrase",
+      "domain": "health",
+      "meaning_ar": "عوامل الخطر",
+      "aliases": [],
+      "accepted_ar": [
+        "عوامل الخطورة"
+      ]
+    },
+    {
+      "term": "warning signs",
+      "kind": "phrase",
+      "domain": "health",
+      "meaning_ar": "العلامات التحذيرية",
+      "aliases": [],
+      "accepted_ar": [
+        "علامات التحذير"
+      ]
+    },
+    {
+      "term": "human papillomavirus",
+      "kind": "phrase",
+      "domain": "health",
+      "meaning_ar": "فيروس الورم الحليمي البشري",
+      "aliases": []
+    },
+    {
+      "term": "HPV",
+      "kind": "acronym_letters",
+      "domain": "health",
+      "meaning_ar": "فيروس الورم الحليمي البشري",
+      "aliases": []
+    },
+    {
+      "term": "hepatitis",
+      "kind": "word",
+      "domain": "health",
+      "meaning_ar": "التهاب الكبد",
+      "aliases": []
+    },
+    {
+      "term": "second-hand smoke",
+      "kind": "phrase",
+      "domain": "health",
+      "meaning_ar": "التدخين السلبي",
+      "aliases": []
     }
   ],
   "never_correct": [],
-  "sha256": "1d717451ec4d0f8dcf8a000a8faf7902d6b0d2b364670361e209a1532611557d"
+  "sha256": "8a06a0c1f51c8c9a52a21cce7722448794e600d9760aa72b8d95f2337b8f7a77"
 }
