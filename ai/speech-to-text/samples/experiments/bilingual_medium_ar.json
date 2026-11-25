@@ -1,0 +1,246 @@
+{
+  "language": "ar",
+  "full_text": "صباح الخير جميعاً، اليوم رح نحكي عن مشروعنا وكيف انتقلنا من مرحلة تحليل المتطلبات، أو Requirements Analysis إلى مرحلة تصميم النظام، واللي بنسميها System Design بالبداية جمعنا كل L Requirements وبعدها عملنا Database Design وحددنا L Entities وال Relationships بعدما خلصنا التصميم، انتقلنا لمرحلة Implementation باستخدام Python و ASP.NET Core هلا بدنا نعمل Run Experiment ونختبر أداء النظام من ناحية Accuracy و Performance و Response Time كمان استخدمنا Artificial Intelligence لتحليل البيانات، و Speech to Text لتحويل كلام المحاضر إلى نص، و Text to Speech لقراءة المحتوى بصوت واضح بالنهاية، لازم نعمل Testing و Evaluation و نتأكد إن كل Feature بيشتغل بالشكل المطلوب",
+  "segments": [
+    {
+      "start": 0.0,
+      "end": 7.2,
+      "text": "صباح الخير جميعاً، اليوم رح نحكي عن مشروعنا وكيف انتقلنا من مرحلة تحليل المتطلبات، أو",
+      "slide": null
+    },
+    {
+      "start": 8.2,
+      "end": 9.8,
+      "text": "Requirements Analysis",
+      "slide": null
+    },
+    {
+      "start": 10.8,
+      "end": 14.1,
+      "text": "إلى مرحلة تصميم النظام، واللي بنسميها",
+      "slide": null
+    },
+    {
+      "start": 15.1,
+      "end": 16.3,
+      "text": "System Design",
+      "slide": null
+    },
+    {
+      "start": 17.9,
+      "end": 19.8,
+      "text": "بالبداية جمعنا كل L",
+      "slide": null
+    },
+    {
+      "start": 20.8,
+      "end": 21.9,
+      "text": "Requirements",
+      "slide": null
+    },
+    {
+      "start": 22.9,
+      "end": 24.3,
+      "text": "وبعدها عملنا",
+      "slide": null
+    },
+    {
+      "start": 25.3,
+      "end": 26.6,
+      "text": "Database Design",
+      "slide": null
+    },
+    {
+      "start": 27.6,
+      "end": 28.8,
+      "text": "وحددنا L",
+      "slide": null
+    },
+    {
+      "start": 30.0,
+      "end": 31.0,
+      "text": "Entities",
+      "slide": null
+    },
+    {
+      "start": 32.0,
+      "end": 32.5,
+      "text": "وال",
+      "slide": null
+    },
+    {
+      "start": 33.5,
+      "end": 34.7,
+      "text": "Relationships",
+      "slide": null
+    },
+    {
+      "start": 36.3,
+      "end": 39.6,
+      "text": "بعدما خلصنا التصميم، انتقلنا لمرحلة",
+      "slide": null
+    },
+    {
+      "start": 40.6,
+      "end": 41.8,
+      "text": "Implementation",
+      "slide": null
+    },
+    {
+      "start": 42.8,
+      "end": 43.8,
+      "text": "باستخدام",
+      "slide": null
+    },
+    {
+      "start": 44.9,
+      "end": 45.7,
+      "text": "Python",
+      "slide": null
+    },
+    {
+      "start": 46.7,
+      "end": 47.2,
+      "text": "و",
+      "slide": null
+    },
+    {
+      "start": 48.1,
+      "end": 49.8,
+      "text": "ASP.NET Core",
+      "slide": null
+    },
+    {
+      "start": 51.5,
+      "end": 52.7,
+      "text": "هلا بدنا نعمل",
+      "slide": null
+    },
+    {
+      "start": 53.9,
+      "end": 55.1,
+      "text": "Run Experiment",
+      "slide": null
+    },
+    {
+      "start": 56.2,
+      "end": 58.4,
+      "text": "ونختبر أداء النظام من ناحية",
+      "slide": null
+    },
+    {
+      "start": 59.3,
+      "end": 60.3,
+      "text": "Accuracy",
+      "slide": null
+    },
+    {
+      "start": 61.3,
+      "end": 61.8,
+      "text": "و",
+      "slide": null
+    },
+    {
+      "start": 62.7,
+      "end": 63.7,
+      "text": "Performance",
+      "slide": null
+    },
+    {
+      "start": 64.7,
+      "end": 65.2,
+      "text": "و",
+      "slide": null
+    },
+    {
+      "start": 66.1,
+      "end": 67.2,
+      "text": "Response Time",
+      "slide": null
+    },
+    {
+      "start": 68.8,
+      "end": 70.1,
+      "text": "كمان استخدمنا",
+      "slide": null
+    },
+    {
+      "start": 71.1,
+      "end": 72.7,
+      "text": "Artificial Intelligence",
+      "slide": null
+    },
+    {
+      "start": 73.7,
+      "end": 75.7,
+      "text": "لتحليل البيانات، و",
+      "slide": null
+    },
+    {
+      "start": 76.7,
+      "end": 78.0,
+      "text": "Speech to Text",
+      "slide": null
+    },
+    {
+      "start": 79.0,
+      "end": 81.9,
+      "text": "لتحويل كلام المحاضر إلى نص، و",
+      "slide": null
+    },
+    {
+      "start": 82.9,
+      "end": 84.1,
+      "text": "Text to Speech",
+      "slide": null
+    },
+    {
+      "start": 85.1,
+      "end": 87.3,
+      "text": "لقراءة المحتوى بصوت واضح",
+      "slide": null
+    },
+    {
+      "start": 89.3,
+      "end": 91.3,
+      "text": "بالنهاية، لازم نعمل",
+      "slide": null
+    },
+    {
+      "start": 92.3,
+      "end": 93.3,
+      "text": "Testing",
+      "slide": null
+    },
+    {
+      "start": 94.3,
+      "end": 94.8,
+      "text": "و",
+      "slide": null
+    },
+    {
+      "start": 95.8,
+      "end": 96.8,
+      "text": "Evaluation",
+      "slide": null
+    },
+    {
+      "start": 97.8,
+      "end": 99.3,
+      "text": "و نتأكد إن كل",
+      "slide": null
+    },
+    {
+      "start": 100.3,
+      "end": 101.3,
+      "text": "Feature",
+      "slide": null
+    },
+    {
+      "start": 102.3,
+      "end": 103.8,
+      "text": "بيشتغل بالشكل المطلوب",
+      "slide": null
+    }
+  ]
+}

@@ -1,0 +1,222 @@
+{
+  "language": "ar",
+  "full_text": "صباح الفير جميعاً، اليوم رح نحكي عن مشروعنا وكيف انتقلنا من مرحلة تحليل المططلبات أو إلى مرحلة تصميم النظام واللي بنسميها بالبداية جمعنا كل أل وبعدها عملنا وحددنا أل انتو تيز وال relationship بعد ما خلصنا التصميم انتقلنا لمرحلة implementation باستخدام python و ASP.NET Core هلا بدنا النعمل run experiment ونختبر أداء النظام من ناحية accuracy و performance و response time كمان استخدمنا artificial intelligence لتحليل البيانات و speech to text لتحويل كلام المحاضر إلى نص و text to speech لقراءة المحتوى بصوت واضح بالنهاية لازم نعمل testing و evaluation ونتأكد ان كل feature بشكل بشكل المطلوب",
+  "segments": [
+    {
+      "start": 0.0,
+      "end": 7.3,
+      "text": "صباح الفير جميعاً، اليوم رح نحكي عن مشروعنا وكيف انتقلنا من مرحلة تحليل المططلبات أو",
+      "slide": null
+    },
+    {
+      "start": 10.8,
+      "end": 14.1,
+      "text": "إلى مرحلة تصميم النظام واللي بنسميها",
+      "slide": null
+    },
+    {
+      "start": 17.9,
+      "end": 19.8,
+      "text": "بالبداية جمعنا كل أل",
+      "slide": null
+    },
+    {
+      "start": 22.9,
+      "end": 24.3,
+      "text": "وبعدها عملنا",
+      "slide": null
+    },
+    {
+      "start": 27.6,
+      "end": 28.8,
+      "text": "وحددنا أل",
+      "slide": null
+    },
+    {
+      "start": 30.0,
+      "end": 31.0,
+      "text": "انتو تيز",
+      "slide": null
+    },
+    {
+      "start": 32.0,
+      "end": 32.6,
+      "text": "وال",
+      "slide": null
+    },
+    {
+      "start": 33.6,
+      "end": 34.6,
+      "text": "relationship",
+      "slide": null
+    },
+    {
+      "start": 36.3,
+      "end": 39.6,
+      "text": "بعد ما خلصنا التصميم انتقلنا لمرحلة",
+      "slide": null
+    },
+    {
+      "start": 40.7,
+      "end": 41.8,
+      "text": "implementation",
+      "slide": null
+    },
+    {
+      "start": 42.9,
+      "end": 43.8,
+      "text": "باستخدام",
+      "slide": null
+    },
+    {
+      "start": 44.9,
+      "end": 45.7,
+      "text": "python",
+      "slide": null
+    },
+    {
+      "start": 46.7,
+      "end": 47.2,
+      "text": "و",
+      "slide": null
+    },
+    {
+      "start": 48.1,
+      "end": 49.8,
+      "text": "ASP.NET Core",
+      "slide": null
+    },
+    {
+      "start": 51.5,
+      "end": 52.7,
+      "text": "هلا بدنا النعمل",
+      "slide": null
+    },
+    {
+      "start": 53.9,
+      "end": 55.1,
+      "text": "run experiment",
+      "slide": null
+    },
+    {
+      "start": 56.2,
+      "end": 58.4,
+      "text": "ونختبر أداء النظام من ناحية",
+      "slide": null
+    },
+    {
+      "start": 59.4,
+      "end": 60.4,
+      "text": "accuracy",
+      "slide": null
+    },
+    {
+      "start": 61.4,
+      "end": 61.9,
+      "text": "و",
+      "slide": null
+    },
+    {
+      "start": 62.8,
+      "end": 63.8,
+      "text": "performance",
+      "slide": null
+    },
+    {
+      "start": 64.8,
+      "end": 65.3,
+      "text": "و",
+      "slide": null
+    },
+    {
+      "start": 66.2,
+      "end": 67.3,
+      "text": "response time",
+      "slide": null
+    },
+    {
+      "start": 68.9,
+      "end": 70.2,
+      "text": "كمان استخدمنا",
+      "slide": null
+    },
+    {
+      "start": 71.3,
+      "end": 72.9,
+      "text": "artificial intelligence",
+      "slide": null
+    },
+    {
+      "start": 73.9,
+      "end": 75.9,
+      "text": "لتحليل البيانات و",
+      "slide": null
+    },
+    {
+      "start": 76.9,
+      "end": 78.1,
+      "text": "speech to text",
+      "slide": null
+    },
+    {
+      "start": 79.2,
+      "end": 82.1,
+      "text": "لتحويل كلام المحاضر إلى نص و",
+      "slide": null
+    },
+    {
+      "start": 83.1,
+      "end": 84.3,
+      "text": "text to speech",
+      "slide": null
+    },
+    {
+      "start": 85.3,
+      "end": 87.5,
+      "text": "لقراءة المحتوى بصوت واضح",
+      "slide": null
+    },
+    {
+      "start": 89.2,
+      "end": 91.3,
+      "text": "بالنهاية لازم نعمل",
+      "slide": null
+    },
+    {
+      "start": 92.4,
+      "end": 93.2,
+      "text": "testing",
+      "slide": null
+    },
+    {
+      "start": 94.2,
+      "end": 94.7,
+      "text": "و",
+      "slide": null
+    },
+    {
+      "start": 95.6,
+      "end": 96.7,
+      "text": "evaluation",
+      "slide": null
+    },
+    {
+      "start": 97.7,
+      "end": 99.2,
+      "text": "ونتأكد ان كل",
+      "slide": null
+    },
+    {
+      "start": 100.3,
+      "end": 101.0,
+      "text": "feature",
+      "slide": null
+    },
+    {
+      "start": 102.1,
+      "end": 103.7,
+      "text": "بشكل بشكل المطلوب",
+      "slide": null
+    }
+  ]
+}
