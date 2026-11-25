@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from conftest import FakeModel
+from conftest import FakeModel, write_wav
 from stt import (AudioNotFoundError, LiveSession, ModelUnavailableError, Segment, STTConfig,
                  Transcriber, Transcript, TranscriptionError)
 from stt.__main__ import main
@@ -23,8 +23,7 @@ def test_config_from_env(monkeypatch):
 
 
 def test_transcribe_file_returns_timestamped_segments(tmp_path, fake_model):
-    audio = tmp_path / "lecture.wav"
-    audio.write_bytes(b"RIFF")
+    audio = write_wav(tmp_path / "lecture.wav")
     t = Transcriber(STTConfig(), model=fake_model).transcribe_file(audio)
     assert [(s.start, s.end) for s in t.segments] == [(0.0, 2.0), (2.0, 4.5)]
     assert t.segments[0].text == "مرحبا بكم في المحاضرة"

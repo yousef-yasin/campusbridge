@@ -1,0 +1,11 @@
+صباح الخير جميعاً، اليوم رح نحكي عن مشروعنا وكيف انتقلنا من مرحلة تحليل المتطلبات، أو Requirements Analysis، إلى مرحلة تصميم النظام، واللي بنسميها System Design.
+
+بالبداية جمعنا كل الـ Requirements، وبعدها عملنا Database Design وحددنا الـ Entities والـ Relationships.
+
+بعد ما خلصنا التصميم، انتقلنا لمرحلة Implementation باستخدام Python و ASP.NET Core.
+
+هلا بدنا نعمل Run Experiment ونختبر أداء النظام من ناحية Accuracy و Performance و Response Time.
+
+كمان استخدمنا Artificial Intelligence لتحليل البيانات، و Speech-to-Text لتحويل كلام المحاضر إلى نص، و Text-to-Speech لقراءة المحتوى بصوت واضح.
+
+بالنهاية، لازم نعمل Testing و Evaluation ونتأكد إن كل Feature بتشتغل بالشكل المطلوب.

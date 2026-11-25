@@ -56,6 +56,7 @@ Environment variables (CLI `--model` / `--device` override them):
 | `STT_LANGUAGE` | `ar` | |
 | `STT_BEAM_SIZE` | `5` | |
 | `STT_VAD_FILTER` | `1` | Skip silence (Silero VAD built into faster-whisper) |
+| `STT_CODE_SWITCHING` | `0` | `1` enables the Arabic-English refinement pass (see below). Applies to file and live |
 | `STT_GLOSSARY` | unset | Path to an approved course glossary; enables technical-term correction (see below). CLI: `--glossary` |
 
 ### Model selection
@@ -78,6 +79,32 @@ python -m stt --model small file lecture.mp3           # one-off override
 ```
 
 PowerShell: `$env:STT_MODEL="large-v3"; python -m stt file lecture.mp3`
+
+### Arabic-English code-switching (opt-in)
+
+With `language=ar`, Whisper sometimes writes English terms in Arabic script or skips short
+English phrases. `STT_CODE_SWITCHING=1` (or `STTConfig(code_switching=True)`) adds a
+refinement step after the Arabic pass (`src/stt/codeswitch.py`):
+
+1. **English re-pass:** Arabic-script segments of 0.5–4 s whose audio is detected as English
+   with ≥ 0.8 probability are re-transcribed with `language="en"`. Timestamps and slide are kept.
+2. **Gap recovery:** speech found by VAD but not covered by any segment is transcribed in its
+   detected language (Arabic or English, ≥ 0.8 probability), dropping low-confidence output.
+
+Arabic stays in Arabic script, and nothing is translated. Long segments that mix Arabic and
+English are not changed: their audio is detected as Arabic.
+
+Measured on `samples/bilingual_test.mp3` (one synthetic TTS clip, CPU int8):
+
+| Model | Code-switching | WER | Arabic WER | English WER | Time (105 s audio) |
+|---|---|---|---|---|---|
+| small | off | 14.6% | 6.8% | 33.3% | 38 s |
+| small | on | 5.8% | 6.8% | 3.3% | 117 s |
+| medium | off | 6.8% | 9.6% | 0.0% | 104 s |
+| medium | on | 6.8% | 9.6% | 0.0% | 508 s |
+
+Each language detection costs a full 30 s encoder pass, so the step is slow when there are many
+short segments. It is off by default, and it is too slow for live captions on CPU.
 
 ### Technical-term correction (approved glossary)
 

@@ -1,7 +1,6 @@
-import sys
-import types
-
 import pytest
+
+from conftest import write_wav
 
 from stt import STTConfig, Transcriber
 from stt import __main__ as cli
@@ -20,7 +19,11 @@ def loads(monkeypatch):
         def transcribe(self, audio, **kw):
             return iter([]), None
 
-    monkeypatch.setitem(sys.modules, "faster_whisper", types.SimpleNamespace(WhisperModel=FakeWhisper))
+        def detect_language(self, audio):
+            return "ar", 1.0, [("ar", 1.0)]
+
+    import faster_whisper
+    monkeypatch.setattr(faster_whisper, "WhisperModel", FakeWhisper)
     monkeypatch.setattr("stt.config._detect_device", lambda: "cpu")
     return loaded
 
@@ -65,8 +68,7 @@ def test_switching_model_replaces_previous(loads):
 
 def _run_cli(monkeypatch, tmp_path, argv):
     monkeypatch.setattr(cli, "record_microphone", lambda session, *a: session.end())
-    audio = tmp_path / "a.wav"
-    audio.write_bytes(b"x")
+    audio = write_wav(tmp_path / "a.wav")
     cmd = ["file", str(audio)] if argv[-1] == "file" else ["mic", "-o", str(tmp_path / "m.txt")]
     return cli.main(argv[:-1] + cmd)
 

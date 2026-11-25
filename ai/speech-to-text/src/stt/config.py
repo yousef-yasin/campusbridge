@@ -21,6 +21,7 @@ class STTConfig:
     language: str = "ar"
     beam_size: int = 5
     vad_filter: bool = True
+    code_switching: bool = False    # opt-in English re-pass + gap recovery (see codeswitch.py)
     glossary_path: Optional[str] = None  # approved course glossary; None disables term correction
     sample_rate: int = 16000
 
@@ -35,6 +36,7 @@ class STTConfig:
             language=e("STT_LANGUAGE", cls.language),
             beam_size=int(e("STT_BEAM_SIZE", cls.beam_size)),
             vad_filter=e("STT_VAD_FILTER", "1").lower() not in ("0", "false", "no"),
+            code_switching=e("STT_CODE_SWITCHING", "0").lower() in ("1", "true", "yes"),
             glossary_path=e("STT_GLOSSARY") or None,
         )
 

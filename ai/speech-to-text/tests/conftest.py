@@ -19,7 +19,20 @@ class FakeModel:
         self.calls.append((audio, kwargs))
         if self.error:
             raise self.error
-        return iter(SimpleNamespace(start=s, end=e, text=t) for s, e, t in self.segments), None
+        return iter(SimpleNamespace(start=s, end=e, text=t, avg_logprob=-0.2, no_speech_prob=0.0)
+                    for s, e, t in self.segments), None
+
+    def detect_language(self, audio):
+        return "ar", 1.0, [("ar", 1.0), ("en", 0.0)]
+
+
+def write_wav(path, seconds=1.0):
+    """Silent 16 kHz mono WAV (decodable, no speech)."""
+    import wave
+    with wave.open(str(path), "wb") as w:
+        w.setnchannels(1); w.setsampwidth(2); w.setframerate(16000)
+        w.writeframes(b"\x00\x00" * int(16000 * seconds))
+    return path
 
 
 @pytest.fixture(autouse=True)

@@ -61,17 +61,29 @@ class Transcriber:
                 _shared["key"] = key
             return _shared["model"]
 
+    def _code_switching(self) -> bool:
+        return self.config.code_switching and self.config.language not in (None, "en")
+
     def _run(self, audio, offset: float = 0.0) -> List[Segment]:
         model = self.model
         try:
+            if self._code_switching() and isinstance(audio, str):
+                from faster_whisper import decode_audio
+                audio = decode_audio(audio, sampling_rate=self.config.sample_rate)
             segments, _ = model.transcribe(
                 audio,
                 language=self.config.language,
                 beam_size=self.config.beam_size,
                 vad_filter=self.config.vad_filter,
             )
-            return [Segment(s.start + offset, s.end + offset, s.text.strip())
-                    for s in segments if s.text.strip()]
+            result = [Segment(s.start, s.end, s.text.strip()) for s in segments if s.text.strip()]
+            if self._code_switching():
+                from .codeswitch import refine
+                result = refine(model, audio, result, self.config.language, self.config.beam_size)
+            for s in result:
+                s.start += offset
+                s.end += offset
+            return result
         except Exception as exc:
             raise TranscriptionError(f"Transcription failed: {exc}") from exc
 
